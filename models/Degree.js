@@ -1,9 +1,6 @@
 // models/Degree.js
 
-import mongoose from "mongoose";
-
-const { Schema, models, model } = mongoose;
-
+import { Schema, models, model } from "mongoose";
 const certificatesSchema = new Schema({
   certificatesName: { type: String, required: true },
   certificatesCountry: { type: String },
@@ -32,11 +29,4 @@ const degreeSchema = new Schema(
   { timestamps: true }
 );
 
-// Add indexes for better query performance
-degreeSchema.index({ name: 1 });
-degreeSchema.index({ status: 1 });
-degreeSchema.index({ createdAt: -1 });
-
-const Degree = models?.Degree || model("Degree", degreeSchema, "degrees");
-
-export default Degree;
+export default models.Degree || model("Degree", degreeSchema, "degrees");

@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Fonts are loaded via next/font/google in _app.js - no need for local font files */
-/* The @font-face declarations have been removed as fonts are handled by Next.js */
+@font-face {
+    font-family: 'Nunito';
+    src: url('/fonts/Nunito.woff2') format('woff2');
+    font-display: swap;
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/fonts/Outfit.woff2') format('woff2');
+    font-display: swap;
+    font-weight: 300;
+}
+
 
 /* * {
     margin: 0;
@@ -13,169 +25,43 @@
 
 body {
     background-color: rgb(248, 250, 252);
-    font-family: var(--font-nunito), "Nunito", sans-serif;
+    font-family: "Nunito", sans-serif;
     font-weight: 600;
     overflow-x: hidden;
-    /* Prevent layout shift */
-    min-height: 100vh;
 }
 
-/* Global optimization for all transitions - use GPU-accelerated properties */
-* {
-    /* Optimize transitions to use transform/opacity for GPU acceleration */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Optimize all hover states to use GPU-accelerated properties */
-button, a, [role="button"] {
-    /* Use transform instead of position changes for better performance */
-    will-change: transform, opacity;
-}
-
-/* Optimize common transition patterns - use GPU-accelerated properties */
-.transition-all {
-    transition-property: transform, opacity, box-shadow;
-    will-change: transform, opacity, box-shadow;
-    transform: translateZ(0); /* Force GPU acceleration */
-}
-
-.transition-colors {
-    transition-property: background-color, color, border-color;
-    will-change: background-color, color, border-color;
-    transform: translateZ(0); /* Force GPU acceleration */
-}
-
-.transition-shadow {
-    transition-property: box-shadow;
-    will-change: box-shadow;
-    transform: translateZ(0); /* Force GPU acceleration */
-}
-
-/* Optimize hover states globally */
-.hover\:scale-105,
-.hover\:scale-110 {
-    will-change: transform;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-}
-
-/* Optimize all Tailwind transition classes */
-[class*="transition"] {
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
-}
-
-/* Prevent layout shift for images */
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-/* Aspect ratio containers to prevent CLS */
-.aspect-square {
-    aspect-ratio: 1 / 1;
-}
-
-.aspect-video {
-    aspect-ratio: 16 / 9;
-}
-
-.aspect-4-3 {
-    aspect-ratio: 4 / 3;
-}
-
-/* Skeleton loaders with fixed dimensions */
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: loading 1.5s ease-in-out infinite;
-    min-height: 1rem;
-    will-change: background-position; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
-}
-
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
-}
 /* body  select {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
   } */
 
-  body  select {
+body select {
     font-family: 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
-  }
-  
+}
+
 /* ================================================== */
 @keyframes pulse-once {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  
-  .animate-pulse-once {
-    animation: pulse-once 1.5s ease-in-out;
-    will-change: transform; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
-  }
-
-/* Shimmer animation for loading skeleton */
-@keyframes shimmer {
     0% {
-        transform: translateX(-100%);
+        transform: scale(1);
     }
-    100% {
-        transform: translateX(100%);
-    }
-}
 
-/* Gradient animation for text and buttons */
-@keyframes gradient {
-    0% {
-        background-position: 0% 50%;
-    }
     50% {
-        background-position: 100% 50%;
+        transform: scale(1.05);
     }
+
     100% {
-        background-position: 0% 50%;
+        transform: scale(1);
     }
 }
 
-.animate-gradient {
-    animation: gradient 3s ease infinite;
+.animate-pulse-once {
+    animation: pulse-once 1.5s ease-in-out;
 }
-  
-  /* Smooth scroll behavior */
-  html {
+
+/* Smooth scroll behavior */
+html {
     scroll-behavior: smooth;
-  }
-  
-  /* RTL text selection fix */
-  [dir="rtl"]::selection {
-    direction: rtl;
-    unicode-bidi: bidi-override;
-  }
-  
-  [dir="rtl"]::-moz-selection {
-    direction: rtl;
-    unicode-bidi: bidi-override;
-  }
-  
-  /* Ensure RTL text displays correctly */
-  [dir="rtl"] {
-    text-align: right;
-    direction: rtl;
-    unicode-bidi: embed;
-  }
+}
+
 /* Flex class */
 
 /* ================================================== */
@@ -348,32 +234,25 @@ img {
 
 /* ================================================== */
 
-/* Custom - UPDATED LAYOUT SYSTEM */
+/* Custom */
 
 /* ================================================== */
 .mycontainer {
     width: 100%;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    max-width: 100%;
-    margin-left: 0;
-    margin-right: 0;
-    margin-top: 64px;
-    padding: 0;
-    will-change: margin-left, width;
-    transform: translateZ(0);
-    backface-visibility: hidden;
+
+    transition: width 0.3s ease-in-out, margin-left 0.3s ease-in-out, margin-left 0.3s ease-in-out, transform 0.3s ease-in-out 25ms;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 61px;
 }
 
 .mycontainer.active {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-}
+    width: calc(100% - 200px);
+    transform: translateX(100px);
+    /* moves the element 50px along the x-axis */
 
-@media screen and (max-width: 1024px) {
-    .mycontainer.active {
-        margin-left: 0;
-        width: 100%;
-    }
+
 }
 
 .po-fixed-center {
@@ -502,36 +381,26 @@ button {
 }
 
 /* ********************************************** */
-/* ******************************* Aside section - UPDATED */
+/* ******************************* Aside section */
 /* ********************************************** */
 
 .asideleft {
     position: fixed;
-    top: 64px;
-    left: 0;
-    width: 240px;
-    height: calc(100vh - 64px);
-    background-color: #0f172a;
-    z-index: 40;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    top: 100px;
+    left: -200px;
+    width: 200px;
+    height: 100vh;
+    background-color: #fff;
+    z-index: 9;
+    box-shadow: 0 0 10px #c4c4c4;
+    transition: 0.3s ease-in-out;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    will-change: transform;
-    transform: translateX(-100%);
-    backface-visibility: hidden;
-    border-right: 1px solid rgba(51, 65, 85, 0.5);
 }
 
 .asideleft.active {
-    transform: translateX(0);
-}
-
-@media screen and (max-width: 1024px) {
-    .asideleft.active {
-        transform: translateX(0);
-    }
+    left: 0;
 }
 
 .asideleft ul li {
@@ -586,7 +455,7 @@ button {
     padding: 0.7rem;
 }
 
-.logoutbtn{
+.logoutbtn {
 
     padding: 10px;
     width: 90%;
@@ -599,14 +468,14 @@ button {
     border-radius: 10px;
     background-color: #e6dbfb;
     color: #5f22db;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    will-change: background-color; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
+    transition: 0.3s;
 }
-.logoutbtn:hover{
+
+.logoutbtn:hover {
     background-color: #9664f1;
     color: #fff;
 }
+
 /* ********************************************** */
 /* ******************************* Dashboard Page */
 /* ********************************************** */
@@ -845,7 +714,7 @@ button {
 .blogscategory {
     width: 100%;
     margin-top: 30px
-    /* height: 100%; */
+        /* height: 100%; */
 }
 
 .blogscategory table {
@@ -862,6 +731,7 @@ button {
     font-weight: 900;
     /* margin: 1px; */
 }
+
 .blogscategory tbody tr:nth-child(even) {
     background-color: #f2f2f2;
     /* margin: 1px; */
@@ -1010,7 +880,7 @@ button {
 
 .addblogspage {
     position: relative;
-     max-width: 100%;
+    max-width: 100%;
     /* margin: auto;  */
     height: 100%;
     margin-top: 30px;
@@ -1164,38 +1034,36 @@ button {
     width: 120px;
     height: 50px;
     background-color: #7b57ff;
-    transition: background-color 0.2s ease;
+    transition-duration: .2s;
     border: none;
     color: rgb(241, 241, 241);
     cursor: pointer;
     font-weight: 600;
     font-size: 1rem;
     border-radius: 20px;
-    will-change: background-color; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .declineButton {
     width: 120px;
     height: 50px;
     background-color: rgb(218, 218, 218);
-    transition: background-color 0.2s ease;
+    transition-duration: .2s;
     color: rgb(46, 46, 46);
     border: none;
     cursor: pointer;
     font-weight: 600;
     font-size: 1rem;
     border-radius: 20px;
-    will-change: background-color; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
 }
 
 .declineButton:hover {
     background-color: #ebebeb;
+    transition-duration: .2s;
 }
 
 .acceptButton:hover {
     background-color: #9173ff;
+    transition-duration: .2s;
 }
 
 
@@ -1333,9 +1201,6 @@ button {
     border-style: dashed;
     animation: borderAnimation 2s infinite;
     transition: border-style 0.3s ease;
-    will-change: border-style, transform; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
 }
 
 @keyframes borderAnimation {
@@ -1387,10 +1252,7 @@ button {
     letter-spacing: 2px;
     cursor: pointer;
     box-shadow: 0 3px 10px #333;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    will-change: transform; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
+    transition: 0.2s ease-in-out;
 }
 
 .loginfront button:is(:hover, :active) {
@@ -1399,7 +1261,7 @@ button {
 }
 
 .loginfront button:active {
-    transform: translateZ(0) scale(0.9); /* Maintain GPU acceleration */
+    transform: scale(0.9);
 }
 
 .loginpre {
@@ -1439,14 +1301,11 @@ button {
     animation-duration: 2s;
     animation-timing-function: linear;
     animation-iteration-count: infinite;
-    will-change: transform; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
 }
 
 .pl__arrows {
     animation-name: arrows42;
-    transform: translateZ(0) rotate(45deg); /* Maintain GPU acceleration */
+    transform: rotate(45deg);
     transform-origin: 16px 52px;
 }
 
@@ -1461,7 +1320,7 @@ button {
 
 .pl__ring-stroke {
     animation-name: ringStroke42;
-    transform: translateZ(0) rotate(-45deg); /* Maintain GPU acceleration */
+    transform: rotate(-45deg);
 }
 
 .pl__tick {
@@ -1499,21 +1358,21 @@ button {
 /* Animations */
 @keyframes arrows42 {
     from {
-        transform: translateZ(0) rotate(45deg); /* GPU acceleration */
+        transform: rotate(45deg);
     }
 
     to {
-        transform: translateZ(0) rotate(405deg); /* GPU acceleration */
+        transform: rotate(405deg);
     }
 }
 
 @keyframes ringRotate42 {
     from {
-        transform: translateZ(0) rotate(0); /* GPU acceleration */
+        transform: rotate(0);
     }
 
     to {
-        transform: translateZ(0) rotate(720deg); /* GPU acceleration */
+        transform: rotate(720deg);
     }
 }
 
@@ -1522,12 +1381,12 @@ button {
     from,
     to {
         stroke-dashoffset: 452;
-        transform: translateZ(0) rotate(-45deg); /* GPU acceleration */
+        transform: rotate(-45deg);
     }
 
     50% {
         stroke-dashoffset: 169.5;
-        transform: translateZ(0) rotate(-180deg); /* GPU acceleration */
+        transform: rotate(-180deg);
     }
 }
 
@@ -1545,6 +1404,7 @@ button {
         stroke-dashoffset: 0;
     }
 }
+
 /* ********************************************** */
 /* *******************************  LOGIN PAGE */
 /* ********************************************** */
@@ -1613,19 +1473,13 @@ button {
     transition: all 0.2s ease-in-out;
 }
 
-.form .login-button {
-    will-change: transform; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
-}
-
 .form .login-button:hover {
-    transform: translateZ(0) scale(1.03); /* Maintain GPU acceleration */
+    transform: scale(1.03);
     box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 23px 10px -20px;
 }
 
 .form .login-button:active {
-    transform: translateZ(0) scale(0.95); /* Maintain GPU acceleration */
+    transform: scale(0.95);
     box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 15px 10px -10px;
 }
 
@@ -1680,9 +1534,6 @@ button {
     animation: loading-keys-app-loading 0.8s infinite ease-in-out;
     width: 13.6px;
     height: 32px;
-    will-change: transform, opacity; /* Optimize for compositing */
-    transform: translateZ(0); /* Force GPU acceleration */
-    backface-visibility: hidden; /* Prevent flickering */
 }
 
 .jimu-primary-loading {
@@ -2008,54 +1859,46 @@ button {
     .rc-md-editor .editor-container>.section:last-child {
         border-top: 1px solid;
     }
-    .notification{
+
+    .notification {
         display: none;
     }
-    .profilenav{
+
+    .profilenav {
         display: none;
     }
+
     .container {
         /* max-width: 100%; */
         /* margin: auto; */
         /* margin: 0; */
         /* transition: 0.3s ease-in-out; */
     }
-    .leftprofile_details{
+
+    .leftprofile_details {
         flex-direction: column;
     }
 }
 
 @media screen and (max-width: 500px) {
-    .leftyearoverview{
+    .leftyearoverview {
         height: auto;
     }
-    .leftyearoverview canvas{
+
+    .leftyearoverview canvas {
         height: auto !important;
     }
-    .right_salescont h3{
+
+    .right_salescont h3 {
         text-align: center;
     }
-    .blogstable table, .blogstable table thead th{
+
+    .blogstable table,
+    .blogstable table thead th {
         font-size: 15px;
     }
-    .blogstable table h3{
-        width: 125px;
-    }
-}
-@media screen and (max-width: 500px) {
-    .leftyearoverview{
-        height: auto;
-    }
-    .leftyearoverview canvas{
-        height: auto !important;
-    }
-    .right_salescont h3{
-        text-align: center;
-    }
-    .blogstable table, .blogstable table thead th{
-        font-size: 15px;
-    }
-    .blogstable table h3{
+
+    .blogstable table h3 {
         width: 125px;
     }
 }

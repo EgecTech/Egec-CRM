@@ -1,185 +1,214 @@
 // pages/api/universities/universities.js
 
-/**
- * @swagger
- * /api/universities/universities:
- *   get:
- *     summary: Get all universities or a specific university
- *     tags: [Universities]
- *     security:
- *       - cookieAuth: []
- *     parameters:
- *       - in: query
- *         name: id
- *         schema:
- *           type: string
- *         description: University ID (optional)
- *       - in: query
- *         name: skipPopulate
- *         schema:
- *           type: boolean
- *         description: Skip populating related data for faster response
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               oneOf:
- *                 - type: array
- *                   items:
- *                     $ref: '#/components/schemas/University'
- *                 - $ref: '#/components/schemas/University'
- *         headers:
- *           X-RateLimit-Limit:
- *             schema:
- *               type: integer
- *             description: Request limit per time window
- *           X-RateLimit-Remaining:
- *             schema:
- *               type: integer
- *             description: Remaining requests
- *       400:
- *         description: Invalid university ID
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Error'
- *       401:
- *         $ref: '#/components/responses/UnauthorizedError'
- *       404:
- *         description: University not found
- *       429:
- *         $ref: '#/components/responses/RateLimitError'
- */
-
-import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
-import University from "@/models/University";
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
-import { applySecureCacheHeaders, classifyDataSecurity, generateETag, checkETag } from "@/lib/secureCacheStrategy";
+import { University } from "@/models/University";
 import { getServerSession } from "next-auth";
+// import { authOptions } from "@/pages/api/[...nextauth]";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import cache from "@/lib/cache";
-import { CACHE_TTL, cacheKeys } from "@/lib/cacheConfig";
 
-const { ObjectId } = mongoose.Types;
+function normalizeCollegesPayload(colleges = []) {
+  if (!Array.isArray(colleges)) return [];
 
-async function handle(req, res) {
-  // Authentication is handled by withProtectionPreset middleware
+  const parseRate = (value) => {
+    if (value === null || value === undefined || value === "") return undefined;
+    const numericValue = Number(value);
+    return Number.isFinite(numericValue) ? numericValue : undefined;
+  };
+
+  return colleges
+    .filter((college) => college?.collegeId && college?.collegeName)
+    .map((college) => ({
+      collegeId: college.collegeId,
+      collegeName: college.collegeName,
+      bachelorRate: parseRate(college.bachelorRate),
+      masterRate: college.masterRate || undefined,
+      doctorateRate: college.doctorateRate || undefined,
+    }));
+}
+
+export default async function handle(req, res) {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     await mongooseConnect();
 
     const { method } = req;
 
     switch (method) {
+      case "POST": {
+        const {
+          name,
+          country,
+          email,
+          establishment,
+          website,
+          phone,
+          location,
+          universityType,
+          contract,
+          images,
+          status,
+          colleges,
+          timesRanking,
+          cwurRanking,
+          shanghaiRanking,
+          qsRanking,
+          accreditation,
+          accreditationCountries,
+          universityConditions,
+        } = req.body;
+
+        if (!name || !status) {
+          return res.status(400).json({ error: "Required fields are missing" });
+        }
+
+        const newUniversity = await University.create({
+          name,
+          country,
+          email,
+          establishment,
+          website,
+          phone,
+          location,
+          universityType,
+          contract,
+          images,
+          status,
+          colleges: normalizeCollegesPayload(colleges),
+          timesRanking,
+          cwurRanking,
+          shanghaiRanking,
+          qsRanking,
+          accreditation,
+          accreditationCountries,
+          universityConditions,
+        });
+
+        return res.status(201).json(newUniversity);
+      }
+
       case "GET": {
-        // Get session for cache strategy
-        const session = await getServerSession(req, res, authOptions);
-        
         if (req.query?.id) {
-          const universityId = req.query.id;
-          if (!ObjectId.isValid(universityId)) {
-            return res.status(400).json({ error: "Invalid university id" });
-          }
-
-          // Check if we need to skip populate for faster response
-          const skipPopulate = req.query.skipPopulate === "true";
-
-          // Try to get from cache first
-          const cacheKey = cacheKeys.universitySingle(universityId, skipPopulate);
-          const university = await cache.wrap(cacheKey, async () => {
-            // Build query with lean() for better performance
-            let query = University.findById(universityId)
-              .select(
-                "name country email website phone location universityType contract images status timesRanking cwurRanking shanghaiRanking qsRanking accreditation accreditationCountries universityConditions colleges"
-              )
-              .lean();
-
-            // Only populate if not skipped
-            if (!skipPopulate) {
-              query = query.populate({
-                path: "colleges.collegeId",
-                select: "name sector",
-                model: "College",
-                options: { lean: true },
-              });
-            }
-
-            return await query;
-          }, CACHE_TTL.SINGLE_ITEM);
-
+          const university = await University.findById(req.query.id).lean();
           if (!university)
             return res.status(404).json({ error: "University not found" });
-
-          // Apply secure cache strategy for single university
-          applySecureCacheHeaders(res, 'semiPublic', session?.user?.role);
-          
-          // Generate ETag for caching
-          const etag = generateETag(university);
-          res.setHeader('ETag', etag);
-          
-          // Check if client has cached version
-          if (checkETag(req, etag)) {
-            return res.status(304).end();
-          }
-          
+          console.log("GET - Fetched university:", university);
+          console.log(
+            "GET - universityConditions:",
+            university.universityConditions
+          );
+          console.log(
+            "GET - Type of universityConditions:",
+            typeof university.universityConditions
+          );
           return res.json(university);
         }
 
-        // Apply pagination from data protection middleware (if enforced)
-        // Business preset allows fetching all data (no pagination)
-        const hasPagination = req.pagination !== undefined;
-        const { limit = 10000, skip = 0 } = req.pagination || {};
+        const universities = await University.find().sort({ _id: -1 }).lean();
+        return res.json(universities);
+      }
 
-        // Cache key for the list
-        const cacheKey = cacheKeys.universityList(limit, skip);
-        
-        const responseData = await cache.wrap(cacheKey, async () => {
-          // Optimized query with selective fields and timeout
-          let query = University.find()
-            .select(
-              "name country universityType accreditation accreditationCountries contract images status colleges"
-            )
-            .sort({ _id: -1 })
-            .maxTimeMS(8000); // Set query timeout to 8 seconds
+      case "PUT": {
+        const {
+          _id,
+          name,
+          country,
+          email,
+          establishment,
+          website,
+          phone,
+          location,
+          universityType,
+          contract,
+          images,
+          status,
+          colleges,
+          timesRanking,
+          cwurRanking,
+          shanghaiRanking,
+          qsRanking,
+          accreditation,
+          accreditationCountries,
+          universityConditions,
+        } = req.body;
 
-          // Only apply limit/skip if pagination is enforced
-          if (hasPagination) {
-            query = query.limit(limit).skip(skip);
-          }
+        console.log(
+          "PUT - Received universityConditions:",
+          universityConditions
+        );
+        console.log(
+          "PUT - Type of universityConditions:",
+          typeof universityConditions
+        );
 
-          const universities = await query.lean();
+        if (!_id)
+          return res.status(400).json({ error: "University ID is required" });
 
-          // Get total count
-          const total = await University.countDocuments().maxTimeMS(5000);
+        const updateData = {
+          name,
+          country,
+          email,
+          establishment,
+          website,
+          phone,
+          location,
+          universityType,
+          contract,
+          images,
+          status,
+          colleges: normalizeCollegesPayload(colleges),
+          timesRanking,
+          cwurRanking,
+          shanghaiRanking,
+          qsRanking,
+          accreditation,
+          accreditationCountries,
+          universityConditions,
+        };
 
-          return {
-            data: universities,
-            pagination: {
-              page: hasPagination ? Math.floor(skip / limit) + 1 : 1,
-              limit: hasPagination ? limit : total,
-              total,
-              pages: hasPagination ? Math.ceil(total / limit) : 1,
-            },
-          };
-        }, CACHE_TTL.LIST_DATA);
+        console.log("PUT - Update data:", updateData);
 
-        // Apply secure cache strategy for universities list
-        applySecureCacheHeaders(res, 'semiPublic', session?.user?.role);
-        
-        // Generate ETag for caching
-        const etag = generateETag(responseData);
-        res.setHeader('ETag', etag);
-        
-        // Check if client has cached version
-        if (checkETag(req, etag)) {
-          return res.status(304).end();
+        const updatedUniversity = await University.findByIdAndUpdate(
+          _id,
+          updateData,
+          { new: true, lean: true }
+        );
+
+        console.log("PUT - Updated university:", updatedUniversity);
+        console.log(
+          "PUT - Updated universityConditions:",
+          updatedUniversity.universityConditions
+        );
+
+        if (!updatedUniversity)
+          return res.status(404).json({ error: "University not found" });
+
+        return res.json(updatedUniversity);
+      }
+
+      case "DELETE": {
+        if (!req.query?.id) {
+          return res
+            .status(400)
+            .json({ error: "Delete University ID is required" });
         }
 
-        return res.json(responseData);
+        const deletedUniversity = await University.findByIdAndDelete(
+          req.query.id
+        );
+        if (!deletedUniversity) {
+          return res.status(404).json({ error: "University not found" });
+        }
+
+        return res.json({
+          success: true,
+          message: "University deleted successfully",
+          deletedUniversity,
+        });
       }
 
       default:
@@ -190,15 +219,3 @@ async function handle(req, res) {
     return res.status(500).json({ error: "Server Error" });
   }
 }
-
-// Apply security layers:
-// 1. API Security - prevents direct access from curl/postman
-// 2. Rate Limiting - prevents bulk data scraping
-// 3. Data Protection - adds watermarking and browser-only access
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handle, "business"),
-    rateLimitPresets.authenticated
-  ),
-  'moderate' // Requires referer + browser, but no token (token can be added for extra security)
-);

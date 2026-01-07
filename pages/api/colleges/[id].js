@@ -1,16 +1,17 @@
 // pages/api/colleges/[id].js
 
-import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
 import College from "@/models/College";
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-const { ObjectId } = mongoose.Types;
+export default async function handler(req, res) {
+  const session = await getServerSession(req, res, authOptions);
 
-async function handler(req, res) {
-  // Authentication is handled by withProtectionPreset middleware
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     await mongooseConnect();
 
@@ -24,62 +25,63 @@ async function handler(req, res) {
     switch (method) {
       case "GET":
         try {
-          if (!ObjectId.isValid(id)) {
-            return res.status(400).json({ error: "Invalid college id" });
+          const college = await College.findById(id).lean();
+          if (!college) {
+            return res.status(404).json({ error: "College not found" });
+          }
+          return res.json(college);
+        } catch (error) {
+          console.error("Error fetching college:", error);
+          return res.status(500).json({ error: "Failed to fetch college" });
+        }
+
+      case "PUT":
+        try {
+          const { name, sector, description, details } = req.body;
+
+          if (!name || !name.trim()) {
+            return res.status(400).json({ error: "College name is required" });
           }
 
-          const college = await College.findById(id)
-            .select("name sector description details createdAt updatedAt")
-            .lean();
+          const college = await College.findByIdAndUpdate(
+            id,
+            {
+              name: name.trim(),
+              sector: sector?.trim(),
+              description: description?.trim(),
+              details: details,
+            },
+            { new: true, runValidators: true }
+          );
 
           if (!college) {
             return res.status(404).json({ error: "College not found" });
           }
 
-          // Single college - private cache for security
-          res.setHeader(
-            "Cache-Control",
-            "private, max-age=300, must-revalidate"
-          );
           return res.json(college);
         } catch (error) {
-          if (process.env.NODE_ENV === "development") {
-            console.error("Error fetching college:", error);
+          console.error("Error updating college:", error);
+          return res.status(500).json({ error: "Failed to update college" });
+        }
+
+      case "DELETE":
+        try {
+          const college = await College.findByIdAndDelete(id);
+          if (!college) {
+            return res.status(404).json({ error: "College not found" });
           }
-          return res.status(500).json({
-            error: "Failed to fetch college",
-            details:
-              process.env.NODE_ENV === "development"
-                ? error.message
-                : undefined,
-          });
+          return res.json({ message: "College deleted successfully" });
+        } catch (error) {
+          console.error("Error deleting college:", error);
+          return res.status(500).json({ error: "Failed to delete college" });
         }
 
       default:
-        res.setHeader("Allow", ["GET"]);
+        res.setHeader("Allow", ["GET", "PUT", "DELETE"]);
         return res.status(405).json({ error: `Method ${method} Not Allowed` });
     }
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("API Error:", {
-        message: error.message,
-        stack: error.stack,
-        query: req.query,
-      });
-    }
-    return res.status(500).json({
-      error: "Internal Server Error",
-      details:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
+    console.error("API Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
-
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handler, "light"),
-    rateLimitPresets.authenticated
-  ),
-  "moderate"
-);

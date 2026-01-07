@@ -1,14 +1,15 @@
-import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
 import College from "@/models/College";
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 
-const { ObjectId } = mongoose.Types;
+export default async function handler(req, res) {
+  const session = await getServerSession(req, res, authOptions);
 
-async function handler(req, res) {
-  // Authentication is handled by withProtectionPreset middleware
+  if (!session) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
   try {
     await mongooseConnect();
     const { method } = req;
@@ -16,103 +17,40 @@ async function handler(req, res) {
     switch (method) {
       case "GET":
         try {
-          const { ids } = req.query;
-          let query = {};
-
-          if (ids) {
-            const parsedIds = Array.isArray(ids)
-              ? ids
-              : String(ids)
-                  .split(",")
-                  .map((id) => id.trim());
-
-            const validIds = parsedIds.filter((id) => ObjectId.isValid(id));
-
-            if (validIds.length === 0) {
-              return res.status(400).json({
-                error: "Invalid college ids",
-              });
-            }
-
-            query = { _id: { $in: validIds } };
-          }
-
-          // Apply pagination if not querying specific IDs
-          const hasPagination = req.pagination !== undefined;
-          const { limit = 10000, skip = 0 } = req.pagination || {};
-
-          let collegesQuery = College.find(query)
-            .select("name sector description details")
-            .sort(ids ? { _id: 1 } : { name: 1 });
-
-          // Only apply limit/skip if pagination is enforced and not querying specific IDs
-          if (!ids && hasPagination) {
-            collegesQuery = collegesQuery.limit(limit).skip(skip);
-          }
-
-          // Execute query and count in parallel for better performance
-          let response;
-          if (!ids) {
-            const [colleges, total] = await Promise.all([
-              collegesQuery.lean(),
-              College.countDocuments(query).maxTimeMS(5000),
-            ]);
-            
-            response = {
-              data: colleges,
-              pagination: {
-                page: hasPagination ? Math.floor(skip / limit) + 1 : 1,
-                limit: hasPagination ? limit : total,
-                total,
-                pages: hasPagination ? Math.ceil(total / limit) : 1,
-              },
-            };
-          } else {
-            // For specific IDs, just return the data
-            const colleges = await collegesQuery.lean();
-            response = colleges;
-          }
-
-          // Private cache for security
-          res.setHeader(
-            "Cache-Control",
-            "private, max-age=300, must-revalidate"
-          );
-          return res.json(response);
+          const colleges = await College.find().sort({ name: 1 }).lean();
+          return res.json(colleges);
         } catch (error) {
-          if (process.env.NODE_ENV === "development") {
-            console.error("Error fetching colleges:", error);
+          console.error("Error fetching colleges:", error);
+          return res.status(500).json({ error: "Failed to fetch colleges" });
+        }
+
+      case "POST":
+        try {
+          const { name, sector, description, details } = req.body;
+
+          if (!name || !name.trim()) {
+            return res.status(400).json({ error: "College name is required" });
           }
-          return res.status(500).json({
-            error: "Failed to fetch colleges",
-            details:
-              process.env.NODE_ENV === "development"
-                ? error.message
-                : undefined,
+
+          const college = await College.create({
+            name: name.trim(),
+            sector: sector?.trim(),
+            description: description?.trim(),
+            details: details,
           });
+
+          return res.status(201).json(college);
+        } catch (error) {
+          console.error("Error creating college:", error);
+          return res.status(500).json({ error: "Failed to create college" });
         }
 
       default:
-        res.setHeader("Allow", ["GET"]);
+        res.setHeader("Allow", ["GET", "POST"]);
         return res.status(405).json({ error: `Method ${method} Not Allowed` });
     }
   } catch (error) {
-    if (process.env.NODE_ENV === "development") {
-      console.error("API Error:", error);
-    }
-    return res.status(500).json({
-      error: "Internal Server Error",
-      details:
-        process.env.NODE_ENV === "development" ? error.message : undefined,
-    });
+    console.error("API Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 }
-
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handler, "business"),
-    rateLimitPresets.authenticated
-  ),
-  'moderate'
-);

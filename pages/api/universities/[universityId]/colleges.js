@@ -1,15 +1,10 @@
 // pages/api/universities/[universityId]/colleges.js
-import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
-import University from "@/models/University";
+import { University } from "@/models/University";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 
-const { ObjectId } = mongoose.Types;
-
-async function handle(req, res) {
+export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
@@ -26,10 +21,6 @@ async function handle(req, res) {
         return res.status(400).json({ error: "Invalid university ID" });
       }
 
-      if (!ObjectId.isValid(universityId)) {
-        return res.status(400).json({ error: "Invalid university ID format" });
-      }
-
       const university = await University.findById(universityId).lean();
 
       if (!university) {
@@ -42,17 +33,10 @@ async function handle(req, res) {
 
       return res.status(500).json({
         error: "Failed to fetch colleges",
-        details:
-          process.env.NODE_ENV === "development" ? error.message : undefined,
+        details: error.message,
       });
     }
   } else {
     return res.status(405).json({ error: "Method Not Allowed" });
   }
 }
-
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(handle, rateLimitPresets.authenticated),
-  "moderate"
-);

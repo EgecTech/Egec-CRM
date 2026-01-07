@@ -1,16 +1,27 @@
-import React, { useEffect, useState, useCallback } from "react";
+// components/Aside.js
 import Link from "next/link";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import { IoSettingsOutline } from "react-icons/io5";
-import { FaFlask, FaHome } from "react-icons/fa";
-import { FiUsers, FiShield } from "react-icons/fi";
+import { signOut, useSession } from "next-auth/react";
 
-const Aside = React.memo(({ asideOpen }) => {
+// Updated icon imports
+import {
+  MdDashboard,
+  MdSchool,
+  MdScience,
+  MdBusinessCenter,
+  MdSettings,
+  MdLogout,
+} from "react-icons/md";
+import { SiBloglovin } from "react-icons/si";
+
+import LoginLayout from "./LoginLayout";
+
+export default function Aside({ asideOpen }) {
   const router = useRouter();
-  const { data: session } = useSession();
   const [activeLink, setActiveLink] = useState("/");
   const [loading, setLoading] = useState(false);
+  const { data: session } = useSession();
 
   useEffect(() => {
     setActiveLink(router.pathname);
@@ -20,191 +31,183 @@ const Aside = React.memo(({ asideOpen }) => {
     async (link) => {
       if (router.pathname === link) return;
       setLoading(true);
-      try {
-        await router.push(link);
-      } finally {
-        setLoading(false);
-      }
+      await router.push(link);
+      setLoading(false);
     },
     [router]
   );
 
   if (!session) return null;
 
-  const navItems = [
-    {
-      href: "/crm/dashboard",
-      label: "Dashboard",
-      icon: FaHome,
-      isActive: activeLink === "/" || activeLink.includes("/crm/dashboard"),
-      gradient: "from-blue-500 to-indigo-600",
-      bgActive: "bg-blue-500/10",
-      borderActive: "border-blue-500/30",
-    },
-    {
-      href: "/crm/customers",
-      label: "Customers",
-      icon: FiUsers,
-      isActive: activeLink.includes("/crm/customers"),
-      gradient: "from-amber-500 to-orange-600",
-      bgActive: "bg-amber-500/10",
-      borderActive: "border-amber-500/30",
-    },
-  ];
-
-  // Add follow-ups for agents and admins
-  if (session?.user?.role === "agent" || session?.user?.role === "egecagent" || 
-      session?.user?.role === "studyagent" || session?.user?.role === "edugateagent" ||
-      session?.user?.role === "admin" || session?.user?.role === "superadmin") {
-    navItems.push({
-      href: "/crm/followups",
-      label: "Follow-ups",
-      icon: FaFlask,
-      isActive: activeLink.includes("/crm/followups"),
-      gradient: "from-emerald-500 to-teal-600",
-      bgActive: "bg-emerald-500/10",
-      borderActive: "border-emerald-500/30",
-    });
-  }
-
-  // Add admin navigation items
-  if (session?.user?.role === "admin" || session?.user?.role === "superadmin") {
-    navItems.push({
-      href: "/crm/users",
-      label: "User Management",
-      icon: FiUsers,
-      isActive: activeLink.includes("/crm/users"),
-      gradient: "from-violet-500 to-purple-600",
-      bgActive: "bg-violet-500/10",
-      borderActive: "border-violet-500/30",
-    });
-    
-    navItems.push({
-      href: "/crm/reports",
-      label: "Reports",
-      icon: IoSettingsOutline,
-      isActive: activeLink.includes("/crm/reports"),
-      gradient: "from-pink-500 to-rose-600",
-      bgActive: "bg-pink-500/10",
-      borderActive: "border-pink-500/30",
-    });
-  }
-  
-  // Add audit logs (Superadmin only)
-  if (session?.user?.role === "superadmin") {
-    navItems.push({
-      href: "/crm/audit-logs",
-      label: "Audit Logs",
-      icon: FiShield,
-      isActive: activeLink.includes("/crm/audit-logs"),
-      gradient: "from-rose-500 to-red-600",
-      bgActive: "bg-rose-500/10",
-      borderActive: "border-rose-500/30",
-    });
-  }
-
   return (
-    <aside
-      className={`fixed top-[64px] z-40 h-[calc(100vh-64px)] w-[240px] bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 shadow-2xl transition-all duration-300 ease-in-out flex flex-col border-r border-slate-700/50 ${
-        asideOpen ? "left-0" : "-left-[240px]"
-      }`}
-    >
-      {/* Decorative gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-amber-500/5 via-transparent to-blue-500/5 pointer-events-none"></div>
+    <LoginLayout>
+      <aside
+        className={`fixed top-[60px] z-10 h-screen bg-white shadow-md transition-all duration-300 ease-in-out ${
+          asideOpen ? "left-0 w-[200px]" : "-left-[200px]"
+        } flex flex-col justify-between`}
+      >
+        {loading && <div className="p-4 text-center">Loading...</div>}
 
-      {loading && (
-        <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center z-10">
-          <div className="w-6 h-6 border-2 border-amber-500/30 border-t-amber-500 rounded-full animate-spin"></div>
-        </div>
-      )}
-
-      {/* Navigation */}
-      <div className="relative flex-1 py-3 sm:py-4">
-        {/* Section Header */}
-        <div className="px-3 sm:px-4 mb-2 sm:mb-3">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            Navigation
-          </p>
-        </div>
-
-        <ul className="flex flex-col gap-1.5 sm:gap-2 px-2 sm:px-3">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link
-                href={item.href}
-                className={`group flex items-center gap-2 sm:gap-3 py-2 px-2.5 sm:px-3 rounded-lg sm:rounded-xl transition-all duration-200 font-medium border ${
-                  item.isActive
-                    ? `${item.bgActive} ${item.borderActive} text-white`
-                    : "border-transparent text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10"
-                }`}
-                onClick={() => handleLinkClick(item.href)}
-              >
-                <div
-                  className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
-                    item.isActive
-                      ? `bg-gradient-to-br ${item.gradient}`
-                      : "bg-slate-700/50 group-hover:bg-slate-700"
-                  }`}
-                >
-                  <item.icon
-                    className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
-                      item.isActive
-                        ? "text-white"
-                        : "text-slate-400 group-hover:text-white"
-                    }`}
-                    aria-hidden="true"
-                  />
-                </div>
-                <span className="text-xs sm:text-sm">{item.label}</span>
-                {item.isActive && (
-                  <div className="ml-auto">
-                    <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"></div>
-                  </div>
-                )}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      {/* Settings */}
-      <div className="relative p-2 sm:p-3 border-t border-slate-700/50 bg-slate-900/50">
-        <Link
-          href="/setting"
-          className={`group flex items-center gap-[15px] py-2.5 px-3 rounded-xl transition-all duration-200 font-medium border ${
-            activeLink.includes("/setting")
-              ? "bg-violet-500/10 border-violet-500/30 text-white"
-              : "border-transparent text-slate-400 hover:text-white hover:bg-white/5 hover:border-white/10"
-          }`}
-          onClick={() => handleLinkClick("/setting")}
-        >
-          <div
-            className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
-              activeLink.includes("/setting")
-                ? "bg-gradient-to-br from-violet-500 to-purple-600"
-                : "bg-slate-700/50 group-hover:bg-slate-700"
+        <ul className="flex flex-col gap-1 px-4 pt-4 text-sm text-gray-700 font-medium">
+          {/* Dashboard */}
+          <li
+            className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+              activeLink === "/"
+                ? "bg-indigo-100 text-indigo-700"
+                : "hover:bg-gray-100"
             }`}
+            onClick={() => handleLinkClick("/")}
+            onMouseEnter={() => router.prefetch("/")}
           >
-            <IoSettingsOutline
-              className={`w-4 h-4 ${
-                activeLink.includes("/setting")
-                  ? "text-white"
-                  : "text-slate-400 group-hover:text-white"
-              }`}
-              aria-hidden="true"
-            />
-          </div>
-          <span className="text-sm">Settings</span>
-          {activeLink.includes("/setting") && (
-            <div className="ml-auto">
-              <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-violet-400 to-purple-500"></div>
-            </div>
-          )}
-        </Link>
-      </div>
-    </aside>
-  );
-});
-Aside.displayName = "Aside";
+            <MdDashboard className="text-xl" />
+            <span>Dashboard</span>
+          </li>
 
-export default Aside;
+          {/* Universities */}
+          <li>
+            <div
+              className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+                activeLink.includes("/universities")
+                  ? "bg-indigo-100 text-indigo-700"
+                  : "hover:bg-gray-100"
+              }`}
+              onClick={() => handleLinkClick("/universities")}
+              onMouseEnter={() => router.prefetch("/universities")}
+            >
+              <MdSchool className="text-xl" />
+              <span>Universities</span>
+            </div>
+            {activeLink.includes("/universities") && (
+              <ul className="pl-6 text-[0.875rem] text-gray-600">
+                {/* <Link href="/universities">
+                  <li className="hover:text-indigo-600 py-1">
+                    All Universities
+                  </li>
+                </Link> */}
+                <Link href="/universities/draftuniversities">
+                  <li className="hover:text-indigo-600 py-1">
+                    Draft Universities
+                  </li>
+                </Link>
+                <Link href="/universities/adduniversity">
+                  <li className="hover:text-indigo-600 py-1">Add University</li>
+                </Link>
+              </ul>
+            )}
+          </li>
+
+          {/* Specializations */}
+          <li>
+            <div
+              className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+                activeLink.includes("/specializations")
+                  ? "bg-indigo-100 text-indigo-700"
+                  : "hover:bg-gray-100"
+              }`}
+              onClick={() => handleLinkClick("/specializations")}
+              onMouseEnter={() => router.prefetch("/specializations")}
+            >
+              <MdScience className="text-xl" />
+              <span>Specializations</span>
+            </div>
+            {activeLink.includes("/specializations") && (
+              <ul className="pl-6 text-[0.875rem] text-gray-600">
+                <Link href="/specializations">
+                  <li className="hover:text-indigo-600 py-1">
+                    All Specializations
+                  </li>
+                </Link>
+                <Link href="/specializations/draftspecializations">
+                  <li className="hover:text-indigo-600 py-1">
+                    Draft Specializations
+                  </li>
+                </Link>
+                <Link href="/specializations/addspecialization">
+                  <li className="hover:text-indigo-600 py-1">
+                    Add Specialization
+                  </li>
+                </Link>
+              </ul>
+            )}
+          </li>
+
+          {/* Colleges */}
+          <li>
+            <div
+              className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+                activeLink.includes("/colleges")
+                  ? "bg-indigo-100 text-indigo-700"
+                  : "hover:bg-gray-100"
+              }`}
+              onClick={() => handleLinkClick("/colleges")}
+              onMouseEnter={() => router.prefetch("/colleges")}
+            >
+              <MdBusinessCenter className="text-xl" />
+              <span>Colleges</span>
+            </div>
+            {/* {activeLink.includes("/colleges") && (
+              <ul className="pl-6 text-[0.875rem] text-gray-600">
+                <Link href="/colleges">
+                  <li className="hover:text-indigo-600 py-1">All Colleges</li>
+                </Link>
+                <Link href="/colleges/addcollege">
+                  <li className="hover:text-indigo-600 py-1">Add College</li>
+                </Link>
+              </ul>
+            )} */}
+          </li>
+
+          {/* Degrees */}
+          <li>
+            <div
+              className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+                activeLink.includes("/degrees")
+                  ? "bg-indigo-100 text-indigo-700"
+                  : "hover:bg-gray-100"
+              }`}
+              onClick={() => handleLinkClick("/degrees")}
+              onMouseEnter={() => router.prefetch("/degrees")}
+            >
+              <MdSchool className="text-xl" />
+              <span>Degrees</span>
+            </div>
+            {activeLink.includes("/degrees") && (
+              <ul className="pl-6 text-[0.875rem] text-gray-600">
+                <Link href="/degrees">
+                  <li className="hover:text-indigo-600 py-1">All Degrees</li>
+                </Link>
+                <Link href="/degrees/adddegree">
+                  <li className="hover:text-indigo-600 py-1">Add Degree</li>
+                </Link>
+              </ul>
+            )}
+          </li>
+
+          {/* Settings */}
+          <li
+            className={`flex items-center gap-2 py-2 px-3 rounded cursor-pointer ${
+              activeLink === "/setting"
+                ? "bg-indigo-100 text-indigo-700"
+                : "hover:bg-gray-100"
+            }`}
+            onClick={() => handleLinkClick("/setting")}
+            onMouseEnter={() => router.prefetch("/setting")}
+          >
+            <MdSettings className="text-xl" />
+            <span>Settings</span>
+          </li>
+        </ul>
+
+        <div className="px-4 pb-6 mb-14">
+          <button
+            onClick={() => signOut({ callbackUrl: "/auth/signin" })}
+            className="w-full flex items-center justify-center gap-2 bg-red-100 text-red-600 hover:bg-red-500 hover:text-white transition py-2 rounded-md font-semibold"
+          >
+            <MdLogout className="text-xl" />
+            Logout
+          </button>
+        </div>
+      </aside>
+    </LoginLayout>
+  );
+}

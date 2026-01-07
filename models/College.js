@@ -1,6 +1,4 @@
-import mongoose from "mongoose";
-
-const { Schema, models, model } = mongoose;
+import { Schema, models, model } from "mongoose";
 
 const collegeSchema = new Schema(
   {
@@ -12,6 +10,10 @@ const collegeSchema = new Schema(
     sector: {
       type: String,
       required: [true, "Sector is required"],
+      trim: true,
+    },
+    description: {
+      type: String,
       trim: true,
     },
     details: [
@@ -26,10 +28,7 @@ const collegeSchema = new Schema(
         requirements: { type: String, trim: true, maxlength: 2000 },
       },
     ],
-    description: {
-      type: String,
-      trim: true,
-    },
+
     createdAt: {
       type: Date,
       default: Date.now,
@@ -50,10 +49,6 @@ const collegeSchema = new Schema(
 collegeSchema.index({ name: 1 });
 collegeSchema.index({ sector: 1 });
 
-// Compound indexes for better performance
-collegeSchema.index({ name: 1, sector: 1 });
-collegeSchema.index({ "details.universityId": 1 });
-
-const College = models?.College || model("College", collegeSchema, "colleges");
+const College = models.College || model("College", collegeSchema);
 
 export default College;

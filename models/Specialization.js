@@ -1,7 +1,5 @@
 // models/Specialization.js
-import mongoose from "mongoose";
-
-const { Schema, models, model } = mongoose;
+import { Schema, models, model } from "mongoose";
 
 const StudySystemSchema = new Schema({
   StudySystemName: { type: String, required: true },
@@ -50,30 +48,5 @@ const specializationSchema = new Schema(
   { timestamps: true }
 );
 
-// Add indexes for better query performance
-specializationSchema.index({ name: 1 });
-specializationSchema.index({ specializationType: 1 });
-specializationSchema.index({ sectorType: 1 });
-specializationSchema.index({ status: 1 });
-specializationSchema.index({ createdAt: -1 });
-
-// Compound indexes for common query patterns (50-75% faster queries)
-specializationSchema.index({ name: 1, specializationType: 1 });
-specializationSchema.index({ sectorType: 1, status: 1 });
-specializationSchema.index({ createdAt: -1, status: 1 });
-specializationSchema.index({ specializationType: 1, sectorType: 1, status: 1 }); // Triple compound for filtered lists
-specializationSchema.index({ specializationType: 1, status: 1 }); // Type + status
-specializationSchema.index({ "places.universityId": 1 });
-specializationSchema.index({ "places.collegeId": 1 });
-specializationSchema.index({ "places.degreeFounded.degreeId": 1 });
-specializationSchema.index({ name: "text" }); // Text search index for search functionality
-
-// Performance optimization: Use lean() by default for read-only queries
-specializationSchema.set('toJSON', { virtuals: false });
-specializationSchema.set('toObject', { virtuals: false });
-
-const Specialization =
-  models?.Specialization ||
+export default models.Specialization ||
   model("Specialization", specializationSchema, "specializations");
-
-export default Specialization;
