@@ -31,11 +31,13 @@ async function handler(req, res) {
         salesStatus, 
         interestRate, 
         assignedAgent,
+        counselorStatus,
         country,
         nationality,
         source,
         desiredUniversity,
         desiredSpecialization,
+        degreeType,
         createdFrom,
         createdTo,
         nextFollowupFrom,
@@ -62,6 +64,9 @@ async function handler(req, res) {
       if (assignedAgent) {
         query['assignment.assignedAgentId'] = assignedAgent;
       }
+      if (counselorStatus) {
+        query['evaluation.counselorStatus'] = counselorStatus;
+      }
       if (country) {
         query['basicData.country'] = country;
       }
@@ -76,6 +81,9 @@ async function handler(req, res) {
       }
       if (desiredSpecialization) {
         query['desiredProgram.desiredSpecialization'] = desiredSpecialization;
+      }
+      if (degreeType) {
+        query.degreeType = degreeType;
       }
       
       // Date range filters
@@ -95,7 +103,7 @@ async function handler(req, res) {
       
       const [customers, total] = await Promise.all([
         Customer.find(query)
-          .select('customerNumber basicData evaluation assignment createdAt updatedAt stats')
+          .select('customerNumber degreeType basicData evaluation assignment desiredProgram createdAt updatedAt stats')
           .sort(sort)
           .skip(skip)
           .limit(parseInt(limit))
@@ -167,6 +175,7 @@ async function handler(req, res) {
       const customerToCreate = {
         ...customerData,
         customerNumber,
+        degreeType: customerData.degreeType || 'bachelor', // Default to bachelor if not specified
         createdBy: userId,
         createdByName: userName
       };

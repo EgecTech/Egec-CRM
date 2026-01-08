@@ -4,12 +4,13 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import connectToDatabase from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs"; // Using bcryptjs instead of bcrypt for better compatibility
+import { checkRateLimit } from "@/lib/rateLimit";
 
-export default NextAuth({
+export const authOptions = {
   session: {
     strategy: "jwt",
-    maxAge: 12 * 60 * 60,
-    updateAge: 48 * 60 * 60,
+    maxAge: 48 * 60 * 60, // 48 hours in seconds
+    updateAge: 48 * 60 * 60, // Update session every 48 hours
   },
   providers: [
     CredentialsProvider({
@@ -26,15 +27,29 @@ export default NextAuth({
           type: "password",
         },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         try {
+          // Rate limiting for login attempts (5 per minute per IP)
+          const forwarded = req.headers?.["x-forwarded-for"];
+          const ip = forwarded
+            ? forwarded.split(",")[0].trim()
+            : req.socket?.remoteAddress || "unknown";
+          const identifier = `auth:${ip}`;
+
+          const rateLimit = checkRateLimit(identifier, 5, 60000);
+          if (!rateLimit.success) {
+            throw new Error(
+              `Too many login attempts. Please try again in ${rateLimit.resetIn} seconds.`
+            );
+          }
+
           // Validate credentials
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Email and password are required");
           }
 
           const db = await connectToDatabase();
-          const collection = db.collection("admin");
+          const collection = db.collection("frontenduser");
 
           // Case-insensitive email search
           const user = await collection.findOne({
@@ -81,7 +96,7 @@ export default NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       const db = await connectToDatabase();
-      const collection = db.collection("admin");
+      const collection = db.collection("frontenduser");
 
       // Initial sign-in
       if (user) {
@@ -146,4 +161,6 @@ export default NextAuth({
   },
   secret: process.env.NEXTAUTH_SECRET, // Required for production
   debug: process.env.NODE_ENV === "development",
-});
+};
+
+export default NextAuth(authOptions);

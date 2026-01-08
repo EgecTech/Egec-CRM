@@ -1,5 +1,10 @@
 import cloudinary from "cloudinary";
 import multiparty from "multiparty";
+import { withPresetRateLimit } from "@/lib/rateLimit";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+
+import { withCsrfProtection } from "@/lib/csrfProtection";
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -7,7 +12,14 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export default async function handle(req, res) {
+async function handle(req, res) {
+  // Require authentication for uploads
+  const session = await getServerSession(req, res, authOptions);
+  if (!session) {
+    return res
+      .status(401)
+      .json({ error: "Unauthorized - Please login to upload files" });
+  }
   try {
     const form = new multiparty.Form();
 
@@ -45,6 +57,9 @@ export default async function handle(req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+// Apply upload rate limiting: 10 uploads per minute
+export default withCsrfProtection(withPresetRateLimit(handle, "upload"));
 
 export const config = {
   api: { bodyParser: false },

@@ -1,20 +1,3 @@
-// const { Schema, models, model } = require("mongoose");
-
-// const ProfileSchema = new Schema(
-//   {
-//     email: { type: String },
-//     password: { type: String },
-//     sessionVersion: { type: Number, default: 1 }, // ✅ add this line
-//   },
-//   {
-//     timestamps: true,
-//   }
-// );
-
-// export const Profile =
-//   models.Profile || model("Profile", ProfileSchema, "admin");
-
-
 
 const { Schema, models, model } = require("mongoose");
 
@@ -23,11 +6,12 @@ const ProfileSchema = new Schema(
     name: { type: String },
     email: { type: String },
     password: { type: String },
-    sessionVersion: { type: Number, default: 1 }, // ✅ add this line
+    sessionVersion: { type: Number, default: 1 },
     userData: [],
     userImage:{ type: String },
     userPhone: { type: String },
     role: { type: String },
+    isActive: { type: Boolean, default: true },
   },
   {
     timestamps: true,
@@ -35,4 +19,4 @@ const ProfileSchema = new Schema(
 );
 
 export const Profile =
-  models.Profile || model("Profile", ProfileSchema, "admin");
+  models.Profile || model("Profile", ProfileSchema, "frontenduser");

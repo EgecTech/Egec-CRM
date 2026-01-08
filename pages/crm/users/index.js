@@ -221,6 +221,11 @@ export default function UserManagement() {
                           }}
                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
                           title="Edit user"
+                          disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
+                          style={{ 
+                            opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
+                            cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
+                          }}
                         >
                           <FaEdit className="w-4 h-4" />
                         </button>
@@ -228,6 +233,11 @@ export default function UserManagement() {
                           onClick={() => handleToggleUserStatus(user._id, user.isActive)}
                           className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg"
                           title={user.isActive ? 'Disable user' : 'Enable user'}
+                          disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
+                          style={{ 
+                            opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
+                            cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
+                          }}
                         >
                           {user.isActive ? <FaLock className="w-4 h-4" /> : <FaUnlock className="w-4 h-4" />}
                         </button>
@@ -364,6 +374,127 @@ export default function UserManagement() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Edit User Modal */}
+        {showEditModal && editingUser && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+              <div className="bg-gradient-to-r from-violet-500 to-purple-500 p-6 text-white">
+                <h3 className="text-2xl font-bold">Edit User</h3>
+                <p className="text-violet-100 mt-1">Update user information</p>
+              </div>
+
+              <div className="p-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Name</label>
+                  <input
+                    type="text"
+                    value={editingUser.name}
+                    onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Email</label>
+                  <input
+                    type="email"
+                    value={editingUser.email}
+                    onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Phone</label>
+                  <input
+                    type="tel"
+                    value={editingUser.userPhone || ''}
+                    onChange={(e) => setEditingUser({...editingUser, userPhone: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
+                  <select
+                    value={editingUser.role}
+                    onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                    disabled={session?.user?.role !== 'superadmin'}
+                  >
+                    {session?.user?.role === 'superadmin' && (
+                      <>
+                        <option value="superadmin">Super Admin</option>
+                        <option value="admin">Admin</option>
+                      </>
+                    )}
+                    <option value="agent">Agent</option>
+                    <option value="dataentry">Data Entry</option>
+                  </select>
+                  {session?.user?.role !== 'superadmin' && (
+                    <p className="text-xs text-slate-500 mt-1">Only superadmin can change roles</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">New Password (optional)</label>
+                  <input
+                    type="password"
+                    placeholder="Leave empty to keep current password"
+                    onChange={(e) => setEditingUser({...editingUser, newPassword: e.target.value})}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
+                  />
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowEditModal(false);
+                      setEditingUser(null);
+                    }}
+                    className="flex-1 px-4 py-3 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const response = await fetch('/api/update-user', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            userId: editingUser._id,
+                            email: editingUser.email,
+                            role: editingUser.role,
+                            newPassword: editingUser.newPassword
+                          })
+                        });
+
+                        if (response.ok) {
+                          setShowEditModal(false);
+                          setEditingUser(null);
+                          fetchUsers();
+                        } else {
+                          const data = await response.json();
+                          alert(data.error || 'Failed to update user');
+                        }
+                      } catch (err) {
+                        console.error('Error updating user:', err);
+                        alert('Failed to update user');
+                      }
+                    }}
+                    className="flex-1 px-4 py-3 bg-gradient-to-r from-violet-500 to-purple-500 text-white rounded-lg font-semibold hover:from-violet-600 hover:to-purple-600"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         )}

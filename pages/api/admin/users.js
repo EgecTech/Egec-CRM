@@ -2,8 +2,9 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { Profile } from "@/models/Profile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   await mongooseConnect();
 
   try {
@@ -13,9 +14,9 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: "You must be logged in" });
     }
 
-    // Verify admin role from database
+    // Verify admin or superadmin role from database
     const currentUser = await Profile.findOne({ email: session.user.email });
-    if (!currentUser || currentUser.role !== "admin") {
+    if (!currentUser || !["admin", "superadmin"].includes(currentUser.role)) {
       return res
         .status(403)
         .json({ error: "Access denied. Admin privileges required." });
@@ -40,3 +41,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Internal server error" });
   }
 }
+
+// Apply rate limiting for admin endpoints
+export default withRateLimit(handler, rateLimitPresets.admin);

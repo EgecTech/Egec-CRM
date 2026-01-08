@@ -105,22 +105,48 @@ const systemSettingsData = [
   {
     settingKey: 'sources',
     settingValue: [
-      'Facebook',
-      'Instagram',
+      'ab-W EGY',
+      'ab-C EGY',
+      'CRM',
+      'C EGY',
+      'INS',
+      'W EGY',
+      'website',
+      'SNAP',
+      'C UAE',
       'Twitter',
-      'LinkedIn',
-      'Website',
-      'Google Ads',
-      'Referral',
-      'Walk-in',
-      'Phone Call',
-      'Email',
-      'Exhibition',
-      'Partner',
-      'Other'
+      'W UAE',
+      'Google UAE',
+      'F-EGEC',
+      'G-Instgram',
+      'social Media Egec',
+      'W site',
+      'G-Master',
+      'IG-PHD',
+      'G-PHD',
+      'CHAT GPT',
+      'IG-Master',
+      'Google',
+      'G-MasterENG',
+      'Google-Master',
+      'G-MA-Calls',
+      'G-google',
+      'Google-PHD',
+      'G-PHD-Calls',
+      'G-BA',
+      'Google-Jeddah',
+      'X-Jeddah',
+      'X-Master',
+      'Twitter-Master',
+      'LinkedIn-MA',
+      'G-BA-Calls',
+      'ma calls bacloria',
+      'G-Calls',
+      'ma calls phd',
+      'Ig'
     ],
     settingType: 'dropdown_options',
-    description: 'Lead sources',
+    description: 'Lead sources (المصدر)',
     isActive: true
   },
   {
@@ -264,9 +290,15 @@ const systemSettingsData = [
   },
   {
     settingKey: 'study_times',
-    settingValue: ['Morning', 'Evening', 'Weekend', 'Flexible', 'Online'],
+    settingValue: [
+      'الان',
+      'اسرع وقت ممكن',
+      'الترم الحالي',
+      'الترم القادم',
+      'العام القادم'
+    ],
     settingType: 'dropdown_options',
-    description: 'Study time preferences',
+    description: 'Study time preferences (وقت الدراسة)',
     isActive: true
   },
   {
@@ -419,6 +451,81 @@ const systemSettingsData = [
     ],
     settingType: 'dropdown_options',
     description: 'Study destinations (الوجهة الدراسية)',
+    isActive: true
+  },
+  // ========== NEW: DEGREE TYPE SETTINGS ==========
+  {
+    settingKey: 'degree_types',
+    settingValue: ['بكالوريوس', 'ماجستير', 'دكتوراه', 'دبلوم'],
+    settingType: 'dropdown_options',
+    description: 'Available degree types (أنواع الدرجات العلمية)',
+    isActive: true
+  },
+  {
+    settingKey: 'master_types',
+    settingValue: ['ماجستير بحثي', 'ماجستير مهني', 'ماجستير مختلط'],
+    settingType: 'dropdown_options',
+    description: 'Types of Master programs (أنواع الماجستير)',
+    isActive: true
+  },
+  {
+    settingKey: 'study_methods',
+    settingValue: ['حضوري', 'عن بعد', 'مختلط', 'تنفيذي'],
+    settingType: 'dropdown_options',
+    description: 'Study methods for graduate programs (طريقة الدراسة)',
+    isActive: true
+  },
+  {
+    settingKey: 'research_fields',
+    settingValue: [
+      'علوم إنسانية',
+      'علوم طبيعية',
+      'علوم اجتماعية',
+      'هندسة',
+      'طب',
+      'صيدلة',
+      'إدارة أعمال',
+      'اقتصاد',
+      'قانون',
+      'تربية',
+      'علوم حاسب',
+      'تكنولوجيا المعلومات',
+      'فنون',
+      'إعلام',
+      'زراعة',
+      'علوم بيئية'
+    ],
+    settingType: 'dropdown_options',
+    description: 'Research fields for PhD (مجالات البحث)',
+    isActive: true
+  },
+  {
+    settingKey: 'study_systems',
+    settingValue: [
+      'سنوي',
+      'فصلي',
+      'ساعات معتمدة',
+      'نظام الوحدات',
+      'نظام المقررات'
+    ],
+    settingType: 'dropdown_options',
+    description: 'Study systems (نظام الدراسة)',
+    isActive: true
+  },
+  {
+    settingKey: 'academic_sectors',
+    settingValue: [
+      'القطاع الطبي',
+      'القطاع الهندسي',
+      'القطاع الإداري',
+      'القطاع العلمي',
+      'القطاع الأدبي',
+      'القطاع الشرعي',
+      'القطاع التقني',
+      'القطاع الفني'
+    ],
+    settingType: 'dropdown_options',
+    description: 'Academic sectors (القطاع الدراسي)',
     isActive: true
   }
 ];

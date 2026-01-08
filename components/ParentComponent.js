@@ -1,15 +1,15 @@
+import React from "react";
 import Aside from "./Aside";
 import Header from "./Header";
 
-function ParentComponent(props) {
-  // console.log(props);
-
+const ParentComponent = React.memo((props) => {
   return (
     <div>
       <Header handleAsideOpen={props.appAsideOpen} />
       <Aside asideOpen={props.appOpen} handleAsideOpen={props.appAsideOpen} />
     </div>
   );
-}
+});
+ParentComponent.displayName = "ParentComponent";
 
 export default ParentComponent;

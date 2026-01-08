@@ -1,15 +1,14 @@
+import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
 import College from "@/models/College";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { withProtectionPreset } from "@/lib/dataProtection";
+import { withPresetSecurity } from "@/lib/apiSecurity";
+import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 
-export default async function handler(req, res) {
-  const session = await getServerSession(req, res, authOptions);
+const { ObjectId } = mongoose.Types;
 
-  if (!session) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
-
+async function handler(req, res) {
+  // Authentication is handled by withProtectionPreset middleware
   try {
     await mongooseConnect();
     const { method } = req;
@@ -17,40 +16,103 @@ export default async function handler(req, res) {
     switch (method) {
       case "GET":
         try {
-          const colleges = await College.find().sort({ name: 1 }).lean();
-          return res.json(colleges);
-        } catch (error) {
-          console.error("Error fetching colleges:", error);
-          return res.status(500).json({ error: "Failed to fetch colleges" });
-        }
+          const { ids } = req.query;
+          let query = {};
 
-      case "POST":
-        try {
-          const { name, sector, description, details } = req.body;
+          if (ids) {
+            const parsedIds = Array.isArray(ids)
+              ? ids
+              : String(ids)
+                  .split(",")
+                  .map((id) => id.trim());
 
-          if (!name || !name.trim()) {
-            return res.status(400).json({ error: "College name is required" });
+            const validIds = parsedIds.filter((id) => ObjectId.isValid(id));
+
+            if (validIds.length === 0) {
+              return res.status(400).json({
+                error: "Invalid college ids",
+              });
+            }
+
+            query = { _id: { $in: validIds } };
           }
 
-          const college = await College.create({
-            name: name.trim(),
-            sector: sector?.trim(),
-            description: description?.trim(),
-            details: details,
-          });
+          // Apply pagination if not querying specific IDs
+          const hasPagination = req.pagination !== undefined;
+          const { limit = 10000, skip = 0 } = req.pagination || {};
 
-          return res.status(201).json(college);
+          let collegesQuery = College.find(query)
+            .select("name sector description details")
+            .sort(ids ? { _id: 1 } : { name: 1 });
+
+          // Only apply limit/skip if pagination is enforced and not querying specific IDs
+          if (!ids && hasPagination) {
+            collegesQuery = collegesQuery.limit(limit).skip(skip);
+          }
+
+          // Execute query and count in parallel for better performance
+          let response;
+          if (!ids) {
+            const [colleges, total] = await Promise.all([
+              collegesQuery.lean(),
+              College.countDocuments(query).maxTimeMS(5000),
+            ]);
+            
+            response = {
+              data: colleges,
+              pagination: {
+                page: hasPagination ? Math.floor(skip / limit) + 1 : 1,
+                limit: hasPagination ? limit : total,
+                total,
+                pages: hasPagination ? Math.ceil(total / limit) : 1,
+              },
+            };
+          } else {
+            // For specific IDs, just return the data
+            const colleges = await collegesQuery.lean();
+            response = colleges;
+          }
+
+          // Private cache for security
+          res.setHeader(
+            "Cache-Control",
+            "private, max-age=300, must-revalidate"
+          );
+          return res.json(response);
         } catch (error) {
-          console.error("Error creating college:", error);
-          return res.status(500).json({ error: "Failed to create college" });
+          if (process.env.NODE_ENV === "development") {
+            console.error("Error fetching colleges:", error);
+          }
+          return res.status(500).json({
+            error: "Failed to fetch colleges",
+            details:
+              process.env.NODE_ENV === "development"
+                ? error.message
+                : undefined,
+          });
         }
 
       default:
-        res.setHeader("Allow", ["GET", "POST"]);
+        res.setHeader("Allow", ["GET"]);
         return res.status(405).json({ error: `Method ${method} Not Allowed` });
     }
   } catch (error) {
-    console.error("API Error:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    if (process.env.NODE_ENV === "development") {
+      console.error("API Error:", error);
+    }
+    return res.status(500).json({
+      error: "Internal Server Error",
+      details:
+        process.env.NODE_ENV === "development" ? error.message : undefined,
+    });
   }
 }
+
+// Apply security layers
+export default withPresetSecurity(
+  withRateLimit(
+    withProtectionPreset(handler, "business"),
+    rateLimitPresets.authenticated
+  ),
+  'moderate'
+);

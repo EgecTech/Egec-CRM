@@ -31,6 +31,8 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.test
+.env.production
 
 # vercel
 .vercel
@@ -38,3 +40,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# testing
+/test-results/
+/playwright-report/
+/playwright/.cache/
+
+# sentry
+.sentryclirc
+
+# logs
+*.log
+/logs/
+
+# backups
+/backups/

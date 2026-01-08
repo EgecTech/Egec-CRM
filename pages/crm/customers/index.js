@@ -25,11 +25,11 @@ export default function CustomerList() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
-    salesStatus: '',
-    interestRate: '',
-    country: '',
+    counselorStatus: '',
     assignedAgent: ''
   });
+  const [systemSettings, setSystemSettings] = useState({});
+  const [agents, setAgents] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -37,16 +37,43 @@ export default function CustomerList() {
     pages: 0
   });
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/signin');
-      return;
+  const fetchSystemSettings = async () => {
+    try {
+      const response = await fetch('/api/crm/system-settings');
+      const data = await response.json();
+      if (data.success) {
+        const settings = {};
+        data.data.forEach(setting => {
+          settings[setting.settingKey] = setting.settingValue;
+        });
+        setSystemSettings(settings);
+      }
+    } catch (err) {
+      console.error('Error fetching system settings:', err);
     }
+  };
 
-    if (status === 'authenticated') {
-      fetchCustomers();
+  const fetchAgents = async () => {
+    try {
+      const response = await fetch('/api/admin/users');
+      const data = await response.json();
+      let usersList = [];
+      if (Array.isArray(data)) {
+        usersList = data;
+      } else if (data.users && Array.isArray(data.users)) {
+        usersList = data.users;
+      } else if (data.data && Array.isArray(data.data)) {
+        usersList = data.data;
+      }
+      const agentUsers = usersList.filter(user => 
+        ['agent', 'egecagent', 'studyagent', 'edugateagent'].includes(user.role) && user.isActive
+      );
+      setAgents(agentUsers);
+    } catch (err) {
+      console.error('Error fetching agents:', err);
+      setAgents([]);
     }
-  }, [status, router, pagination.page, searchQuery, filters]);
+  };
 
   const fetchCustomers = async () => {
     try {
@@ -58,9 +85,7 @@ export default function CustomerList() {
       });
       
       if (searchQuery) params.append('search', searchQuery);
-      if (filters.salesStatus) params.append('salesStatus', filters.salesStatus);
-      if (filters.interestRate) params.append('interestRate', filters.interestRate);
-      if (filters.country) params.append('country', filters.country);
+      if (filters.counselorStatus) params.append('counselorStatus', filters.counselorStatus);
       if (filters.assignedAgent) params.append('assignedAgent', filters.assignedAgent);
       
       const response = await fetch(`/api/crm/customers?${params}`);
@@ -81,6 +106,24 @@ export default function CustomerList() {
     }
   };
 
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/signin');
+      return;
+    }
+
+    if (status === 'authenticated') {
+      const role = session?.user?.role;
+      const isAdminUser = role === 'superadmin' || role === 'admin';
+      
+      fetchCustomers();
+      if (isAdminUser) {
+        fetchSystemSettings();
+        fetchAgents();
+      }
+    }
+  }, [status, router, pagination.page, searchQuery, filters, session]);
+
   const handleSearch = useCallback((e) => {
     setSearchQuery(e.target.value);
     setPagination(prev => ({ ...prev, page: 1 }));
@@ -93,36 +136,13 @@ export default function CustomerList() {
 
   const resetFilters = useCallback(() => {
     setFilters({
-      salesStatus: '',
-      interestRate: '',
-      country: '',
+      counselorStatus: '',
       assignedAgent: ''
     });
     setSearchQuery('');
     setPagination(prev => ({ ...prev, page: 1 }));
   }, []);
 
-  const getStatusBadge = (status) => {
-    const colors = {
-      'prospect': 'bg-blue-100 text-blue-700 border-blue-200',
-      'suspect': 'bg-amber-100 text-amber-700 border-amber-200',
-      'lost': 'bg-red-100 text-red-700 border-red-200',
-      'forcast': 'bg-emerald-100 text-emerald-700 border-emerald-200',
-      'potential': 'bg-violet-100 text-violet-700 border-violet-200',
-      'NOD': 'bg-slate-100 text-slate-700 border-slate-200'
-    };
-    return colors[status] || colors['prospect'];
-  };
-
-  const getInterestBadge = (interest) => {
-    const badges = {
-      'Hot': { emoji: '🔥', color: 'bg-red-100 text-red-700 border-red-200' },
-      'Warm': { emoji: '⚠️', color: 'bg-amber-100 text-amber-700 border-amber-200' },
-      'Cold': { emoji: '❄️', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-      'Unknown': { emoji: '❓', color: 'bg-gray-100 text-gray-700 border-gray-200' }
-    };
-    return badges[interest] || badges['Unknown'];
-  };
 
   if (status === 'loading') {
     return (
@@ -136,6 +156,12 @@ export default function CustomerList() {
 
   const role = session?.user?.role;
   const isAdmin = role === 'superadmin' || role === 'admin';
+
+  // Only show this page for admin and superadmin
+  if (status === 'authenticated' && !isAdmin) {
+    router.push('/crm/dashboard');
+    return null;
+  }
 
   return (
     <LoginLayout>
@@ -215,59 +241,42 @@ export default function CustomerList() {
             </div>
 
             {/* Filters Panel */}
-            {showFilters && (
+            {showFilters && isAdmin && (
               <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
-                      Sales Status
+                      حالة المرشد (Counselor Status)
                     </label>
                     <select
-                      value={filters.salesStatus}
-                      onChange={(e) => handleFilterChange('salesStatus', e.target.value)}
+                      value={filters.counselorStatus}
+                      onChange={(e) => handleFilterChange('counselorStatus', e.target.value)}
                       className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
                     >
                       <option value="">All Statuses</option>
-                      <option value="prospect">prospect</option>
-                      <option value="suspect">suspect</option>
-                      <option value="lost">lost</option>
-                      <option value="forcast">forcast</option>
-                      <option value="potential">potential</option>
-                      <option value="NOD">NOD</option>
+                      {(systemSettings.counselor_statuses || []).map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
-                      Interest Level
+                      Agent
                     </label>
                     <select
-                      value={filters.interestRate}
-                      onChange={(e) => handleFilterChange('interestRate', e.target.value)}
+                      value={filters.assignedAgent}
+                      onChange={(e) => handleFilterChange('assignedAgent', e.target.value)}
                       className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
                     >
-                      <option value="">All Levels</option>
-                      <option value="Hot">🔥 Hot</option>
-                      <option value="Warm">⚠️ Warm</option>
-                      <option value="Cold">❄️ Cold</option>
-                      <option value="Unknown">❓ Unknown</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
-                      Country
-                    </label>
-                    <select
-                      value={filters.country}
-                      onChange={(e) => handleFilterChange('country', e.target.value)}
-                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
-                    >
-                      <option value="">All Countries</option>
-                      <option value="Saudi Arabia">Saudi Arabia</option>
-                      <option value="Egypt">Egypt</option>
-                      <option value="Jordan">Jordan</option>
-                      <option value="UAE">UAE</option>
+                      <option value="">All Agents</option>
+                      {agents.map((agent) => (
+                        <option key={agent._id} value={agent._id}>
+                          {agent.name} - {agent.email}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
@@ -325,25 +334,21 @@ export default function CustomerList() {
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Name</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Phone</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">حالة المرشد</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Status</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Interest</th>
-                    {isAdmin && (
-                      <th className="px-6 py-4 text-left text-xs font-bold uppercase">Agent</th>
-                    )}
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Next Follow-up</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Agent</th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Desired Specialization (التخصص المطلوب)</th>
                     <th className="px-6 py-4 text-center text-xs font-bold uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={isAdmin ? 8 : 7} className="text-center py-12">
+                      <td colSpan={7} className="text-center py-12">
                         <Loading />
                       </td>
                     </tr>
                   ) : customers.length === 0 ? (
                     <tr>
-                      <td colSpan={isAdmin ? 8 : 7} className="text-center py-12 text-slate-500">
+                      <td colSpan={7} className="text-center py-12 text-slate-500">
                         No customers found
                       </td>
                     </tr>
@@ -376,39 +381,18 @@ export default function CustomerList() {
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(customer.evaluation?.salesStatus)}`}>
-                            {customer.evaluation?.salesStatus || 'prospect'}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4">
-                          {customer.evaluation?.interestRate && (
-                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getInterestBadge(customer.evaluation.interestRate).color}`}>
-                              <span>{getInterestBadge(customer.evaluation.interestRate).emoji}</span>
-                              {customer.evaluation.interestRate}
-                            </span>
-                          )}
-                        </td>
-                        {isAdmin && (
-                          <td className="px-6 py-4">
-                            {customer.assignment?.assignedAgentName ? (
-                              <span className="text-sm text-slate-700">
-                                {customer.assignment.assignedAgentName}
-                              </span>
-                            ) : (
-                              <button className="text-xs text-blue-600 hover:text-blue-700 font-semibold">
-                                Assign
-                              </button>
-                            )}
-                          </td>
-                        )}
-                        <td className="px-6 py-4">
-                          {customer.evaluation?.nextFollowupDate ? (
+                          {customer.assignment?.assignedAgentName ? (
                             <span className="text-sm text-slate-700">
-                              {new Date(customer.evaluation.nextFollowupDate).toLocaleDateString()}
+                              {customer.assignment.assignedAgentName}
                             </span>
                           ) : (
-                            <span className="text-xs text-slate-400">Not set</span>
+                            <span className="text-xs text-slate-400">Not assigned</span>
                           )}
+                        </td>
+                        <td className="px-6 py-4">
+                          <span className="text-sm text-slate-700">
+                            {customer.desiredProgram?.desiredSpecialization || '-'}
+                          </span>
                         </td>
                         <td className="px-6 py-4 text-center">
                           <Link href={`/crm/customers/${customer._id}`}>

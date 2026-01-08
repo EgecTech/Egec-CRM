@@ -10,10 +10,19 @@ const customerSchema = new mongoose.Schema(
       index: true,
     },
 
+    // ========== DEGREE TYPE (نوع الدرجة العلمية) ==========
+    degreeType: {
+      type: String,
+      enum: ["bachelor", "master", "phd", "diploma"],
+      default: "bachelor",
+      required: true,
+      index: true,
+    },
+
     // ========== MARKETING DATA (بيانات التسويق) ==========
     marketingData: {
       requiredScientificInterface: String,
-      studyDestination: { type: String, default: 'مصر' }, // الوجهة الدراسية
+      studyDestination: { type: String, default: "مصر" }, // الوجهة الدراسية
       source: String,
       company: String,
       inquiryDate: Date,
@@ -59,14 +68,56 @@ const customerSchema = new mongoose.Schema(
 
     // ========== CURRENT QUALIFICATION (بيانات الشهادة) ==========
     currentQualification: {
+      // Common fields for all degree types
       certificateName: String,
-      certificateTrack: String,
+      graduationYear: Number,
       grade: String,
       overallRating: String,
-      graduationYear: Number,
       studySystem: String,
+      studyDuration: String,
       equivalencyRequirements: String,
-      availableColleges: [String],
+      counselorNotes: String,
+
+      // Bachelor-specific fields (for students seeking Bachelor degree)
+      bachelor: {
+        certificateTrack: String, // المسار (علمي/أدبي)
+        availableColleges: [String],
+      },
+
+      // Master-seeker fields (students seeking Master - they hold Bachelor)
+      masterSeeker: {
+        bachelorSpecialization: String, // تخصص البكالوريوس
+        bachelorCollege: String, // كلية البكالوريوس
+        bachelorUniversity: String, // جامعة البكالوريوس
+        bachelorCountry: String, // دولة شهادة البكالوريوس
+        bachelorGraduationYear: Number, // سنة الحصول على البكالوريوس
+        bachelorStudySystem: String, // نظام الدراسة
+        bachelorRating: String, // تقدير
+        bachelorGPA: String, // معدل
+        creditHours: Number, // عدد الساعات المعتمدة
+        studyDuration: String, // مدة الدراسة
+      },
+
+      // PhD-seeker fields (students seeking PhD - they hold Master)
+      phdSeeker: {
+        masterSpecialization: String, // تخصص الماجستير
+        masterCollege: String, // كلية الماجستير
+        masterUniversity: String, // جامعة الماجستير
+        masterCountry: String, // دولة شهادة الماجستير
+        masterGraduationYear: Number, // سنة الحصول على الماجستير
+        masterStudySystem: String, // نظام الدراسة
+        masterRating: String, // تقدير
+        masterGPA: String, // معدل
+        masterThesisTitle: String, // عنوان رسالة الماجستير
+        studyDuration: String, // مدة الدراسة
+      },
+
+      // Diploma-seeker fields (future support)
+      diplomaSeeker: {
+        // To be defined based on requirements
+      },
+
+      // Documents (common for all types)
       otherDocuments: [
         {
           documentType: String,
@@ -80,11 +131,11 @@ const customerSchema = new mongoose.Schema(
           },
         },
       ],
-      counselorNotes: String,
     },
 
     // ========== DESIRED DEGREE (بيانات الدرجة العلمية المطلوبة) ==========
     desiredProgram: {
+      // Common fields for all degree types
       desiredSpecialization: String,
       desiredSpecializationId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -107,6 +158,30 @@ const customerSchema = new mongoose.Schema(
       desiredUniversityType: String,
       desiredStudyTime: String,
       desiredSector: String,
+
+      // Bachelor-specific fields
+      bachelor: {
+        // Uses common fields only
+      },
+
+      // Master-specific fields
+      master: {
+        specificSpecialization: String, // التخصص الدقيق المطلوب
+        studyMethod: String, // طريقة الدراسة المطلوب (حضوري/عن بعد/مختلط)
+        masterType: String, // نوع الماجستير المطلوب (بحثي/مهني/مختلط)
+      },
+
+      // PhD-specific fields
+      phd: {
+        specificSpecialization: String, // التخصص الدقيق المطلوب
+        studyMethod: String, // طريقة الدراسة المطلوب
+        researchField: String, // مجال البحث المطلوب
+      },
+
+      // Diploma-specific fields (future support)
+      diploma: {
+        // To be defined based on requirements
+      },
     },
 
     // ========== EVALUATION & STATUS ==========
@@ -241,6 +316,11 @@ customerSchema.pre("save", function (next) {
   if (this.assignment) {
     cleanObjectId(this.assignment, "assignedAgentId");
     cleanObjectId(this.assignment, "assignedBy");
+  }
+
+  // Validate degree type
+  if (!this.degreeType) {
+    this.degreeType = "bachelor"; // Default to bachelor if not set
   }
 
   // Validate loss reason when status is Lost

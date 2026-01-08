@@ -205,22 +205,33 @@ export default function EditCustomer() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">الوجهة الدراسية (Study Destination)</label>
-                  <input
-                    type="text"
+                  <select
                     value={customer.marketingData?.studyDestination || 'مصر'}
                     onChange={(e) => handleChange('marketingData', 'studyDestination', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="مصر, السعودية, الإمارات..."
-                  />
+                  >
+                    <option value="">Select destination</option>
+                    {(systemSettings.study_destinations || ['مصر']).map((dest) => (
+                      <option key={dest} value={dest}>
+                        {dest}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Source (المصدر)</label>
-                  <input
-                    type="text"
+                  <select
                     value={customer.marketingData?.source || ''}
                     onChange={(e) => handleChange('marketingData', 'source', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select source</option>
+                    {(systemSettings.sources || []).map((source) => (
+                      <option key={source} value={source}>
+                        {source}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Company (الشركة)</label>
@@ -515,9 +526,27 @@ export default function EditCustomer() {
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">اختر النوع</option>
-                    <option value="حكومية">حكومية</option>
-                    <option value="أهلية">أهلية</option>
-                    <option value="خاصة">خاصة</option>
+                    {(systemSettings.university_types || ['حكومية', 'أهلية', 'خاصة']).map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Study Time (وقت الدراسة)</label>
+                  <select
+                    value={customer.desiredProgram?.desiredStudyTime || ''}
+                    onChange={(e) => handleChange('desiredProgram', 'desiredStudyTime', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select time</option>
+                    {(systemSettings.study_times || []).map((time) => (
+                      <option key={time} value={time}>
+                        {time}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -535,12 +564,11 @@ export default function EditCustomer() {
                     onChange={(e) => handleChange('evaluation', 'salesStatus', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="prospect">prospect</option>
-                    <option value="suspect">suspect</option>
-                    <option value="lost">lost</option>
-                    <option value="forcast">forcast</option>
-                    <option value="potential">potential</option>
-                    <option value="NOD">NOD</option>
+                    {(systemSettings.sales_statuses || ['prospect', 'suspect', 'lost', 'forcast', 'potential', 'NOD']).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
@@ -552,26 +580,28 @@ export default function EditCustomer() {
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">اختر المستوى</option>
-                    <option value="interest">interest</option>
-                    <option value="badtim">badtim</option>
-                    <option value="Un Qualified">Un Qualified</option>
-                    <option value="INprogres">INprogres</option>
-                    <option value="Open Deal">Open Deal</option>
-                    <option value="lost">lost</option>
-                    <option value="Done Deal">Done Deal</option>
-                    <option value="BadTiming">BadTiming</option>
+                    {(systemSettings.interest_rates || ['Hot', 'Warm', 'Cold', 'Unknown']).map((rate) => (
+                      <option key={rate} value={rate}>
+                        {rate}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Interest Percentage (نسبة الاهتمام)</label>
-                  <input
-                    type="text"
+                  <select
                     value={customer.evaluation?.interestPercentage || ''}
                     onChange={(e) => handleChange('evaluation', 'interestPercentage', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="%10, %20, %30..."
-                  />
+                  >
+                    <option value="">Select percentage</option>
+                    {(systemSettings.interest_percentages || ['%10', '%20', '%30', '%40', '%50', '%60', '%70', '%80', '%90', '%100']).map((pct) => (
+                      <option key={pct} value={pct}>
+                        {pct}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -582,33 +612,27 @@ export default function EditCustomer() {
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">اختر الحالة</option>
-                    <option value="متجاوب">متجاوب</option>
-                    <option value="استفسار">استفسار</option>
-                    <option value="غ مهتم">غ مهتم</option>
-                    <option value="غ مطابق">غ مطابق</option>
-                    <option value="بعت ورق">بعت ورق</option>
-                    <option value="ج مكتب">ج مكتب</option>
-                    <option value="بيجهز الاوراق">بيجهز الاوراق</option>
-                    <option value="تحويل">تحويل</option>
-                    <option value="مهتم جدا">مهتم جدا</option>
-                    <option value="ب واتساب">ب واتساب</option>
-                    <option value="س ببلد اخري">س ببلد اخري</option>
-                    <option value="س ببلده">س ببلده</option>
-                    <option value="س بنفسه">س بنفسه</option>
-                    <option value="رقم خطأ">رقم خطأ</option>
-                    <option value="س بالغلط">س بالغلط</option>
-                    <option value="لاحق">لاحق</option>
-                    <option value="جامعه غاليه">جامعه غاليه</option>
-                    <option value="تم اولي">تم اولي</option>
-                    <option value="رسوم غاليه">رسوم غاليه</option>
-                    <option value="عام قادم">عام قادم</option>
-                    <option value="لم يتخرج">لم يتخرج</option>
-                    <option value="منحة">منحة</option>
-                    <option value="غير رايه">غير رايه</option>
-                    <option value="كنسل نهائى">كنسل نهائى</option>
-                    <option value="بلوك">بلوك</option>
-                    <option value="NO Reach">NO Reach</option>
-                    <option value="س من قبل">س من قبل</option>
+                    {(systemSettings.counselor_statuses || []).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">حالة العميل</label>
+                  <select
+                    value={customer.evaluation?.customerStatus || ''}
+                    onChange={(e) => handleChange('evaluation', 'customerStatus', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select status</option>
+                    {(systemSettings.customer_statuses || []).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

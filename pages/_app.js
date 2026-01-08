@@ -1,25 +1,73 @@
 // pages/_app.js
-import Head from "next/head";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import { useEffect, useState, useCallback } from "react";
 import { SessionProvider } from "next-auth/react";
-import { Nunito, Outfit } from "next/font/google";
 import Loading from "@/components/Loading";
+import ErrorBoundary from "@/components/ErrorBoundary";
+import Script from "next/script";
+import { Nunito, Outfit } from "next/font/google";
+import { validateEnvWithWarnings } from "@/lib/validateEnv";
 import "@/styles/globals.css";
 
+// Validate environment variables on app startup (only in production)
+if (typeof window === "undefined") {
+  // Server-side only
+  try {
+    validateEnvWithWarnings();
+  } catch (error) {
+    console.error("Environment validation failed:", error.message);
+    // Don't throw in development to allow easier setup
+    if (process.env.NODE_ENV === "production") {
+      throw error;
+    }
+  }
+  
+  // Initialize Redis cache on server startup
+  import("@/lib/cache").then((cacheModule) => {
+    cacheModule.initCache().then(() => {
+      console.log("🚀 Cache initialization complete");
+      
+      // Warm cache after initialization (only in production)
+      if (process.env.NODE_ENV === "production") {
+        import("@/lib/cacheWarming").then((warmingModule) => {
+          // Warm cache immediately on startup
+          warmingModule.warmCache({
+            universities: true,
+            specializations: true,
+            degrees: true,
+            universityLimit: 100,
+            specializationLimit: 100,
+            degreeLimit: 100,
+          }).then((results) => {
+            if (results.success) {
+              console.log("🔥 Cache warming completed successfully");
+            }
+          }).catch((err) => {
+            console.warn("Cache warming failed (non-critical):", err.message);
+          });
+          
+          // Schedule periodic cache warming every hour
+          warmingModule.scheduleCacheWarming(60);
+        });
+      }
+    }).catch((err) => {
+      console.error("Cache initialization error:", err.message);
+    });
+  });
+}
+
 // Optimize font loading with next/font
-// Note: Nunito doesn't support Arabic subset, using latin-ext for better coverage
 const nunito = Nunito({
-  subsets: ["latin", "latin-ext"],
-  weight: ["200", "300", "400", "500", "600", "700", "800", "900", "1000"],
+  weight: ["200", "300", "400", "600", "700", "800", "900"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-nunito",
 });
 
 const outfit = Outfit({
-  subsets: ["latin"],
   weight: ["300", "900"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-outfit",
 });
@@ -59,18 +107,19 @@ function useRouteChangeLoading() {
   return loading;
 }
 
-export default function App({ Component, pageProps }) {
+function App({ Component, pageProps }) {
   const [asideOpen, setAsideOpen] = useState(false);
   const [showLoading, setShowLoading] = useState(false);
   const loading = useRouteChangeLoading();
   const router = useRouter();
 
+  // Optimize loading timeout - reduce from 3500ms to 2000ms for better UX
   useEffect(() => {
     if (loading) {
       setShowLoading(true);
       const timeout = setTimeout(() => {
         setShowLoading(false);
-      }, 3500);
+      }, 2000); // Reduced from 3500ms
 
       return () => clearTimeout(timeout);
     } else {
@@ -82,9 +131,26 @@ export default function App({ Component, pageProps }) {
     setAsideOpen((prev) => !prev);
   }, []);
 
+  // Memoize container class to avoid recalculation
+  const containerClass = useMemo(
+    () => (asideOpen ? "mycontainer active" : "mycontainer"),
+    [asideOpen]
+  );
+
   return (
-    <SessionProvider session={pageProps.session}>
-      <div className={`${nunito.variable} ${outfit.variable}`}>
+    <div className={`${nunito.variable} ${outfit.variable}`}>
+      <ErrorBoundary>
+        <SessionProvider session={pageProps.session}>
+        {/* Load fonts asynchronously */}
+        <Script id="font-loader" strategy="afterInteractive">
+          {`
+            // Load fonts asynchronously to prevent render blocking
+            const fontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"][media="print"]');
+            fontLinks.forEach(link => {
+              link.media = 'all';
+            });
+          `}
+        </Script>
         {showLoading ? (
           <div
             className="flex flex-col items-center justify-center min-h-screen w-full"
@@ -98,13 +164,16 @@ export default function App({ Component, pageProps }) {
           <>
             <ParentComponent appOpen={asideOpen} appAsideOpen={toggleAside} />
             <main className="flex min-h-screen">
-              <div className={asideOpen ? "mycontainer active" : "mycontainer"}>
+              <div className={containerClass}>
                 <Component {...pageProps} />
               </div>
             </main>
           </>
         )}
-      </div>
-    </SessionProvider>
+      </SessionProvider>
+    </ErrorBoundary>
+    </div>
   );
 }
+
+export default App;
