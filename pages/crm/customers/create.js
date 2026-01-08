@@ -56,6 +56,10 @@ export default function CustomerCreate() {
   const [duplicate, setDuplicate] = useState(null);
   const [systemSettings, setSystemSettings] = useState({});
   const [agents, setAgents] = useState([]);
+  
+  // Cascading dropdown state
+  const [universities, setUniversities] = useState([]);
+  const [colleges, setColleges] = useState([]);
 
   const [formData, setFormData] = useState({
     degreeType: "bachelor", // Default to bachelor
@@ -123,7 +127,9 @@ export default function CustomerCreate() {
     desiredProgram: {
       desiredSpecialization: "",
       desiredCollege: "",
+      desiredCollegeId: null,
       desiredUniversity: "",
+      desiredUniversityId: null,
       desiredStudySystem: "",
       desiredUniversityType: "",
       desiredStudyTime: "",
@@ -172,6 +178,67 @@ export default function CustomerCreate() {
       localStorage.setItem("customerDraft", JSON.stringify(formData));
     }
   }, [formData, status]);
+
+  // Fetch universities when study destination changes
+  useEffect(() => {
+    const fetchUniversities = async () => {
+      if (!formData.marketingData.studyDestination) {
+        setUniversities([]);
+        setColleges([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/crm/universities?country=${encodeURIComponent(
+            formData.marketingData.studyDestination
+          )}`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          setUniversities(data.data);
+        } else {
+          console.error("Failed to fetch universities:", data.error);
+          setUniversities([]);
+        }
+      } catch (err) {
+        console.error("Error fetching universities:", err);
+        setUniversities([]);
+      }
+    };
+
+    fetchUniversities();
+  }, [formData.marketingData.studyDestination]);
+
+  // Fetch colleges when university changes
+  useEffect(() => {
+    const fetchColleges = async () => {
+      if (!formData.desiredProgram.desiredUniversityId) {
+        setColleges([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/api/crm/universities/${formData.desiredProgram.desiredUniversityId}/colleges`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          setColleges(data.data);
+        } else {
+          console.error("Failed to fetch colleges:", data.error);
+          setColleges([]);
+        }
+      } catch (err) {
+        console.error("Error fetching colleges:", err);
+        setColleges([]);
+      }
+    };
+
+    fetchColleges();
+  }, [formData.desiredProgram.desiredUniversityId]);
 
   const fetchSystemSettings = async () => {
     try {
@@ -1579,42 +1646,129 @@ export default function CustomerCreate() {
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Study Destination (moved here for context) */}
+                  <div>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">
+                      الوجهة الدراسية (Study Destination)
+                    </label>
+                    <select
+                      value={formData.marketingData.studyDestination}
+                      onChange={(e) => {
+                        handleInputChange(
+                          "marketingData",
+                          "studyDestination",
+                          e.target.value
+                        );
+                        // Reset dependent fields
+                        setFormData(prev => ({
+                          ...prev,
+                          desiredProgram: {
+                            ...prev.desiredProgram,
+                            desiredUniversity: "",
+                            desiredUniversityId: null,
+                            desiredCollege: "",
+                            desiredCollegeId: null,
+                          }
+                        }));
+                      }}
+                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      {(
+                        systemSettings.study_destinations || [
+                          "مصر",
+                          "السعودية",
+                          "الإمارات",
+                          "تركيا",
+                          "امريكا",
+                          "بريطانيا",
+                          "كندا",
+                          "المانيا",
+                        ]
+                      ).map((dest) => (
+                        <option key={dest} value={dest}>
+                          {dest}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Desired University - Cascading Dropdown */}
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Desired University (الجامعة المطلوبة)
                     </label>
-                    <input
-                      type="text"
-                      value={formData.desiredProgram.desiredUniversity}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "desiredProgram",
-                          "desiredUniversity",
-                          e.target.value
-                        )
-                      }
+                    <select
+                      value={formData.desiredProgram.desiredUniversityId || ""}
+                      onChange={(e) => {
+                        const selectedUni = universities.find(
+                          (uni) => uni.value === e.target.value
+                        );
+                        setFormData(prev => ({
+                          ...prev,
+                          desiredProgram: {
+                            ...prev.desiredProgram,
+                            desiredUniversityId: e.target.value || null,
+                            desiredUniversity: selectedUni ? selectedUni.label : "",
+                            // Reset college when university changes
+                            desiredCollege: "",
+                            desiredCollegeId: null,
+                          }
+                        }));
+                      }}
                       className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter university name"
-                    />
+                      disabled={!formData.marketingData.studyDestination || universities.length === 0}
+                    >
+                      <option value="">
+                        {!formData.marketingData.studyDestination
+                          ? "Select Study Destination First"
+                          : universities.length === 0
+                          ? "No universities available"
+                          : "Select University"}
+                      </option>
+                      {universities.map((uni) => (
+                        <option key={uni.value} value={uni.value}>
+                          {uni.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
+                  {/* Desired College - Cascading Dropdown */}
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Desired College (الكلية المطلوبة)
                     </label>
-                    <input
-                      type="text"
-                      value={formData.desiredProgram.desiredCollege}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "desiredProgram",
-                          "desiredCollege",
-                          e.target.value
-                        )
-                      }
+                    <select
+                      value={formData.desiredProgram.desiredCollegeId || ""}
+                      onChange={(e) => {
+                        const selectedCol = colleges.find(
+                          (col) => col.value === e.target.value
+                        );
+                        setFormData(prev => ({
+                          ...prev,
+                          desiredProgram: {
+                            ...prev.desiredProgram,
+                            desiredCollegeId: e.target.value || null,
+                            desiredCollege: selectedCol ? selectedCol.label : "",
+                          }
+                        }));
+                      }}
                       className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      placeholder="Enter college name"
-                    />
+                      disabled={!formData.desiredProgram.desiredUniversityId || colleges.length === 0}
+                    >
+                      <option value="">
+                        {!formData.desiredProgram.desiredUniversityId
+                          ? "Select University First"
+                          : colleges.length === 0
+                          ? "No colleges available"
+                          : "Select College"}
+                      </option>
+                      {colleges.map((col) => (
+                        <option key={col.value} value={col.value}>
+                          {col.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
                   <div>
