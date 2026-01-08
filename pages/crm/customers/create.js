@@ -56,7 +56,7 @@ export default function CustomerCreate() {
   const [duplicate, setDuplicate] = useState(null);
   const [systemSettings, setSystemSettings] = useState({});
   const [agents, setAgents] = useState([]);
-  
+
   // Cascading dropdown state
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
@@ -112,14 +112,28 @@ export default function CustomerCreate() {
         studyDuration: "",
       },
       phdSeeker: {
+        // Bachelor degree fields
+        bachelorSpecialization: "",
+        bachelorSector: "",
+        bachelorCollege: "",
+        bachelorUniversity: "",
+        bachelorCountry: "",
+        bachelorGraduationYear: "",
+        bachelorStudySystem: "",
+        bachelorGPA: "",
+        bachelorRating: "",
+        bachelorSemesters: "",
+        // Master degree fields
         masterSpecialization: "",
+        masterSector: "",
         masterCollege: "",
         masterUniversity: "",
         masterCountry: "",
         masterGraduationYear: "",
         masterStudySystem: "",
-        masterRating: "",
+        masterDegreeType: "",
         masterGPA: "",
+        masterRating: "",
         masterThesisTitle: "",
         studyDuration: "",
       },
@@ -599,17 +613,16 @@ export default function CustomerCreate() {
                 {/* Degree Type Selector - Prominent */}
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-6 mb-6">
                   <label className="block text-lg font-bold text-slate-900 mb-3">
-                    🎓 نوع الدرجة العلمية المطلوبة (Degree Type) <span className="text-red-500">*</span>
+                    نوع الدرجة العلمية المطلوبة (Degree Type) <span className="text-red-500">*</span>
                   </label>
                   <p className="text-sm text-slate-600 mb-4">
                     اختر نوع الدرجة التي يرغب العميل في دراستها
                   </p>
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                      { value: 'bachelor', label: 'بكالوريوس', icon: '🎓', color: 'blue' },
-                      { value: 'master', label: 'ماجستير', icon: '📚', color: 'purple' },
-                      { value: 'phd', label: 'دكتوراه', icon: '🔬', color: 'green' },
-                      { value: 'diploma', label: 'دبلوم', icon: '📜', color: 'orange' }
+                      { value: 'bachelor', label: 'بكالوريوس', color: 'blue' },
+                      { value: 'master', label: 'ماجستير', color: 'purple' },
+                      { value: 'phd', label: 'دكتوراه', color: 'green' }
                     ].map(degree => (
                       <button
                         key={degree.value}
@@ -621,8 +634,7 @@ export default function CustomerCreate() {
                             : 'border-slate-200 bg-white hover:border-slate-300'
                         }`}
                       >
-                        <div className="text-3xl mb-2">{degree.icon}</div>
-                        <div className={`font-bold ${
+                        <div className={`font-bold text-lg ${
                           formData.degreeType === degree.value ? `text-${degree.color}-700` : 'text-slate-700'
                         }`}>
                           {degree.label}
@@ -1041,15 +1053,15 @@ export default function CustomerCreate() {
                   <p className="text-sm font-semibold text-slate-700">
                     Selected Degree Type: {' '}
                     <span className="text-blue-600">
-                      {formData.degreeType === 'bachelor' && '🎓 بكالوريوس (Bachelor)'}
-                      {formData.degreeType === 'master' && '📚 ماجستير (Master)'}
-                      {formData.degreeType === 'phd' && '🔬 دكتوراه (PhD)'}
-                      {formData.degreeType === 'diploma' && '📜 دبلوم (Diploma)'}
+                      {formData.degreeType === 'bachelor' && 'بكالوريوس (Bachelor)'}
+                      {formData.degreeType === 'master' && 'ماجستير (Master)'}
+                      {formData.degreeType === 'phd' && 'دكتوراه (PhD)'}
                     </span>
                   </p>
                 </div>
 
-                {/* Common Fields for All Degree Types */}
+                {/* Common Fields - ONLY for Bachelor (NOT for Master or PhD) */}
+                {formData.degreeType === 'bachelor' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -1161,9 +1173,11 @@ export default function CustomerCreate() {
                       max={new Date().getFullYear()}
                     />
                   </div>
+                  </div>
+                )}
 
                   {/* CONDITIONAL FIELDS BASED ON DEGREE TYPE */}
-                  
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Bachelor-specific fields */}
                   {formData.degreeType === 'bachelor' && (
                     <>
@@ -1198,7 +1212,7 @@ export default function CustomerCreate() {
                     <>
                       <div className="col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-4 mb-2">
                         <p className="text-sm font-semibold text-blue-900">
-                          📚 معلومات شهادة البكالوريوس (الحاصل عليها الطالب)
+                          معلومات شهادة البكالوريوس (الحاصل عليها الطالب)
                         </p>
                         <p className="text-xs text-blue-700 mt-1">
                           Bachelor's Degree Information (that the student already holds)
@@ -1404,21 +1418,283 @@ export default function CustomerCreate() {
                     </>
                   )}
 
-                  {/* PhD-seeker fields (they hold Master degree) */}
+                  {/* PhD-seeker fields (they hold Bachelor AND Master degrees) */}
                   {formData.degreeType === 'phd' && (
                     <>
-                      <div className="col-span-2 bg-green-50 border border-green-200 rounded-lg p-4 mb-2">
-                        <p className="text-sm font-semibold text-green-900">
-                          🔬 معلومات شهادة الماجستير (الحاصل عليها الطالب)
+                      {/* SECTION 1: Bachelor's Degree Information */}
+                      <div className="col-span-2 bg-blue-50 border border-blue-200 rounded-lg p-4 mb-2 mt-6">
+                        <p className="text-sm font-semibold text-blue-900">
+                          بيانات الشهادة الحاصل عليها الطالب (بكالوريوس - دبلوم دراسات عليا)
                         </p>
-                        <p className="text-xs text-green-700 mt-1">
-                          Master's Degree Information (that the student already holds)
+                        <p className="text-xs text-blue-700 mt-1">
+                          Bachelor's Degree Information (first qualification)
                         </p>
                       </div>
 
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                          تخصص الماجستير <span className="text-red-500">*</span>
+                          تخصص (بكالوريوس) الحاصل عليه الطالب
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorSpecialization || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorSpecialization: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Computer Science"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          قطاع تخصص البكالوريوس
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorSector || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorSector: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Engineering, Science, Arts"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          كلية مؤهل (بكالوريوس) الحاصل عليه الطالب
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorCollege || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorCollege: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., College of Engineering"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          جامعة المؤهل (البكالوريوس)
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorUniversity || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorUniversity: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Cairo University"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          دولة شهادة البكالوريوس
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.bachelorCountry || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorCountry: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر الدولة</option>
+                          {(systemSettings.countries || []).map(country => (
+                            <option key={country} value={country}>{country}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          سنة الحصول على شهادة البكالوريوس
+                        </label>
+                        <input
+                          type="number"
+                          value={formData.currentQualification.phdSeeker?.bachelorGraduationYear || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorGraduationYear: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="2018"
+                          min="1950"
+                          max={new Date().getFullYear()}
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          نظام الدراسة
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.bachelorStudySystem || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorStudySystem: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر النظام</option>
+                          {(systemSettings.study_systems || ['سنوي', 'فصلي', 'ساعات معتمدة']).map(system => (
+                            <option key={system} value={system}>{system}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          المعدل
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorGPA || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorGPA: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., 3.5/4.0 or 85%"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          التقدير
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.bachelorRating || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorRating: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر التقدير</option>
+                          {(systemSettings.certificate_ratings || []).map(rating => (
+                            <option key={rating} value={rating}>{rating}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          فصول دراسية
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.bachelorSemesters || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  bachelorSemesters: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., 8 semesters"
+                        />
+                      </div>
+
+                      {/* SECTION 2: Master's Degree Information */}
+                      <div className="col-span-2 bg-green-50 border border-green-200 rounded-lg p-4 mb-2 mt-6">
+                        <p className="text-sm font-semibold text-green-900">
+                          بيانات الشهادة الحاصل عليها الطالب (ماجستير)
+                        </p>
+                        <p className="text-xs text-green-700 mt-1">
+                          Master's Degree Information (second qualification)
+                        </p>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          تخصص الماجستير الحاصل عليه الطالب
                         </label>
                         <input
                           type="text"
@@ -1442,7 +1718,31 @@ export default function CustomerCreate() {
 
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                          كلية الماجستير
+                          قطاع تخصص الماجستير
+                        </label>
+                        <input
+                          type="text"
+                          value={formData.currentQualification.phdSeeker?.masterSector || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  masterSector: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                          placeholder="e.g., Engineering, Science, Arts"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          كلية (ماجستير) الحاصل عليه الطالب
                         </label>
                         <input
                           type="text"
@@ -1466,7 +1766,7 @@ export default function CustomerCreate() {
 
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                          جامعة الماجستير
+                          جامعة المؤهل (الماجستير)
                         </label>
                         <input
                           type="text"
@@ -1490,7 +1790,7 @@ export default function CustomerCreate() {
 
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                          دولة شهادة الماجستير
+                          دولة شهادة (الماجستير)
                         </label>
                         <select
                           value={formData.currentQualification.phdSeeker?.masterCountry || ''}
@@ -1543,7 +1843,61 @@ export default function CustomerCreate() {
 
                       <div>
                         <label className="block text-sm font-semibold text-slate-700 mb-2">
-                          المعدل (GPA)
+                          نظام دراسة الماجستير
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.masterStudySystem || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  masterStudySystem: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر النظام</option>
+                          {(systemSettings.study_systems || ['سنوي', 'فصلي', 'ساعات معتمدة']).map(system => (
+                            <option key={system} value={system}>{system}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          نوع الدرجة العلمية
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.masterDegreeType || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  masterDegreeType: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر النوع</option>
+                          {(systemSettings.master_types || ['ماجستير بحثي', 'ماجستير مهني', 'ماجستير مختلط']).map(type => (
+                            <option key={type} value={type}>{type}</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          المعدل
                         </label>
                         <input
                           type="text"
@@ -1561,8 +1915,35 @@ export default function CustomerCreate() {
                             });
                           }}
                           className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                          placeholder="e.g., 3.8/4.0"
+                          placeholder="e.g., 3.8/4.0 or 90%"
                         />
+                      </div>
+
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-700 mb-2">
+                          التقدير
+                        </label>
+                        <select
+                          value={formData.currentQualification.phdSeeker?.masterRating || ''}
+                          onChange={(e) => {
+                            setFormData({
+                              ...formData,
+                              currentQualification: {
+                                ...formData.currentQualification,
+                                phdSeeker: {
+                                  ...formData.currentQualification.phdSeeker,
+                                  masterRating: e.target.value
+                                }
+                              }
+                            });
+                          }}
+                          className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        >
+                          <option value="">اختر التقدير</option>
+                          {(systemSettings.certificate_ratings || []).map(rating => (
+                            <option key={rating} value={rating}>{rating}</option>
+                          ))}
+                        </select>
                       </div>
 
                       <div className="col-span-2">
@@ -1849,7 +2230,7 @@ export default function CustomerCreate() {
                     <>
                       <div className="col-span-2 bg-purple-50 border border-purple-200 rounded-lg p-4 mt-4 mb-2">
                         <p className="text-sm font-semibold text-purple-900">
-                          📚 معلومات إضافية للماجستير
+                          معلومات إضافية للماجستير
                         </p>
                         <p className="text-xs text-purple-700 mt-1">
                           Additional Master's Program Information
@@ -1941,7 +2322,7 @@ export default function CustomerCreate() {
                     <>
                       <div className="col-span-2 bg-green-50 border border-green-200 rounded-lg p-4 mt-4 mb-2">
                         <p className="text-sm font-semibold text-green-900">
-                          🔬 معلومات إضافية للدكتوراه
+                          معلومات إضافية للدكتوراه
                         </p>
                         <p className="text-xs text-green-700 mt-1">
                           Additional PhD Program Information

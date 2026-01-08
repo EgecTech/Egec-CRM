@@ -13,7 +13,7 @@ const customerSchema = new mongoose.Schema(
     // ========== DEGREE TYPE (نوع الدرجة العلمية) ==========
     degreeType: {
       type: String,
-      enum: ["bachelor", "master", "phd", "diploma"],
+      enum: ["bachelor", "master", "phd"],
       default: "bachelor",
       required: true,
       index: true,
@@ -98,16 +98,31 @@ const customerSchema = new mongoose.Schema(
         studyDuration: String, // مدة الدراسة
       },
 
-      // PhD-seeker fields (students seeking PhD - they hold Master)
+      // PhD-seeker fields (students seeking PhD - they hold Bachelor AND Master)
       phdSeeker: {
+        // Bachelor degree information (first degree)
+        bachelorSpecialization: String, // تخصص البكالوريوس
+        bachelorSector: String, // قطاع تخصص البكالوريوس
+        bachelorCollege: String, // كلية البكالوريوس
+        bachelorUniversity: String, // جامعة البكالوريوس
+        bachelorCountry: String, // دولة شهادة البكالوريوس
+        bachelorGraduationYear: Number, // سنة الحصول على البكالوريوس
+        bachelorStudySystem: String, // نظام الدراسة
+        bachelorGPA: String, // معدل
+        bachelorRating: String, // تقدير
+        bachelorSemesters: String, // فصول دراسية
+        
+        // Master degree information (second degree)
         masterSpecialization: String, // تخصص الماجستير
+        masterSector: String, // قطاع تخصص الماجستير
         masterCollege: String, // كلية الماجستير
         masterUniversity: String, // جامعة الماجستير
         masterCountry: String, // دولة شهادة الماجستير
         masterGraduationYear: Number, // سنة الحصول على الماجستير
         masterStudySystem: String, // نظام الدراسة
-        masterRating: String, // تقدير
+        masterDegreeType: String, // نوع الدرجة العلمية (بحثي/مهني)
         masterGPA: String, // معدل
+        masterRating: String, // تقدير
         masterThesisTitle: String, // عنوان رسالة الماجستير
         studyDuration: String, // مدة الدراسة
       },
