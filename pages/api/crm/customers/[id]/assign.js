@@ -2,13 +2,12 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../../auth/[...nextauth]';
 import Customer from '@/models/Customer';
-import Profile from '@/models/Profile';
+import { Profile } from '@/models/Profile';
 import { checkPermission } from '@/lib/permissions';
 import { logAudit } from '@/lib/auditLogger';
 import { mongooseConnect } from '@/lib/mongoose';
-import { withRateLimit } from '@/lib/rateLimit';
 
-async function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -93,8 +92,3 @@ async function handler(req, res) {
   }
 }
 
-// Apply rate limiting
-export default withRateLimit(handler, {
-  maxRequests: 50,
-  windowMs: 60000
-});

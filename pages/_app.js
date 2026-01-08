@@ -27,30 +27,6 @@ if (typeof window === "undefined") {
   import("@/lib/cache").then((cacheModule) => {
     cacheModule.initCache().then(() => {
       console.log("🚀 Cache initialization complete");
-      
-      // Warm cache after initialization (only in production)
-      if (process.env.NODE_ENV === "production") {
-        import("@/lib/cacheWarming").then((warmingModule) => {
-          // Warm cache immediately on startup
-          warmingModule.warmCache({
-            universities: true,
-            specializations: true,
-            degrees: true,
-            universityLimit: 100,
-            specializationLimit: 100,
-            degreeLimit: 100,
-          }).then((results) => {
-            if (results.success) {
-              console.log("🔥 Cache warming completed successfully");
-            }
-          }).catch((err) => {
-            console.warn("Cache warming failed (non-critical):", err.message);
-          });
-          
-          // Schedule periodic cache warming every hour
-          warmingModule.scheduleCacheWarming(60);
-        });
-      }
     }).catch((err) => {
       console.error("Cache initialization error:", err.message);
     });

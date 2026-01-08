@@ -2,8 +2,6 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { Profile } from "@/models/Profile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withPresetRateLimit } from "@/lib/rateLimit";
 import cloudinary from "cloudinary";
 
 cloudinary.v2.config({
@@ -12,7 +10,7 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-async function handler(req, res) {
+export default async function handler(req, res) {
   await mongooseConnect();
 
   if (req.method !== "POST") {
@@ -81,8 +79,3 @@ async function handler(req, res) {
   }
 }
 
-// Apply security layers: rate limiting + API security
-export default withPresetSecurity(
-  withPresetRateLimit(handler, "upload"),
-  "moderate"
-);

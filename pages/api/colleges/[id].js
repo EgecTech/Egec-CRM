@@ -3,13 +3,10 @@
 import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
 import College from "@/models/College";
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 
 const { ObjectId } = mongoose.Types;
 
-async function handler(req, res) {
+export default async function handler(req, res) {
   // Authentication is handled by withProtectionPreset middleware
   try {
     await mongooseConnect();
@@ -75,11 +72,3 @@ async function handler(req, res) {
   }
 }
 
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handler, "light"),
-    rateLimitPresets.authenticated
-  ),
-  "moderate"
-);

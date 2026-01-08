@@ -39,18 +39,8 @@ import mongoose from "mongoose";
 import Specialization from "@/models/Specialization";
 import University from "@/models/University"; // Import University model for populate
 import { mongooseConnect } from "@/lib/mongoose";
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
-import {
-  applySecureCacheHeaders,
-  generateETag,
-  checkETag,
-} from "@/lib/secureCacheStrategy";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import cache from "@/lib/cache";
-import { CACHE_TTL, cacheKeys } from "@/lib/cacheConfig";
 
 const { ObjectId } = mongoose.Types;
 
@@ -267,12 +257,3 @@ async function handler(req, res) {
 
 // Apply security layers:
 // 1. API Security - prevents direct access from curl/postman
-// 2. Rate Limiting - prevents bulk data scraping
-// 3. Data Protection - adds watermarking and browser-only access
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handler, "business"),
-    rateLimitPresets.authenticated
-  ),
-  "moderate" // Requires referer + browser, but no token
-);

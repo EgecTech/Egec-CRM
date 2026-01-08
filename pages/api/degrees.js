@@ -3,18 +3,12 @@ import mongoose from "mongoose";
 import { mongooseConnect } from "@/lib/mongoose";
 import Degree from "@/models/Degree";
 import College from "@/models/College"; // Import College model for populate
-import { withProtectionPreset } from "@/lib/dataProtection";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
-import { applySecureCacheHeaders, generateETag, checkETag } from "@/lib/secureCacheStrategy";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import cache from "@/lib/cache";
-import { CACHE_TTL, cacheKeys } from "@/lib/cacheConfig";
 
 const { ObjectId } = mongoose.Types;
 
-async function handle(req, res) {
+export default async function handle(req, res) {
   // Authentication is handled by withProtectionPreset middleware
   try {
     await mongooseConnect();
@@ -130,11 +124,3 @@ async function handle(req, res) {
   }
 }
 
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(
-    withProtectionPreset(handle, "business"),
-    rateLimitPresets.authenticated
-  ),
-  'moderate'
-);

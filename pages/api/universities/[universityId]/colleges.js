@@ -4,12 +4,10 @@ import { mongooseConnect } from "@/lib/mongoose";
 import University from "@/models/University";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { withPresetSecurity } from "@/lib/apiSecurity";
-import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 
 const { ObjectId } = mongoose.Types;
 
-async function handle(req, res) {
+export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session) {
@@ -51,8 +49,3 @@ async function handle(req, res) {
   }
 }
 
-// Apply security layers
-export default withPresetSecurity(
-  withRateLimit(handle, rateLimitPresets.authenticated),
-  "moderate"
-);
