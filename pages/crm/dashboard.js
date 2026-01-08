@@ -90,7 +90,7 @@ export default function CRMDashboard() {
   const userName = session?.user?.name;
 
   // Role-based dashboard rendering
-  const isAdmin = role === 'superadmin' || role === 'admin';
+  const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
   const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
   const isDataEntry = role === 'dataentry';
 
@@ -118,7 +118,7 @@ export default function CRMDashboard() {
                   {isDataEntry && 'Your customer entry statistics'}
                 </p>
               </div>
-              {(role === 'superadmin' || role === 'admin' || role === 'dataentry') && (
+              {(role === 'superadmin' || role === 'admin' || role === 'superagent' || role === 'dataentry') && (
                 <Link href="/crm/customers/create">
                   <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg">
                     <FaUserPlus className="w-5 h-5" />

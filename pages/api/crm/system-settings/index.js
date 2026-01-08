@@ -23,6 +23,11 @@ async function handler(req, res) {
     try {
       const { key } = req.query;
       
+      // Set headers to prevent caching
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      
       if (key) {
         // Get specific setting
         const setting = await SystemSetting.findOne({ settingKey: key, isActive: true }).lean();
@@ -36,10 +41,11 @@ async function handler(req, res) {
           data: setting
         });
       } else {
-        // Get all settings
+        // Get all settings - FORCE fresh query, no cache
         const settings = await SystemSetting.find({ isActive: true })
           .sort({ settingKey: 1 })
-          .lean();
+          .lean()
+          .exec(); // Force execution
         
         return res.status(200).json({
           success: true,

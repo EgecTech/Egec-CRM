@@ -13,44 +13,51 @@ import {
   FaExclamationTriangle,
 } from "react-icons/fa";
 
-const STEPS = [
-  {
-    id: 1,
-    title: "Marketing Data",
-    subtitle: "Lead source and counselor info",
-    required: false,
-  },
-  {
-    id: 2,
-    title: "Basic Data",
-    subtitle: "Customer contact information",
-    required: true,
-  },
-  {
-    id: 3,
-    title: "Current Qualification",
-    subtitle: "Educational background",
-    required: false,
-  },
-  {
-    id: 4,
-    title: "Desired Program",
-    subtitle: "Target university and specialization",
-    required: false,
-  },
-  {
-    id: 5,
-    title: "Evaluation & Status",
-    subtitle: "Assessment and follow-up",
-    required: false,
-  },
-];
-
 export default function CustomerCreate() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [currentStep, setCurrentStep] = useState(1);
+  // Permission checks
+  const role = session?.user?.role;
+  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isSuperAgent = role === 'superagent';
+  const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
+
+  // Dynamic steps based on role
+  const STEPS = [
+    ...(canSeeMarketing ? [{
+      id: 1,
+      title: "Marketing Data",
+      subtitle: "Lead source and counselor info",
+      required: false,
+    }] : []),
+    {
+      id: canSeeMarketing ? 2 : 1,
+      title: "Basic Data",
+      subtitle: "Customer contact information",
+      required: true,
+    },
+    {
+      id: canSeeMarketing ? 3 : 2,
+      title: "Current Qualification",
+      subtitle: "Educational background",
+      required: false,
+    },
+    {
+      id: canSeeMarketing ? 4 : 3,
+      title: "Desired Program",
+      subtitle: "Target university and specialization",
+      required: false,
+    },
+    {
+      id: canSeeMarketing ? 5 : 4,
+      title: "Evaluation & Status",
+      subtitle: "Assessment and follow-up",
+      required: false,
+    },
+  ];
+
+  const [currentStep, setCurrentStep] = useState(canSeeMarketing ? 1 : 2); // Start from step 2 for Agent/Super Agent
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [duplicate, setDuplicate] = useState(null);
@@ -65,7 +72,7 @@ export default function CustomerCreate() {
     degreeType: "bachelor", // Default to bachelor
     marketingData: {
       requiredScientificInterface: "",
-      studyDestination: "مصر", // Default to Egypt
+      // studyDestination moved to desiredProgram
       source: "",
       company: "EGEC", // Default to EGEC
       inquiryDate: new Date().toISOString().slice(0, 16), // Auto-set to current date and time
@@ -139,6 +146,7 @@ export default function CustomerCreate() {
       },
     },
     desiredProgram: {
+      studyDestination: "Egypt", // Default to Egypt - moved from marketingData
       desiredSpecialization: "",
       desiredCollege: "",
       desiredCollegeId: null,
@@ -196,7 +204,7 @@ export default function CustomerCreate() {
   // Fetch universities when study destination changes
   useEffect(() => {
     const fetchUniversities = async () => {
-      if (!formData.marketingData.studyDestination) {
+      if (!formData.desiredProgram.studyDestination) {
         setUniversities([]);
         setColleges([]);
         return;
@@ -205,7 +213,7 @@ export default function CustomerCreate() {
       try {
         const response = await fetch(
           `/api/crm/universities?country=${encodeURIComponent(
-            formData.marketingData.studyDestination
+            formData.desiredProgram.studyDestination
           )}`
         );
         const data = await response.json();
@@ -223,7 +231,7 @@ export default function CustomerCreate() {
     };
 
     fetchUniversities();
-  }, [formData.marketingData.studyDestination]);
+  }, [formData.desiredProgram.studyDestination]);
 
   // Fetch colleges when university changes
   useEffect(() => {
@@ -257,7 +265,13 @@ export default function CustomerCreate() {
   const fetchSystemSettings = async () => {
     try {
       console.log("🔄 Fetching system settings...");
-      const response = await fetch("/api/crm/system-settings");
+      const response = await fetch("/api/crm/system-settings", {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       console.log("Response status:", response.status);
 
       const data = await response.json();
@@ -269,15 +283,13 @@ export default function CustomerCreate() {
         data.data.forEach((setting) => {
           settings[setting.settingKey] = setting.settingValue;
           console.log(
-            `Setting: ${setting.settingKey} = ${
-              setting.settingValue?.length || 0
-            } items`
+            `Setting: ${setting.settingKey} = ${JSON.stringify(setting.settingValue?.slice(0, 3))}...`
           );
         });
         console.log("✅ Parsed settings:", settings);
         console.log(
-          "✅ Study destinations count:",
-          settings.study_destinations?.length
+          "✅ Study destinations:",
+          JSON.stringify(settings.study_destinations)
         );
         setSystemSettings(settings);
       } else {
@@ -411,7 +423,8 @@ export default function CustomerCreate() {
   };
 
   const prevStep = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    const minStep = canSeeMarketing ? 1 : 2; // Agent/Super Agent starts from step 2
+    setCurrentStep((prev) => Math.max(prev - 1, minStep));
     setError(null);
   };
 
@@ -603,8 +616,8 @@ export default function CustomerCreate() {
 
           {/* Form Content */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8">
-            {/* Step 1: Marketing Data */}
-            {currentStep === 1 && (
+            {/* Step 1: Marketing Data - Only for Superadmin and Admin */}
+            {currentStep === 1 && canSeeMarketing && (
               <div className="space-y-6">
                 <h2 className="text-xl font-bold text-slate-900 mb-6">
                   Marketing Data (بيانات التسويق)
@@ -645,40 +658,8 @@ export default function CustomerCreate() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      الوجهة الدراسية (Study Destination)
-                    </label>
-                    <select
-                      value={formData.marketingData.studyDestination}
-                      onChange={(e) =>
-                        handleInputChange(
-                          "marketingData",
-                          "studyDestination",
-                          e.target.value
-                        )
-                      }
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    >
-                      {(
-                        systemSettings.study_destinations || [
-                          "مصر",
-                          "السعودية",
-                          "الإمارات",
-                          "تركيا",
-                          "امريكا",
-                          "بريطانيا",
-                          "كندا",
-                          "المانيا",
-                        ]
-                      ).map((dest) => (
-                        <option key={dest} value={dest}>
-                          {dest}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
+                  {/* Study Destination moved to Desired Program section */}
+                  
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Source (المصدر)
@@ -779,9 +760,10 @@ export default function CustomerCreate() {
                   />
                 </div>
 
-                {/* Assign Agent - Admin/Superadmin only */}
+                {/* Assign Agent - Admin/Superadmin/Superagent only */}
                 {(session?.user?.role === "admin" ||
-                  session?.user?.role === "superadmin") && (
+                  session?.user?.role === "superadmin" ||
+                  session?.user?.role === "superagent") && (
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       تعيين للمرشد (Assign to Agent)
@@ -2033,10 +2015,10 @@ export default function CustomerCreate() {
                       الوجهة الدراسية (Study Destination)
                     </label>
                     <select
-                      value={formData.marketingData.studyDestination}
+                      value={formData.desiredProgram.studyDestination}
                       onChange={(e) => {
                         handleInputChange(
-                          "marketingData",
+                          "desiredProgram",
                           "studyDestination",
                           e.target.value
                         );
@@ -2045,6 +2027,7 @@ export default function CustomerCreate() {
                           ...prev,
                           desiredProgram: {
                             ...prev.desiredProgram,
+                            studyDestination: e.target.value,
                             desiredUniversity: "",
                             desiredUniversityId: null,
                             desiredCollege: "",
@@ -2056,14 +2039,12 @@ export default function CustomerCreate() {
                     >
                       {(
                         systemSettings.study_destinations || [
-                          "مصر",
-                          "السعودية",
-                          "الإمارات",
-                          "تركيا",
-                          "امريكا",
-                          "بريطانيا",
-                          "كندا",
-                          "المانيا",
+                          "Egypt",
+                          "Jordan",
+                          "Germany",
+                          "Hungary",
+                          "United Arab Emirates",
+                          "Cyprus",
                         ]
                       ).map((dest) => (
                         <option key={dest} value={dest}>
@@ -2097,10 +2078,10 @@ export default function CustomerCreate() {
                         }));
                       }}
                       className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                      disabled={!formData.marketingData.studyDestination || universities.length === 0}
+                      disabled={!formData.desiredProgram.studyDestination || universities.length === 0}
                     >
                       <option value="">
-                        {!formData.marketingData.studyDestination
+                        {!formData.desiredProgram.studyDestination
                           ? "Select Study Destination First"
                           : universities.length === 0
                           ? "No universities available"
@@ -2685,7 +2666,7 @@ export default function CustomerCreate() {
             <div className="flex justify-between mt-8 pt-6 border-t border-slate-200">
               <button
                 onClick={prevStep}
-                disabled={currentStep === 1}
+                disabled={currentStep === (canSeeMarketing ? 1 : 2)}
                 className="flex items-center gap-2 px-6 py-3 bg-white text-slate-700 border border-slate-300 rounded-lg font-semibold hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <FaArrowLeft className="w-4 h-4" />

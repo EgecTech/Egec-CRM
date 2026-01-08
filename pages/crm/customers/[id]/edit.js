@@ -20,10 +20,16 @@ export default function EditCustomer() {
   const [success, setSuccess] = useState('');
   const [systemSettings, setSystemSettings] = useState({});
   const [agents, setAgents] = useState([]);
-  
+
   // Cascading dropdown state
   const [universities, setUniversities] = useState([]);
   const [colleges, setColleges] = useState([]);
+
+  // Permission checks
+  const role = session?.user?.role;
+  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isSuperAgent = role === 'superagent';
+  const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -41,7 +47,7 @@ export default function EditCustomer() {
   // Fetch universities when study destination changes
   useEffect(() => {
     const fetchUniversities = async () => {
-      if (!customer?.marketingData?.studyDestination) {
+      if (!customer?.desiredProgram?.studyDestination) {
         setUniversities([]);
         setColleges([]);
         return;
@@ -50,7 +56,7 @@ export default function EditCustomer() {
       try {
         const response = await fetch(
           `/api/crm/universities?country=${encodeURIComponent(
-            customer.marketingData.studyDestination
+            customer.desiredProgram.studyDestination
           )}`
         );
         const data = await response.json();
@@ -70,7 +76,7 @@ export default function EditCustomer() {
     if (customer) {
       fetchUniversities();
     }
-  }, [customer?.marketingData?.studyDestination]);
+  }, [customer?.desiredProgram?.studyDestination]);
 
   // Fetch colleges when university changes
   useEffect(() => {
@@ -129,13 +135,20 @@ export default function EditCustomer() {
 
   const fetchSystemSettings = async () => {
     try {
-      const response = await fetch('/api/crm/system-settings');
+      const response = await fetch('/api/crm/system-settings', {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       const data = await response.json();
       if (data.success) {
         const settings = {};
         data.data.forEach(setting => {
           settings[setting.settingKey] = setting.settingValue;
         });
+        console.log('✅ Study destinations loaded:', settings.study_destinations);
         setSystemSettings(settings);
       }
     } catch (err) {
@@ -151,6 +164,11 @@ export default function EditCustomer() {
 
       if (data.success) {
         setCustomer(data.data);
+        
+        // Check if user has permission to edit
+        if (!canEditCustomer(data.data)) {
+          setError('You do not have permission to edit this customer');
+        }
       } else {
         setError(data.error);
       }
@@ -160,6 +178,39 @@ export default function EditCustomer() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Check if user can edit this customer
+  const canEditCustomer = (customerData) => {
+    if (!customerData || !session?.user) return false;
+
+    const role = session.user.role;
+    const userId = session.user.id;
+
+    // Superadmin, Admin, and Superagent can edit all customers
+    if (role === 'superadmin' || role === 'admin' || role === 'superagent') {
+      return true;
+    }
+
+    // Data Entry can edit their own customers within 15 minutes
+    if (role === 'dataentry') {
+      const createdBy = customerData.createdBy?.toString() || customerData.createdBy;
+      if (createdBy !== userId) return false;
+
+      const createdAt = new Date(customerData.createdAt);
+      const now = new Date();
+      const minutesSinceCreation = (now - createdAt) / 1000 / 60;
+
+      return minutesSinceCreation <= 15;
+    }
+
+    // Agents can edit their assigned customers
+    if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+      const assignedAgentId = customerData.assignment?.assignedAgentId?.toString() || customerData.assignment?.assignedAgentId;
+      return assignedAgentId === userId;
+    }
+
+    return false;
   };
 
   const handleSave = async (e) => {
@@ -208,8 +259,8 @@ export default function EditCustomer() {
       } else {
         if (data.errors && Array.isArray(data.errors)) {
           setError(data.errors.join(', '));
-        } else {
-          setError(data.error || data.message || 'Failed to update customer');
+      } else {
+        setError(data.error || data.message || 'Failed to update customer');
         }
       }
     } catch (err) {
@@ -292,6 +343,32 @@ export default function EditCustomer() {
             <p className="text-slate-600 mt-2">{customer.customerNumber}</p>
           </div>
 
+          {/* Data Entry Edit Window Warning */}
+          {session?.user?.role === 'dataentry' && customer.createdBy?.toString() === session.user.id && (
+            <>
+              {(() => {
+                const createdAt = new Date(customer.createdAt);
+                const now = new Date();
+                const minutesSinceCreation = (now - createdAt) / 1000 / 60;
+                const remainingMinutes = Math.max(0, 15 - minutesSinceCreation);
+
+                if (remainingMinutes > 0) {
+                  return (
+                    <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4 text-amber-800">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl">⏱️</span>
+                        <div>
+                          <p className="font-semibold">Edit Window Active</p>
+                          <p className="text-sm">You have <strong>{Math.floor(remainingMinutes)} minutes</strong> remaining to edit this customer</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+              })()}
+            </>
+          )}
+
           {/* Messages */}
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
@@ -343,38 +420,13 @@ export default function EditCustomer() {
               </div>
             </div>
 
-            {/* Marketing Data */}
+            {/* Marketing Data - Only for Superadmin and Admin */}
+            {canSeeMarketing && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <h2 className="text-xl font-bold text-slate-900 mb-6">Marketing Data (بيانات التسويق)</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">الوجهة الدراسية (Study Destination)</label>
-                  <select
-                    value={customer.marketingData?.studyDestination || 'مصر'}
-                    onChange={(e) => {
-                      handleChange('marketingData', 'studyDestination', e.target.value);
-                      // Reset dependent fields
-                      setCustomer(prev => ({
-                        ...prev,
-                        desiredProgram: {
-                          ...prev.desiredProgram,
-                          desiredUniversity: "",
-                          desiredUniversityId: null,
-                          desiredCollege: "",
-                          desiredCollegeId: null,
-                        }
-                      }));
-                    }}
-                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select destination</option>
-                    {(systemSettings.study_destinations || ['مصر']).map((dest) => (
-                      <option key={dest} value={dest}>
-                        {dest}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {/* Study Destination moved to Desired Program section */}
+                
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Source (المصدر)</label>
                   <select
@@ -400,8 +452,8 @@ export default function EditCustomer() {
                   />
                 </div>
 
-                {/* Reassign Agent - Admin/Superadmin only */}
-                {(session?.user?.role === 'admin' || session?.user?.role === 'superadmin') && (
+                {/* Reassign Agent - Admin/Superadmin/Superagent only */}
+                {(session?.user?.role === 'admin' || session?.user?.role === 'superadmin' || session?.user?.role === 'superagent') && (
                   <div className="md:col-span-2">
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       تعيين للمرشد (Assign to Agent)
@@ -436,6 +488,7 @@ export default function EditCustomer() {
                 )}
               </div>
             </div>
+            )}
 
             {/* Basic Data */}
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -555,31 +608,31 @@ export default function EditCustomer() {
                     {customer.degreeType === 'phd' && 'دكتوراه (PhD)'}
                   </span>
                 </p>
-              </div>
+                </div>
 
               {/* Common Fields - ONLY for Bachelor (NOT for Master or PhD) */}
               {customer.degreeType === 'bachelor' && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                  <div>
+                <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">Grade/GPA (المعدل)</label>
-                    <select
-                      value={customer.currentQualification?.grade || ''}
-                      onChange={(e) => handleChange('currentQualification', 'grade', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select grade</option>
-                      {(systemSettings.grades || ['2.5', '%10', '%20', '%30', '%40', '%50', '%60', '%70', '%80', '%90', '%100']).map(grade => (
-                        <option key={grade} value={grade}>{grade}</option>
-                      ))}
-                    </select>
-                  </div>
+                  <select
+                    value={customer.currentQualification?.grade || ''}
+                    onChange={(e) => handleChange('currentQualification', 'grade', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select grade</option>
+                    {(systemSettings.grades || ['2.5', '%10', '%20', '%30', '%40', '%50', '%60', '%70', '%80', '%90', '%100']).map(grade => (
+                      <option key={grade} value={grade}>{grade}</option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Overall Rating (التقدير)</label>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Overall Rating (التقدير)</label>
                     <select
-                      value={customer.currentQualification?.overallRating || ''}
-                      onChange={(e) => handleChange('currentQualification', 'overallRating', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                    value={customer.currentQualification?.overallRating || ''}
+                    onChange={(e) => handleChange('currentQualification', 'overallRating', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="">Select rating</option>
                       {(systemSettings.certificate_ratings || []).map(rating => (
@@ -600,21 +653,21 @@ export default function EditCustomer() {
                         <option key={system} value={system}>{system}</option>
                       ))}
                     </select>
-                  </div>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Graduation Year (سنة التخرج)</label>
-                    <input
-                      type="number"
-                      value={customer.currentQualification?.graduationYear || ''}
-                      onChange={(e) => handleChange('currentQualification', 'graduationYear', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Graduation Year (سنة التخرج)</label>
+                  <input
+                    type="number"
+                    value={customer.currentQualification?.graduationYear || ''}
+                    onChange={(e) => handleChange('currentQualification', 'graduationYear', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                       placeholder="2024"
                       min="1950"
                       max={new Date().getFullYear()}
-                    />
-                  </div>
+                  />
                 </div>
+              </div>
               )}
 
               {/* Bachelor-specific fields */}
@@ -1021,6 +1074,37 @@ export default function EditCustomer() {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <h2 className="text-xl font-bold text-slate-900 mb-6">Desired Program (البرنامج المطلوب)</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Study Destination - First dropdown */}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">الوجهة الدراسية (Study Destination)</label>
+                  <select
+                    value={customer.desiredProgram?.studyDestination || 'Egypt'}
+                    onChange={(e) => {
+                      handleChange('desiredProgram', 'studyDestination', e.target.value);
+                      // Reset dependent fields
+                      setCustomer(prev => ({
+                        ...prev,
+                        desiredProgram: {
+                          ...prev.desiredProgram,
+                          studyDestination: e.target.value,
+                          desiredUniversity: "",
+                          desiredUniversityId: null,
+                          desiredCollege: "",
+                          desiredCollegeId: null,
+                        }
+                      }));
+                    }}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select destination</option>
+                    {(systemSettings.study_destinations || ['Egypt', 'Jordan', 'Germany', 'Hungary', 'United Arab Emirates', 'Cyprus']).map((dest) => (
+                      <option key={dest} value={dest}>
+                        {dest}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 {/* Desired University - Cascading dropdown */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -1042,10 +1126,10 @@ export default function EditCustomer() {
                       }));
                     }}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    disabled={!customer.marketingData?.studyDestination}
+                    disabled={!customer.desiredProgram?.studyDestination}
                   >
                     <option value="">
-                      {customer.marketingData?.studyDestination ? "Select University" : "Select Study Destination First"}
+                      {customer.desiredProgram?.studyDestination ? "Select University" : "Select Study Destination First"}
                     </option>
                     {universities.map((uni) => (
                       <option key={uni.value} value={uni.value}>
@@ -1135,127 +1219,127 @@ export default function EditCustomer() {
             {session?.user?.role !== 'dataentry' && (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h2 className="text-xl font-bold text-slate-900 mb-6">Status & Evaluation (التقييم والحالة)</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">حالة المبيعات</label>
-                    <select
-                      value={customer.evaluation?.salesStatus || 'prospect'}
-                      onChange={(e) => handleChange('evaluation', 'salesStatus', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      {(systemSettings.sales_statuses || ['prospect', 'suspect', 'lost', 'forcast', 'potential', 'NOD']).map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">حالة المبيعات</label>
+                  <select
+                    value={customer.evaluation?.salesStatus || 'prospect'}
+                    onChange={(e) => handleChange('evaluation', 'salesStatus', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    {(systemSettings.sales_statuses || ['prospect', 'suspect', 'lost', 'forcast', 'potential', 'NOD']).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">مستوى الاهتمام</label>
-                    <select
-                      value={customer.evaluation?.interestRate || ''}
-                      onChange={(e) => handleChange('evaluation', 'interestRate', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">اختر المستوى</option>
-                      {(systemSettings.interest_rates || ['Hot', 'Warm', 'Cold', 'Unknown']).map((rate) => (
-                        <option key={rate} value={rate}>
-                          {rate}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">مستوى الاهتمام</label>
+                  <select
+                    value={customer.evaluation?.interestRate || ''}
+                    onChange={(e) => handleChange('evaluation', 'interestRate', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">اختر المستوى</option>
+                    {(systemSettings.interest_rates || ['Hot', 'Warm', 'Cold', 'Unknown']).map((rate) => (
+                      <option key={rate} value={rate}>
+                        {rate}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Interest Percentage (نسبة الاهتمام)</label>
-                    <select
-                      value={customer.evaluation?.interestPercentage || ''}
-                      onChange={(e) => handleChange('evaluation', 'interestPercentage', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select percentage</option>
-                      {(systemSettings.interest_percentages || ['%10', '%20', '%30', '%40', '%50', '%60', '%70', '%80', '%90', '%100']).map((pct) => (
-                        <option key={pct} value={pct}>
-                          {pct}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Interest Percentage (نسبة الاهتمام)</label>
+                  <select
+                    value={customer.evaluation?.interestPercentage || ''}
+                    onChange={(e) => handleChange('evaluation', 'interestPercentage', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select percentage</option>
+                    {(systemSettings.interest_percentages || ['%10', '%20', '%30', '%40', '%50', '%60', '%70', '%80', '%90', '%100']).map((pct) => (
+                      <option key={pct} value={pct}>
+                        {pct}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">حالة المرشد</label>
-                    <select
-                      value={customer.evaluation?.counselorStatus || ''}
-                      onChange={(e) => handleChange('evaluation', 'counselorStatus', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">اختر الحالة</option>
-                      {(systemSettings.counselor_statuses || []).map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">حالة المرشد</label>
+                  <select
+                    value={customer.evaluation?.counselorStatus || ''}
+                    onChange={(e) => handleChange('evaluation', 'counselorStatus', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">اختر الحالة</option>
+                    {(systemSettings.counselor_statuses || []).map((status) => (
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">حالة العميل</label>
-                    <select
-                      value={customer.evaluation?.customerStatus || ''}
-                      onChange={(e) => handleChange('evaluation', 'customerStatus', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select status</option>
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">حالة العميل</label>
+                  <select
+                    value={customer.evaluation?.customerStatus || ''}
+                    onChange={(e) => handleChange('evaluation', 'customerStatus', e.target.value)}
+                    className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select status</option>
                       {(systemSettings.customer_statuses || ['interest', 'Un Qualified', 'INprogres', 'Open Deal', 'Done Deal', 'lost', 'BadTiming']).map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Next Follow-up (تاريخ المتابعة)</label>
-                    <input
-                      type="date"
-                      value={customer.evaluation?.nextFollowupDate ? new Date(customer.evaluation.nextFollowupDate).toISOString().split('T')[0] : ''}
-                      onChange={(e) => handleChange('evaluation', 'nextFollowupDate', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Best Time to Contact (أفضل وقت)</label>
-                    <input
-                      type="text"
-                      value={customer.evaluation?.bestTimeToContact || ''}
-                      onChange={(e) => handleChange('evaluation', 'bestTimeToContact', e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
+                      <option key={status} value={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
-                <div className="mt-6">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Technical Opinion (الرأي الفني)</label>
-                  <textarea
-                    value={customer.evaluation?.technicalOpinion || ''}
-                    onChange={(e) => handleChange('evaluation', 'technicalOpinion', e.target.value)}
-                    rows={3}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Next Follow-up (تاريخ المتابعة)</label>
+                  <input
+                    type="date"
+                    value={customer.evaluation?.nextFollowupDate ? new Date(customer.evaluation.nextFollowupDate).toISOString().split('T')[0] : ''}
+                    onChange={(e) => handleChange('evaluation', 'nextFollowupDate', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
-                <div className="mt-6">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Additional Notes (ملاحظات إضافية)</label>
-                  <textarea
-                    value={customer.evaluation?.additionalNotes || ''}
-                    onChange={(e) => handleChange('evaluation', 'additionalNotes', e.target.value)}
-                    rows={4}
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-2">Best Time to Contact (أفضل وقت)</label>
+                  <input
+                    type="text"
+                    value={customer.evaluation?.bestTimeToContact || ''}
+                    onChange={(e) => handleChange('evaluation', 'bestTimeToContact', e.target.value)}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-                    placeholder="Add any notes..."
                   />
                 </div>
+              </div>
+
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Technical Opinion (الرأي الفني)</label>
+                <textarea
+                  value={customer.evaluation?.technicalOpinion || ''}
+                  onChange={(e) => handleChange('evaluation', 'technicalOpinion', e.target.value)}
+                  rows={3}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div className="mt-6">
+                <label className="block text-sm font-semibold text-slate-700 mb-2">Additional Notes (ملاحظات إضافية)</label>
+                <textarea
+                  value={customer.evaluation?.additionalNotes || ''}
+                  onChange={(e) => handleChange('evaluation', 'additionalNotes', e.target.value)}
+                  rows={4}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  placeholder="Add any notes..."
+                />
+              </div>
               </div>
             )}
 

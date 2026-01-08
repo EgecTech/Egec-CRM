@@ -8,7 +8,7 @@ import { cacheGet, cacheSet } from "../../../lib/cache";
  * Internal API endpoint to fetch universities (with optional country filter)
  * Used by CRM forms for cascading dropdowns
  * 
- * GET /api/crm/universities?country=Turkey
+ * GET /api/crm/universities?country=Egypt
  * Returns: { success: true, data: [{ value: "uni_id", label: "University Name" }] }
  */
 export default async function handler(req, res) {

@@ -22,7 +22,7 @@ export default function Reports() {
 
     if (status === 'authenticated') {
       const role = session?.user?.role;
-      if (role !== 'admin' && role !== 'superadmin') {
+      if (role !== 'admin' && role !== 'superadmin' && role !== 'superagent') {
         router.push('/crm/dashboard');
         return;
       }

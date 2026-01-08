@@ -24,9 +24,18 @@ export default function CustomerList() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [activeDegreeTab, setActiveDegreeTab] = useState('all'); // all, bachelor, master, phd
   const [filters, setFilters] = useState({
     counselorStatus: '',
-    assignedAgent: ''
+    assignedAgent: '',
+    createdFrom: '',
+    createdTo: ''
+  });
+  const [degreeStats, setDegreeStats] = useState({
+    all: 0,
+    bachelor: 0,
+    master: 0,
+    phd: 0
   });
   const [systemSettings, setSystemSettings] = useState({});
   const [agents, setAgents] = useState([]);
@@ -75,6 +84,18 @@ export default function CustomerList() {
     }
   };
 
+  const fetchDegreeStats = async () => {
+    try {
+      const response = await fetch('/api/crm/customers/stats');
+      const data = await response.json();
+      if (data.success) {
+        setDegreeStats(data.stats);
+      }
+    } catch (err) {
+      console.error('Error fetching degree stats:', err);
+    }
+  };
+
   const fetchCustomers = async () => {
     try {
       setLoading(true);
@@ -87,6 +108,13 @@ export default function CustomerList() {
       if (searchQuery) params.append('search', searchQuery);
       if (filters.counselorStatus) params.append('counselorStatus', filters.counselorStatus);
       if (filters.assignedAgent) params.append('assignedAgent', filters.assignedAgent);
+      if (filters.createdFrom) params.append('createdFrom', filters.createdFrom);
+      if (filters.createdTo) params.append('createdTo', filters.createdTo);
+      
+      // Add degree type filter
+      if (activeDegreeTab !== 'all') {
+        params.append('degreeType', activeDegreeTab);
+      }
       
       const response = await fetch(`/api/crm/customers?${params}`);
       const data = await response.json();
@@ -114,15 +142,26 @@ export default function CustomerList() {
 
     if (status === 'authenticated') {
       const role = session?.user?.role;
-      const isAdminUser = role === 'superadmin' || role === 'admin';
+      const isAdminUser = role === 'superadmin' || role === 'admin' || role === 'superagent';
+      const isAgentUser = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+      const isDataEntryUser = role === 'dataentry';
       
       fetchCustomers();
+      
+      // Fetch system settings for all users (needed for filters)
+      fetchSystemSettings();
+      
+      // Fetch agents only for admin users
       if (isAdminUser) {
-        fetchSystemSettings();
         fetchAgents();
       }
+      
+      // Fetch degree stats for admin, agent, and data entry users
+      if (isAdminUser || isAgentUser || isDataEntryUser) {
+        fetchDegreeStats();
+      }
     }
-  }, [status, router, pagination.page, searchQuery, filters, session]);
+  }, [status, router, pagination.page, searchQuery, filters, session, activeDegreeTab]);
 
   const handleSearch = useCallback((e) => {
     setSearchQuery(e.target.value);
@@ -134,10 +173,17 @@ export default function CustomerList() {
     setPagination(prev => ({ ...prev, page: 1 }));
   }, []);
 
+  const handleDegreeTabChange = (tab) => {
+    setActiveDegreeTab(tab);
+    setPagination(prev => ({ ...prev, page: 1 }));
+  };
+
   const resetFilters = useCallback(() => {
     setFilters({
       counselorStatus: '',
-      assignedAgent: ''
+      assignedAgent: '',
+      createdFrom: '',
+      createdTo: ''
     });
     setSearchQuery('');
     setPagination(prev => ({ ...prev, page: 1 }));
@@ -155,10 +201,13 @@ export default function CustomerList() {
   }
 
   const role = session?.user?.role;
-  const isAdmin = role === 'superadmin' || role === 'admin';
+  const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
+  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isDataEntry = role === 'dataentry';
+  const canAccessCustomers = isAdmin || isAgent || isDataEntry;
 
-  // Only show this page for admin and superadmin
-  if (status === 'authenticated' && !isAdmin) {
+  // Redirect if no access
+  if (status === 'authenticated' && !canAccessCustomers) {
     router.push('/crm/dashboard');
     return null;
   }
@@ -177,13 +226,13 @@ export default function CustomerList() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-white">
-                  {isAdmin ? 'All Customers' : 'My Customers'}
+                  {isAdmin ? 'All Customers' : isAgent ? 'My Assigned Customers' : 'My Customers'}
                 </h1>
                 <p className="text-slate-400 mt-2">
-                  Manage and track customer records
+                  {isAdmin ? 'Manage and track all customer records' : isAgent ? 'Manage your assigned customer records' : 'View and manage your created customers'}
                 </p>
               </div>
-              {(role === 'superadmin' || role === 'admin' || role === 'dataentry') && (
+              {(role === 'superadmin' || role === 'admin' || role === 'superagent' || role === 'dataentry') && (
                 <Link href="/crm/customers/create">
                   <button className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-bold hover:from-amber-600 hover:to-orange-600 transition-all shadow-lg">
                     <FaUserPlus className="w-5 h-5" />
@@ -197,6 +246,82 @@ export default function CustomerList() {
 
         {/* Main Content */}
         <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Degree Type Tabs - For all users (Admin, Super Agent, Agent, Data Entry) */}
+          {(isAdmin || isAgent || isDataEntry) && (
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 mb-6 overflow-hidden">
+            <div className="flex border-b border-slate-200">
+              <button
+                onClick={() => handleDegreeTabChange('all')}
+                className={`flex-1 px-6 py-4 text-sm font-bold transition-all ${
+                  activeDegreeTab === 'all'
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span>📊 All Customers</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs ${
+                    activeDegreeTab === 'all' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {degreeStats.all.toLocaleString()}
+                  </span>
+                </div>
+              </button>
+              <button
+                onClick={() => handleDegreeTabChange('bachelor')}
+                className={`flex-1 px-6 py-4 text-sm font-bold transition-all ${
+                  activeDegreeTab === 'bachelor'
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span>Bachelor (بكالوريوس)</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs ${
+                    activeDegreeTab === 'bachelor' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {degreeStats.bachelor.toLocaleString()}
+                  </span>
+                </div>
+              </button>
+              <button
+                onClick={() => handleDegreeTabChange('master')}
+                className={`flex-1 px-6 py-4 text-sm font-bold transition-all ${
+                  activeDegreeTab === 'master'
+                    ? 'bg-gradient-to-r from-purple-500 to-violet-500 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span>Master (ماجستير)</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs ${
+                    activeDegreeTab === 'master' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {degreeStats.master.toLocaleString()}
+                  </span>
+                </div>
+              </button>
+              <button
+                onClick={() => handleDegreeTabChange('phd')}
+                className={`flex-1 px-6 py-4 text-sm font-bold transition-all ${
+                  activeDegreeTab === 'phd'
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                    : 'bg-white text-slate-600 hover:bg-slate-50'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <span>PhD (دكتوراه)</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs ${
+                    activeDegreeTab === 'phd' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                  }`}>
+                    {degreeStats.phd.toLocaleString()}
+                  </span>
+                </div>
+              </button>
+            </div>
+          </div>
+          )}
+
           {/* Search and Filters */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -241,9 +366,10 @@ export default function CustomerList() {
             </div>
 
             {/* Filters Panel */}
-            {showFilters && isAdmin && (
+            {showFilters && (
               <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                  {/* Counselor Status - Available for all roles */}
                   <div>
                     <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
                       حالة المرشد (Counselor Status)
@@ -262,6 +388,8 @@ export default function CustomerList() {
                     </select>
                   </div>
 
+                  {/* Agent Filter - Only for Admin roles (not for Agent or Data Entry) */}
+                  {isAdmin && (
                   <div>
                     <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
                       Agent
@@ -278,6 +406,31 @@ export default function CustomerList() {
                         </option>
                       ))}
                     </select>
+                  </div>
+                  )}
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
+                      📅 Created From (من تاريخ)
+                    </label>
+                    <input
+                      type="date"
+                      value={filters.createdFrom}
+                      onChange={(e) => handleFilterChange('createdFrom', e.target.value)}
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
+                      📅 Created To (إلى تاريخ)
+                    </label>
+                    <input
+                      type="date"
+                      value={filters.createdTo}
+                      onChange={(e) => handleFilterChange('createdTo', e.target.value)}
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
+                    />
                   </div>
 
                   <div className="flex items-end">
@@ -334,7 +487,9 @@ export default function CustomerList() {
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Name</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Phone</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">حالة المرشد</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Agent</th>
+                    {isAdmin && (
+                      <th className="px-6 py-4 text-left text-xs font-bold uppercase">Agent</th>
+                    )}
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Desired Specialization (التخصص المطلوب)</th>
                     <th className="px-6 py-4 text-center text-xs font-bold uppercase">Actions</th>
                   </tr>
@@ -342,13 +497,13 @@ export default function CustomerList() {
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-12">
+                      <td colSpan={isAdmin ? 7 : 6} className="text-center py-12">
                         <Loading />
                       </td>
                     </tr>
                   ) : customers.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="text-center py-12 text-slate-500">
+                      <td colSpan={isAdmin ? 7 : 6} className="text-center py-12 text-slate-500">
                         No customers found
                       </td>
                     </tr>
@@ -380,15 +535,17 @@ export default function CustomerList() {
                             {customer.evaluation?.counselorStatus || '-'}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          {customer.assignment?.assignedAgentName ? (
-                            <span className="text-sm text-slate-700">
-                              {customer.assignment.assignedAgentName}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-slate-400">Not assigned</span>
-                          )}
-                        </td>
+                        {isAdmin && (
+                          <td className="px-6 py-4">
+                            {customer.assignment?.assignedAgentName ? (
+                              <span className="text-sm text-slate-700">
+                                {customer.assignment.assignedAgentName}
+                              </span>
+                            ) : (
+                              <span className="text-xs text-slate-400">Not assigned</span>
+                            )}
+                          </td>
+                        )}
                         <td className="px-6 py-4">
                           <span className="text-sm text-slate-700">
                             {customer.desiredProgram?.desiredSpecialization || '-'}

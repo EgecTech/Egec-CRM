@@ -34,6 +34,7 @@ export default function UserManagement() {
 
     if (status === 'authenticated') {
       const role = session?.user?.role;
+      // Only admin and superadmin can access user management (NOT superagent)
       if (role !== 'admin' && role !== 'superadmin') {
         router.push('/crm/dashboard');
         return;
@@ -127,10 +128,25 @@ export default function UserManagement() {
     const colors = {
       'superadmin': 'bg-rose-100 text-rose-700',
       'admin': 'bg-violet-100 text-violet-700',
+      'superagent': 'bg-amber-100 text-amber-700',
       'agent': 'bg-blue-100 text-blue-700',
       'dataentry': 'bg-emerald-100 text-emerald-700'
     };
     return colors[role] || 'bg-slate-100 text-slate-700';
+  };
+
+  const getRoleLabel = (role) => {
+    const labels = {
+      'superadmin': 'Super Admin',
+      'admin': 'Admin',
+      'superagent': 'Super Agent',
+      'agent': 'Agent',
+      'dataentry': 'Data Entry',
+      'egecagent': 'EGEC Agent',
+      'studyagent': 'Study Agent',
+      'edugateagent': 'EduGate Agent'
+    };
+    return labels[role] || role;
   };
 
   if (status === 'loading' || loading) {
@@ -199,7 +215,7 @@ export default function UserManagement() {
                     <td className="px-6 py-4 text-slate-700">{user.email}</td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadge(user.role)}`}>
-                        {user.role}
+                        {getRoleLabel(user.role)}
                       </span>
                     </td>
                     <td className="px-6 py-4">
@@ -327,6 +343,7 @@ export default function UserManagement() {
                     {session?.user?.role === 'admin' && (
                       <option value="admin">Admin</option>
                     )}
+                    <option value="superagent">Super Agent</option>
                     <option value="agent">Agent</option>
                     <option value="dataentry">Data Entry</option>
                   </select>
@@ -432,6 +449,7 @@ export default function UserManagement() {
                         <option value="admin">Admin</option>
                       </>
                     )}
+                    <option value="superagent">Super Agent</option>
                     <option value="agent">Agent</option>
                     <option value="dataentry">Data Entry</option>
                   </select>

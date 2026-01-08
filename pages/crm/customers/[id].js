@@ -17,16 +17,6 @@ import {
   FaFileAlt
 } from 'react-icons/fa';
 
-const TABS = [
-  { id: 'basic', label: 'Basic Info', icon: '👤' },
-  { id: 'marketing', label: 'Marketing Data', icon: '📊' },
-  { id: 'qualification', label: 'Qualification', icon: '🎓' },
-  { id: 'desired', label: 'Desired Program', icon: '🎯' },
-  { id: 'evaluation', label: 'Evaluation', icon: '⭐' },
-  { id: 'followups', label: 'Follow-ups', icon: '📞' },
-  { id: 'timeline', label: 'Activity', icon: '📋' }
-];
-
 export default function CustomerProfile() {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -45,6 +35,23 @@ export default function CustomerProfile() {
     outcome: ''
   });
   const [savingFollowup, setSavingFollowup] = useState(false);
+
+  // Permission checks
+  const role = session?.user?.role;
+  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isSuperAgent = role === 'superagent';
+  const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
+
+  // Dynamic tabs based on role
+  const TABS = [
+    { id: 'basic', label: 'Basic Info', icon: '👤' },
+    ...(canSeeMarketing ? [{ id: 'marketing', label: 'Marketing Data', icon: '📊' }] : []),
+    { id: 'qualification', label: 'Qualification', icon: '🎓' },
+    { id: 'desired', label: 'Desired Program', icon: '🎯' },
+    { id: 'evaluation', label: 'Evaluation', icon: '⭐' },
+    { id: 'followups', label: 'Follow-ups', icon: '📞' },
+    { id: 'timeline', label: 'Activity', icon: '📋' }
+  ];
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -74,6 +81,38 @@ export default function CustomerProfile() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Check if user can edit this customer
+  const canEdit = () => {
+    if (!customer || !session?.user) return false;
+
+    const userId = session.user.id;
+
+    // Superadmin, Admin, and Superagent can edit all customers
+    if (role === 'superadmin' || role === 'admin' || role === 'superagent') {
+      return true;
+    }
+
+    // Data Entry can edit their own customers within 15 minutes
+    if (role === 'dataentry') {
+      const createdBy = customer.createdBy?.toString() || customer.createdBy;
+      if (createdBy !== userId) return false;
+
+      const createdAt = new Date(customer.createdAt);
+      const now = new Date();
+      const minutesSinceCreation = (now - createdAt) / 1000 / 60;
+
+      return minutesSinceCreation <= 15;
+    }
+
+    // Agents can edit their assigned customers
+    if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+      const assignedAgentId = customer.assignment?.assignedAgentId?.toString() || customer.assignment?.assignedAgentId;
+      return assignedAgentId === userId;
+    }
+
+    return false;
   };
 
   const fetchFollowups = async () => {
@@ -177,7 +216,6 @@ export default function CustomerProfile() {
     );
   }
 
-  const role = session?.user?.role;
   const isAdmin = role === 'superadmin' || role === 'admin';
   const interestBadge = getInterestBadge(customer.evaluation?.interestRate);
 
@@ -241,6 +279,32 @@ export default function CustomerProfile() {
                 )}
               </div>
 
+              {/* Data Entry Edit Window Warning */}
+              {session?.user?.role === 'dataentry' && customer.createdBy?.toString() === session.user.id && (
+                <>
+                  {(() => {
+                    const createdAt = new Date(customer.createdAt);
+                    const now = new Date();
+                    const minutesSinceCreation = (now - createdAt) / 1000 / 60;
+                    const remainingMinutes = Math.max(0, 15 - minutesSinceCreation);
+
+                    if (remainingMinutes > 0) {
+                      return (
+                        <div className="mb-4 bg-amber-50 border border-amber-200 rounded-lg p-3 text-amber-800 text-sm">
+                          ⏱️ You can edit this customer for the next <strong>{Math.floor(remainingMinutes)} minutes</strong>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-800 text-sm">
+                          🔒 Your 15-minute edit window has expired. Contact your supervisor to edit this customer.
+                        </div>
+                      );
+                    }
+                  })()}
+                </>
+              )}
+
               {/* Quick Actions */}
               <div className="flex items-center gap-2">
                 <a href={`tel:${customer.basicData?.customerPhone}`}>
@@ -260,12 +324,14 @@ export default function CustomerProfile() {
                     </button>
                   </a>
                 )}
-                <Link href={`/crm/customers/${id}/edit`}>
-                  <button className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
-                    <FaEdit className="w-4 h-4" />
-                    Edit
-                  </button>
-                </Link>
+                {canEdit() && (
+                  <Link href={`/crm/customers/${id}/edit`}>
+                    <button className="flex items-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700">
+                      <FaEdit className="w-4 h-4" />
+                      Edit
+                    </button>
+                  </Link>
+                )}
                 <button 
                   onClick={() => setShowFollowupModal(true)}
                   className="flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg font-semibold hover:from-amber-600 hover:to-orange-600"
@@ -319,8 +385,8 @@ export default function CustomerProfile() {
             </div>
           )}
 
-          {/* Marketing Data Tab */}
-          {activeTab === 'marketing' && (
+          {/* Marketing Data Tab - Only for Superadmin and Admin */}
+          {activeTab === 'marketing' && canSeeMarketing && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <h2 className="text-xl font-bold text-slate-900 mb-6">Marketing Data</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -360,6 +426,7 @@ export default function CustomerProfile() {
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <h2 className="text-xl font-bold text-slate-900 mb-6">Desired Program</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <InfoField label="Study Destination (الوجهة الدراسية)" value={customer.desiredProgram?.studyDestination || 'Not specified'} />
                 <InfoField label="Desired University" value={customer.desiredProgram?.desiredUniversity || 'Not specified'} />
                 <InfoField label="Desired College" value={customer.desiredProgram?.desiredCollege || 'Not specified'} />
                 <InfoField label="Desired Specialization" value={customer.desiredProgram?.desiredSpecialization || 'Not specified'} />

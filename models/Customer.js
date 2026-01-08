@@ -22,7 +22,7 @@ const customerSchema = new mongoose.Schema(
     // ========== MARKETING DATA (بيانات التسويق) ==========
     marketingData: {
       requiredScientificInterface: String,
-      studyDestination: { type: String, default: "مصر" }, // الوجهة الدراسية
+      // studyDestination moved to desiredProgram
       source: String,
       company: String,
       inquiryDate: Date,
@@ -150,6 +150,9 @@ const customerSchema = new mongoose.Schema(
 
     // ========== DESIRED DEGREE (بيانات الدرجة العلمية المطلوبة) ==========
     desiredProgram: {
+      // Study destination - moved from marketingData
+      studyDestination: { type: String, default: "Egypt" }, // الوجهة الدراسية
+      
       // Common fields for all degree types
       desiredSpecialization: String,
       desiredSpecializationId: {
@@ -302,6 +305,18 @@ customerSchema.index({
   "basicData.customerPhone": "text",
   customerNumber: "text",
 });
+
+// Performance indexes for queries
+customerSchema.index({ "assignment.assignedAgentId": 1 }); // For agent queries
+customerSchema.index({ createdBy: 1 }); // For data entry queries
+customerSchema.index({ createdAt: -1 }); // For date sorting
+customerSchema.index({ degreeType: 1 }); // For degree filtering
+customerSchema.index({ "evaluation.counselorStatus": 1 }); // For status filtering
+customerSchema.index({ isDeleted: 1 }); // For soft delete queries
+
+// Compound indexes for common query patterns
+customerSchema.index({ "assignment.assignedAgentId": 1, degreeType: 1 }); // Agent + degree
+customerSchema.index({ isDeleted: 1, createdAt: -1 }); // Active customers sorted by date
 
 // Pre-save validation and cleanup
 customerSchema.pre("save", function (next) {
