@@ -53,10 +53,16 @@ export default async function handler(req, res) {
     }
 
     // Transform colleges to dropdown format
-    const dropdownData = (university.colleges || []).map(college => ({
-      value: college._id.toString(),
-      label: college.name
-    }));
+    // Filter out colleges with "لا يوجد" (none/not available)
+    const dropdownData = (university.colleges || [])
+      .filter(college => {
+        const collegeName = college.collegeName || college.name || '';
+        return collegeName && collegeName !== 'لا يوجد';
+      })
+      .map(college => ({
+        value: college.collegeId ? college.collegeId.toString() : college._id.toString(),
+        label: college.collegeName || college.name || 'Unknown College'
+      }));
 
     // Sort by name
     dropdownData.sort((a, b) => a.label.localeCompare(b.label));

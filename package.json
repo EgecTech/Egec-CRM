@@ -20,6 +20,8 @@
     "seed:destinations": "node scripts/updateStudyDestinations.js",
     "seed:all": "npm run seed:crm && npm run seed:destinations && npm run seed:universities",
     "seed:new-universities": "node scripts/seed153Universities.js",
+    "update:153universities": "node scripts/updateTo153Universities.js",
+    "parse:info": "node scripts/parseInfoFile.js",
     "check:env": "node scripts/checkEnvironment.js",
     "verify:destinations": "node scripts/verifyStudyDestinations.js",
     "clear:destinations": "node scripts/clearOldStudyDestinations.js",

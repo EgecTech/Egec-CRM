@@ -1,0 +1,2210 @@
+[
+  {
+    "name": "Universität Bonn - جامعه بون",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Karlsruhe Institute of  Technology (KIT) -  (KIT) معهد كالسروه للتكنولوجيا",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Fresenius University of Applied Sciences - جامعة فريزينيوس للعلوم التطبيقية",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "John von Neumann University - جامعة جون فون نيومان",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Business Administration and Economics - كلية إدارة الأعمال والإقتصاد"
+      },
+      {
+        "collegeName": "College of Horticulture and Rural Development - كلية البستنة والتنمية الريفية"
+      },
+      {
+        "collegeName": "College of Engineering and Computer Science, University of Gamff - كلية الهندسة وعلوم الحاسوب بجامعة غامف"
+      }
+    ]
+  },
+  {
+    "name": "Free University of Berlin - برلين الحره",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "University of Pécs - جامعة بيتش",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Engineering and Information Technology - كلية الهندسة وتكنولوجيا المعلومات"
+      },
+      {
+        "collegeName": "College of Cultural Sciences, Education and Regional Development - كلية العلوم الثقافية والتربية والتنمية الإقليمية"
+      },
+      {
+        "collegeName": "College of Business Administration and Economics - كلية إدارة الأعمال والإقتصاد"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Humanities and Social Sciences - كلية العلوم الإنسانية والإجتماعية"
+      },
+      {
+        "collegeName": "College of Health Sciences - كلية العلوم الصحية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Music and Visual Arts - كلية الموسيقي والفنون البصرية"
+      },
+      {
+        "collegeName": "College of International Studies - كلية الدراسات الدولية"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      }
+    ]
+  },
+  {
+    "name": "Budapest Metropolitan University - جامعة بودابست متروبوليتان",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Art - كلية الفن"
+      },
+      {
+        "collegeName": "College of Business Administration, Communications and Tourism - كلية إدارة الأعمال والإتصالات والسياجة"
+      }
+    ]
+  },
+  {
+    "name": "Eötvös Loránd University ( ELTE) - (ELTE) جامعة إيلتي إيتفوش لوراند",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Economics - كلية الإقتصاد"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "college of Informatics - كلية المعلوماتية"
+      },
+      {
+        "collegeName": "College of Humanities - كلية العلوم الإنسانية"
+      },
+      {
+        "collegeName": "College of Social Sciences - كلية العلوم الإجتماعية"
+      },
+      {
+        "collegeName": "College of Education and Psychology - كلية التربية وعلم النفس"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Primary Education and Kindergarten - كلية التربية الإبتدائية ورياض الأطفال"
+      },
+      {
+        "collegeName": "Barzi Gustav College for Special Needs Education - كلية بارزي غوستاف لتعليم ذوي الاحتياجات الخاصة"
+      }
+    ]
+  },
+  {
+    "name": "Budapest University of Economics and Business - جامعة بودابست للاقتصاد والأعمال",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Marketing and Business Communications - كلية التسويق والإتصالات التجارية"
+      },
+      {
+        "collegeName": "College of Management - كلية الإدارة"
+      },
+      {
+        "collegeName": "College of International Business Administration - كلية إدارة الأعمال الدولية"
+      },
+      {
+        "collegeName": "College of Finance and Accounting - كلية المالية والمحاسبة"
+      }
+    ]
+  },
+  {
+    "name": "Budapest University of Technology and Economics - جامعة بودابست للتكنولوجيا والاقتصاد",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College of Civil Engineering (ÉMK) - (ÉMK) كلية الهندسة المدنية"
+      },
+      {
+        "collegeName": "College of Architecture - كلية الهندسة المعمارية"
+      },
+      {
+        "collegeName": "College of Electrical and Computer Engineering - كلية الهندسة الكهربائية والمعلوماتية"
+      },
+      {
+        "collegeName": "College of Natural Sciences - كلية العلوم الطبيعية"
+      },
+      {
+        "collegeName": "College of Economic and Social Sciences - كلية العلوم الإقتصادية والإجتماعية"
+      },
+      {
+        "collegeName": "College of Transportation Engineering and Vehicle Engineering - كلية هندسة النقل وهندسة المركبات"
+      },
+      {
+        "collegeName": "College of Chemical Technology and Biotechnology - كلية التكنولوجيا الكيميائية والتكنولوجيا الحيوية"
+      },
+      {
+        "collegeName": "College of Mechanical Engineering - كلية الهندسة الميكانيكية"
+      }
+    ]
+  },
+  {
+    "name": "University of Miskolc - جامعة ميسكولك",
+    "country": "Hungary",
+    "colleges": [
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "Bartok Bella Music College - كلية بارتوك بيلا للموسيقي"
+      },
+      {
+        "collegeName": "College of Health Sciences - كلية العلوم الصحية"
+      },
+      {
+        "collegeName": "College of Humanities and Social Sciences - كلية العلوم الإنسانية والإجتماعية"
+      },
+      {
+        "collegeName": "College of Economics - كلية الإقتصاد"
+      },
+      {
+        "collegeName": "College of Mechanical and Informatics Engineering - كلية الهندسة الميكانيكية والمعلوماتية"
+      },
+      {
+        "collegeName": "College of Materials Engineering and Chemical Engineering - كلية هندسة المواد والهندسة الكميائية"
+      },
+      {
+        "collegeName": "College of Earth and Environmental Sciences and Engineering - كلية علوم الأرض والبيئة والهندسة"
+      }
+    ]
+  },
+  {
+    "name": "University of Szeged - جامعة سيجد",
+    "country": "Hungary",
+    "colleges": []
+  },
+  {
+    "name": "American University of Ras Al Khaimah - الجامعة الأمريكية في رأس الخيمة",
+    "country": "United Arab Emirates",
+    "colleges": [
+      {
+        "collegeName": "College of Engineering and Computing - كلية الهندسة والحوسبة"
+      },
+      {
+        "collegeName": "College of Arts and Sciences - كلية الأداب والعلوم"
+      },
+      {
+        "collegeName": "College of Business Administration - كلية إدارة الأعمال"
+      }
+    ]
+  },
+  {
+    "name": "Private university of applied sciences - جامعة العلوم التطبيقية الخاصة",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "National university of technology - الجامعية الوطنية للتكنولوجيا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Near East University - جامعة الشرق الادنى",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "Philadelphia university - جامعة فيلادلفيا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "CYPRUS INTERNATIONAL UNIVERSITY - جامعة قبرص الدولية",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "Florida International University - جامعة فلوريدا الدولية",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "KYRENIA ÜNİVERSİTESİ - جامعة كيرينيا",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "Gadara university - جامعة جدارا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "American university of madaba - الجامعة الأمريكية في مادبا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Aqaba university of medical sciences - جامعة العقبة للعلوم الطبية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Ibn sina national - إبن سينا الأهلية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Ibn sina university of medical sciences - جامعة ابن سينا للعلوم الطبية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "CIU University - جامعة CIU",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "Balqa applied university - جامعة البلقاء التطبيقية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Al-zaytoonah university of jordan - جامعة الزيتونة الأردنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "University of Kansas - جامعة كانساس",
+    "country": "Cyprus",
+    "colleges": []
+  },
+  {
+    "name": "Tafila technical university - جامعة الطفيلة التقنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Strong aqaba university - جامعة العقبة للتكنولوجيا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Jerash university - جامعة جرش",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Luminus technical university college - كلية لومينوس الجامعية التقنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "International islamic sciences university - جامعة العلوم الإسلامية العالمية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Al-hussein technical university - جامعة الحسين التقنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Arab open niuversity, jordan branch - الجامعة العربية المفتوحة فرع الأردن",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Al-isra university - جامعة الإسراء",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Zarqa university - جامعة الزرقاء",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Aqaba university college - جامعة عمان العربية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Ajloun National university - جامعة عجلون الوطنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Aqaba university college - كلية العقبة الجامعية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Prince hussein academy for civil brotection - أكاديمية الأمير حسين للحماية المدنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Al hussein bin talal university - جامعة الحسين بن طلال",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Motah university - جامعة مؤتة",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Jordanian german university - الجامعة الألمانية الأردنية",
+    "country": "Jordan",
+    "colleges": [
+      {
+        "collegeName": "الهندسة الكهربائية وتكنولوجيا المعلومات"
+      },
+      {
+        "collegeName": "الهندسة المعمارية والبيئة المبنية"
+      },
+      {
+        "collegeName": "كلية إدارة الأعمال"
+      },
+      {
+        "collegeName": "العلوم الإنسانية والاجتماعية التطبيقية"
+      },
+      {
+        "collegeName": "العلوم التقنية التطبيقية"
+      },
+      {
+        "collegeName": "التمريض"
+      },
+      {
+        "collegeName": "هندسة وإدارة الموارد الطبيعية"
+      },
+      {
+        "collegeName": "العلوم الطبية التطبيقية"
+      }
+    ]
+  },
+  {
+    "name": "Lrbid national university - جامعة اربد الأهلية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "princess sumaya university for technology - جامعة الأميرة سمية للتكنولوجيا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Jordan university of science and technology - جامعة العلوم والتكنولوجيا الاردنيه",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Middle east university - MEU جامعة الشرق الأوسط",
+    "country": "Jordan",
+    "colleges": [
+      {
+        "collegeName": "College of Business Administration - كلية إدارة الأعمال"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "Technical College - الكلية التقنية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Arts and Educational Sciences - كلية الآداب والعلوم التربوية"
+      },
+      {
+        "collegeName": "College of Allied Medical Sciences - كلية العلوم الطبية المساعدة"
+      },
+      {
+        "collegeName": "College of Engineering and Design - كلية الهندسة والتصميم"
+      },
+      {
+        "collegeName": "College of Science and Information Technology - كلية العلوم وتكنولوجيا المعلومات"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      }
+    ]
+  },
+  {
+    "name": "National university of technology - الجامعية الوطنية للتكنولوجيا",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "University of Petra - جامعة البترا",
+    "country": "Jordan",
+    "colleges": [
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Information Technology - كلية تكنولوجيا المعلومات"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "College of Architecture and Design - كلية العمارة والتصميم"
+      },
+      {
+        "collegeName": "College of Arts and Sciences - كلية الأداب والعلوم"
+      },
+      {
+        "collegeName": "College of Pharmacy and Medical Sciences - كلية الصيدلة والعلوم الطبية"
+      },
+      {
+        "collegeName": "College of Administrative and Financial Sciences - كلية العلوم الإدارية والمالية"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      }
+    ]
+  },
+  {
+    "name": "Amman private university - جامعة عمان الاهلية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Hashemite university - الجامعة الهاشمية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Yarmouk university - جامعة اليرموك",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "Al Bayt university - جامعة آل البيت",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "University of jordan - الجامعة الأردنية",
+    "country": "Jordan",
+    "colleges": []
+  },
+  {
+    "name": "RAK Medical & Health Sciences University - جامعة رأس الخيمة للطب والعلوم الصحية",
+    "country": "United Arab Emirates",
+    "colleges": [
+      {
+        "collegeName": "RAK College of Pharmacy (RAKСОР) - (RAKСОР) كلية الصيدلة في رأس الخيمة"
+      },
+      {
+        "collegeName": "RAK College of Nursing (RAKCON) - (RAKCON) كلية التمريض في رأس الخيمة"
+      },
+      {
+        "collegeName": "RAK College of Medical Sciences (RAKCOMS) - (RAKCOMS) كلية العلوم الطبية في رأس الخيمة"
+      },
+      {
+        "collegeName": "RAK College of Dental Sciences (RAKCODS) - (RAKCODS) كلية علوم طب الأسنان في رأس الخيمة"
+      }
+    ]
+  },
+  {
+    "name": "Technical University of Munich - الجامعة التقنية فى ميونخ",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Macromedia University of Applied Sciences - جامعة ماكروميديا للعلوم التطبيقية",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Constructor University - جامعة كونستراكتور",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Arden University Berlin - جامعة اردن برلين",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "University of Hochschule Fresenius - جامعة فريسينيوس للعلوم التطبيقية",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "SRH Berlin University of Applied Sciences - جامعة اس ار اتش برلين للعلوم التطبيقية",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Gisma Universityof Applied sciences - جامعة جيسما للعلوم التطبيقية",
+    "country": "Germany",
+    "colleges": [
+      {
+        "collegeName": "لا يوجد"
+      }
+    ]
+  },
+  {
+    "name": "Ain Shams University - جامعة عين شمس",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Languages - كلية الألسن"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "Girls' College - كلية البنات"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Graduate Studies for Childhood - كلية الدراسات العليا للطفولة"
+      },
+      {
+        "collegeName": "Institute of Graduate Studies and Environmental Research - معهد الدراسات العليا والبحوث البيئية"
+      },
+      {
+        "collegeName": "College of Archeology - كلية الآثار"
+      },
+      {
+        "collegeName": "Institute of Graduate Studies and Agricultural Research in Arid Areas - معهد الدراسات العليا والبحوث الزراعية في المناطق القاحلة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "College of International Business and Affairs - كلية الشئون والأعمال الدولية"
+      }
+    ]
+  },
+  {
+    "name": "Assiut University - جامعة أسيوط",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Fine Arts - كلية الفنون الجميلة"
+      },
+      {
+        "collegeName": "Institute of Materials Science and Nanotechnology - معهد علوم المواد والنانوتكنولوجي"
+      },
+      {
+        "collegeName": "College of Social Work - كلية الخدمة الإجتماعية"
+      },
+      {
+        "collegeName": "College of Sugar Technology and Integrated Industries - كلية تكنولوجيا صناعة السكر والصناعات التكاملية"
+      },
+      {
+        "collegeName": "Drug Research, Development and Innovation Institute - معهد بحوث تطوير وإبتكار الدواء"
+      },
+      {
+        "collegeName": "Molecular Biology Research Institute - معهد بحوث دراسات البيولوجيا الجزيئية"
+      },
+      {
+        "collegeName": "South Egypt Cancer Institute - معهد جنوب مصر للأورام"
+      }
+    ]
+  },
+  {
+    "name": "Minya University - جامعة المنيا",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Dar Al-Uloom - كلية دار العلوم"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Sports Sciences - كلية علوم الرياضة"
+      },
+      {
+        "collegeName": "College of Languages - كلية الألسن"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Fine Arts - كلية الفنون الجميلة"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Fine Arts Education - كلية التربية الفنية"
+      }
+    ]
+  },
+  {
+    "name": "Helwan University - جامعة حلوان",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Home Economics - كلية الإقتصاد المنزلى"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Social Work - كلية الخدمة الاجتماعية"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Fine Arts - كلية الفنون الجميلة"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Fine Arts Education - كلية التربية الفنية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "College of Music Education - كلية التربية الموسيقية"
+      },
+      {
+        "collegeName": "College of Nutrition Sciences - كلية علوم التغذية"
+      },
+      {
+        "collegeName": "College of Technology and Education - كلية التكنولوجيا والتعليم"
+      },
+      {
+        "collegeName": "Nursing Institute - معهد التمريض"
+      },
+      {
+        "collegeName": "National Institute of Intellectual Property - المعهد القومي للملكية الفكرية"
+      },
+      {
+        "collegeName": "college of Sports Sciences for Boys - كلية علوم الرياضة بنين"
+      },
+      {
+        "collegeName": "College of Sports Sciences for Girls - كلية علوم الرياضة بنات"
+      },
+      {
+        "collegeName": "College of Commerce and Business Administration - كلية التجارة وإدارة الأعمال"
+      },
+      {
+        "collegeName": "College of Engineering (Helwan) - كلية الهندسة (حلوان)"
+      },
+      {
+        "collegeName": "College of Engineering (Matariya) - كلية الهندسة (المطرية)"
+      }
+    ]
+  },
+  {
+    "name": "Zagazig University - جامعة الزقازيق",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Graduate Asian Studies - كلية الدراسات الأسيوية العليا"
+      },
+      {
+        "collegeName": "Higher Institute of Ancient Near Eastern Civilizations - المعهد العالي لحضارات الشرق الأدنى القديم"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing in Faqus - المعهد الفني للتمريض بفاقوس"
+      },
+      {
+        "collegeName": "College of Medicine, Faqus - كلية الطب البشري بفاقوس"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Archeology - كلية الآثار"
+      },
+      {
+        "collegeName": "College of Disability and Rehabilitation Sciences - كلية علوم ذوي الإعاقة والتأهيل"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Physical Education for Boys - كلية التربية الرياضية بنين"
+      },
+      {
+        "collegeName": "College of Physical Education for Girls - كلية التربية الرياضية للبنات"
+      },
+      {
+        "collegeName": "College of Technology and Development - كلية التكنولوجيا والتنمية"
+      },
+      {
+        "collegeName": "College of Oral and Dental Medicine and Surgery - كلية طب وجراحة الفم والأسنان"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Medicine, Zagazig - كلية الطب البشري بالزقازيق"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      }
+    ]
+  },
+  {
+    "name": "Tanta University - جامعة طنطا",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Sports Sciences - كلية علوم الرياضة"
+      }
+    ]
+  },
+  {
+    "name": "Cairo University - جامعة القاهرة",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of African Graduate Studies - كلية الدراسات الأفريقية العليا"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Archeology - كلية الآثار"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الفم والأسنان"
+      },
+      {
+        "collegeName": "College of Dar Al-Uloom - كلية دار العلوم"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Graduate Studies in Education - كلية الدراسات العليا للتربية"
+      },
+      {
+        "collegeName": "College of Graduate Studies for Statistical Research - كلية الدراسات العليا للبحوث الإحصائية"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "College of Nanotechnology Graduate Studies - كلية الدراسات العليا للنانو تكنولوجي"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Physical Therapy - كلية العلاج الطبيعي"
+      },
+      {
+        "collegeName": "College of Regional and Urban Planning - كلية التخطيط الإقليمي والعمراني"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "National Cancer Institute - المعهد القومي للأورام"
+      },
+      {
+        "collegeName": "National Institute of Laser Sciences - المعهد القومى لعلوم الليزر"
+      },
+      {
+        "collegeName": "college of Economics and Political Science - كلية الاقتصاد والعلوم السياسية"
+      }
+    ]
+  },
+  {
+    "name": "Tanta Al-Ahly - طنطا الأهليه",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      }
+    ]
+  },
+  {
+    "name": "Sadat City Private University - جامعة مدينة السادات الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Damietta National - دمياط الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Luxor National - الأقصر الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Suez Private University - جامعة السويس الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Damanhour National University - دمنهور الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Fayoum National - الفيوم الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Sohag National - سوهاج الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "New Valley Private School - الوادى الجديد الأهلية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Languages ​​and Humanities - كلية اللغات والعلوم الإنسانية"
+      }
+    ]
+  },
+  {
+    "name": "Kafr El Sheikh National - كفر الشيخ الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Ain Shams Private University - جامعة عين شمس الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Cairo national University - جامعة القاهرة الأهلية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Physical Therapy - كلية العلاج الطبيعي"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      }
+    ]
+  },
+  {
+    "name": "British University in Egypt - الجامعة البريطانية في مصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "New Salhiya University - جامعة الصالحية الجديدة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Draya University - جامعة دراية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "University of Peace in Egypt - جامعة السلام في مصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Nile Valley University - جامعة وادي النيل",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "ALHAYAH University - جامعة الحياة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "City University of Cairo - جامعة المدينة بالقاهرة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Innovation University - جامعة الإبتكار",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "May University in Cairo  - جامعة مايو بالقاهرة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Merit University - جامعة ميريت",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Badr University in Assiut - جامعة بدر بأسيوط",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Sphinx University - جامعة سفنكس",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Future University in Egypt - جامعة المستقبل بمصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Lotus University in Minya - جامعة لوتس بالمنيا",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Misr International University - جامعة مصرالدولية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Delta University of Science and Technology -  جامعة الدلتا للعلوم و التكنولوجيا",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Horus University - Egypt - جامعة حورس - مصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Sinai University -  جامعة سيناء",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Egypt University of Science and Technology - جامعة مصر للعلوم والتكنولوجيا",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Heliopolis University - جامعة هليوبوليس",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Al Ryada University for Science and Technologyجامعة الريادة للعلوم والتكنولوجيا",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "October University for Modern Sciences and Arts -  جامعة أكتوبر للعلوم الحديثة والآداب",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Egypt University of Informatics - جامعة مصر للمعلوماتية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Egyptian-Russian University - الجامعة المصرية الروسية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Nahda University - جامعة النهضة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Badr University in Cairo - جامعة بدر بالقاهرة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Egyptian Chinese University - الجامعة المصرية الصينية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Pharos University - جامعة فاروس",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Badia University - جامعة باديا",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Al-Ahram Canadian University - جامعة الأهرام الكندية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "South Valley National University -  جامعة جنوب الوادي الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Alexandria National University - جامعة الإسكندرية الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Minya National University - جامعة المنيا الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Zagazig Private University - جامعة الزقازيق الأهلية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Oral and Dental Medicine and Surgery - كلية طب وجراحة الفم والأسنان"
+      }
+    ]
+  },
+  {
+    "name": "Mansoura Private University - جامعة المنصورة الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Assiut Private University - جامعة اسيوط الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Benha Private University - جامعة بنها الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Egyptian National E-Learning University - الجامعة المصرية للتعليم الإلكتروني الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "French University in Egypt - الجامعة الفرنسية بمصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Nile University - جامعة النيل",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Menoufia Private University - جامعة المنوفية الأهلية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Helwan national University - جامعة حلوان الأهلية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Physical Therapy - كلية العلاج الطبيعي"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Information Technology and Computer Science - كلية تكنولوجيا المعلومات وعلوم الحاسوب"
+      },
+      {
+        "collegeName": "College of Applied Health Sciences Technology - كلية تكنولوجيا العلوم الصحية التطبيقية"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Humanities, Commerce and Business Administration - كلية العلوم الأنسانية والتجارة وأدارة الأعمال"
+      }
+    ]
+  },
+  {
+    "name": "New Ismailia University - Egypt - الإسماعيلية الجديدة - مصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "New Mansoura University - جامعة المنصورة الجديدة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Alamein International University - جامعه العلمين الدولية",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "King Salman International University - الملك سليمان الدوليه",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Al-Jalala University - الجلالة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "New Giza University - جامعة الجيزة الجديدة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Modern University for Information Technology - الجامعة الحديثة لتكنولوجيا المعلومات",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "German University in Cairo - الجامعة الألمانية بالقاهرة",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "6th of October University - جامعة 6 أكتوبر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Luxor University - جامعة الأقصر",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Sohag University - جامعة سوهاج",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Suez Canal University - جامعة قناة السويس",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Suez University - جامعة السويس",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "South Valley University - جامعة جنوب الوادى",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Benha University - جامعة بنها",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Physical Therapy - كلية العلاج الطبيعي"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "college of Engineering, Shubra - كلية الهندسة بشبرا"
+      },
+      {
+        "collegeName": "College of Engineering, Benha - كلية الهندسة ببنها"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Sports Sciences - كلية علوم الرياضة"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      }
+    ]
+  },
+  {
+    "name": "Alexandria University - جامعة الإسكندرية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Agriculture, Saba Pasha - كلية الزراعة سابا باشا"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Computer Science and Data Science - كلية الحاسبات وعلوم البيانات"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Economics and Political Science - كلية الدراسات الاقتصادية والعلوم السياسية"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Fine Arts - كلية الفنون الجميلة"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Physical Education for Girls - كلية التربية الرياضية للبنات"
+      },
+      {
+        "collegeName": "College of Physical Education for Boys - كلية التربية الرياضية بنين"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "Higher Institute of Public Health - المعهد العالي للصحة العامة"
+      },
+      {
+        "collegeName": "Medical Research Institute - معهد البحوث الطبية"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "Institute of Graduate Studies and Research - معهد الدراسات العليا والبحوث"
+      }
+    ]
+  },
+  {
+    "name": "Mansoura University - جامعة المنصورة",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Fine Arts - كلية الفنون الجميلة"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      }
+    ]
+  },
+  {
+    "name": "Aswan University - جامعه اسوان",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Menoufia University - جامعة المنوفية",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Engineering, Shebin El-Kom - كلية الهندسة بشبين الكوم"
+      },
+      {
+        "collegeName": "College of Electronic Engineering, Menoufia University - كلية الهندسة الالكترونية بمنوف"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Artificial Intelligence - كلية الذكاء الاصطناعي"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Home Economics - كلية الإقتصاد المنزلى"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "Liver Institute - معهد الكبد"
+      },
+      {
+        "collegeName": "College of Media - كلية الإعلام"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "Oncology Institute - معهد الأورام"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Applied Health Sciences Technology - كلية تكنولوجيا العلوم الصحية التطبيقية"
+      }
+    ]
+  },
+  {
+    "name": "Beni Suef University - جامعه بنى سويف",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Fayoum University - جامعة الفيوم",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Dar Al-Uloom - كلية دار العلوم"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Social Work - كلية الخدمة الاجتماعية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Archeology - كلية الآثار"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "Nile Basin Countries Institute - معهد دول حوض النيل"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Languages - كلية الألسن"
+      },
+      {
+        "collegeName": "Technical Institute of Nursing - المعهد الفني للتمريض"
+      }
+    ]
+  },
+  {
+    "name": "Kafrelsheikh University - جامعة كفر الشيخ",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "New Valley University - جامعة الوادى الجديد",
+    "country": "Egypt",
+    "colleges": []
+  },
+  {
+    "name": "Port Said University - جامعة بورسعيد",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Management Technology and Information Systems - كلية تكنولوجيا الادارة ونظم المعلومات"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Physical Therapy - كلية العلاج الطبيعي"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      }
+    ]
+  },
+  {
+    "name": "Arish University - جامعة العريش",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Agricultural and Environmental Sciences - كلية العلوم الزراعية البيئية"
+      },
+      {
+        "collegeName": "Institute of Graduate Environmental Studies - معهد الدراسات العليا البيئية"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Home Economics - كلية الإقتصاد المنزلى"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Aquaculture and Fisheries - كلية الإستزراع المائي والمصايد البحرية"
+      }
+    ]
+  },
+  {
+    "name": "University of sadat city - جامعة مدينة السادات",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Tourism and Hotels - كلية السياحة والفنادق"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "College of business - كلية التجارة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "Institute of Graduate Studies and Environmental Research - معهد الدراسات العليا والبحوث البيئية"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "Genetic Engineering and Biotechnology Research Institute - معهد بحوث الهندسة الوراثية والتكنولوجيا الحيوية"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      }
+    ]
+  },
+  {
+    "name": "Damietta University - جامعة دمياط",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of business - كلية تجارة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Specific Education - كلية التربية النوعية"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College rights - كلية الحقوق"
+      },
+      {
+        "collegeName": "College of Archeology - كلية الآثار"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Physical Education - كلية التربية الرياضية"
+      },
+      {
+        "collegeName": "College of Computer Science and Artificial Intelligence - كلية الحاسبات والذكاء الإصطناعي"
+      }
+    ]
+  },
+  {
+    "name": "Damanhour University - جامعة دمنهور",
+    "country": "Egypt",
+    "colleges": [
+      {
+        "collegeName": "College of Agriculture - كلية الزراعة"
+      },
+      {
+        "collegeName": "College of Arts - كلية الآداب"
+      },
+      {
+        "collegeName": "College of Dentistry - كلية طب الأسنان"
+      },
+      {
+        "collegeName": "College of Early Childhood Education - كلية التربية للطفولة المبكرة"
+      },
+      {
+        "collegeName": "College of Education - كلية التربية"
+      },
+      {
+        "collegeName": "College of Engineering - كلية الهندسة"
+      },
+      {
+        "collegeName": "College of Human Medicine - كلية الطب البشري"
+      },
+      {
+        "collegeName": "College of Nursing - كلية التمريض"
+      },
+      {
+        "collegeName": "College of Pharmacy - كلية الصيدلة"
+      },
+      {
+        "collegeName": "College of Veterinary Medicine - كلية الطب البيطرى"
+      },
+      {
+        "collegeName": "Institute of Graduate Studies and Environmental Research - معهد الدراسات العليا والبحوث البيئية"
+      },
+      {
+        "collegeName": "College of business - كلية تجارة"
+      },
+      {
+        "collegeName": "College of Science - كلية العلوم"
+      },
+      {
+        "collegeName": "College of Computers and Information - كلية الحاسبات والمعلومات"
+      },
+      {
+        "collegeName": "College of Specific Education in Nubaria - كلية التربية النوعية بالنوبارية"
+      },
+      {
+        "collegeName": "College of Applied Arts - كلية الفنون التطبيقية"
+      }
+    ]
+  }
+]
