@@ -11,6 +11,7 @@ import {
   FaFilter, 
   FaUserPlus, 
   FaEye,
+  FaEdit,
   FaUserCheck,
   FaDownload
 } from 'react-icons/fa';
@@ -552,12 +553,24 @@ export default function CustomerList() {
                           </span>
                         </td>
                         <td className="px-6 py-4 text-center">
-                          <Link href={`/crm/customers/${customer._id}`}>
-                            <button className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 transition-colors">
-                              <FaEye className="w-4 h-4" />
-                              View
-                            </button>
-                          </Link>
+                          <div className="flex items-center justify-center gap-2">
+                            <Link href={`/crm/customers/${customer._id}`}>
+                              <button 
+                                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                title="View Profile"
+                              >
+                                <FaEye className="w-4 h-4" />
+                              </button>
+                            </Link>
+                            <Link href={`/crm/customers/${customer._id}/edit`}>
+                              <button 
+                                className="p-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                title="Edit Customer"
+                              >
+                                <FaEdit className="w-4 h-4" />
+                              </button>
+                            </Link>
+                          </div>
                         </td>
                       </tr>
                     ))
