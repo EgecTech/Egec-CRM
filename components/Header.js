@@ -146,10 +146,10 @@ const EduGateHeader = React.memo(({ handleAsideOpen }) => {
               ></span>
             </button>
 
-            {/* Admin Create User */}
-            {session?.user?.role === "admin" && (
+            {/* Create User - Only for Super Admin */}
+            {session?.user?.role === "superadmin" && (
               <Link
-                href="/auth/signup"
+                href="/crm/users"
                 className="hidden md:flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-amber-500/20 to-orange-500/20 hover:from-amber-500/30 hover:to-orange-500/30 rounded-xl transition-all font-medium text-sm text-amber-300 border border-amber-500/30 hover:border-amber-500/50"
               >
                 <FiUserPlus className="w-4 h-4" />
