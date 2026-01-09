@@ -79,7 +79,14 @@ export default function AuditLogs() {
       'UPDATE': 'bg-blue-100 text-blue-700',
       'DELETE': 'bg-red-100 text-red-700',
       'ASSIGN': 'bg-violet-100 text-violet-700',
-      'LOGIN': 'bg-slate-100 text-slate-700'
+      'assigned': 'bg-violet-100 text-violet-700',
+      'CUSTOMER_AGENT_ADDED': 'bg-purple-100 text-purple-700',
+      'AGENT_ADDED': 'bg-indigo-100 text-indigo-700',
+      'UPDATE_SYSTEM_SETTING': 'bg-amber-100 text-amber-700',
+      'DELETE_SYSTEM_SETTING': 'bg-rose-100 text-rose-700',
+      'LOGIN': 'bg-green-100 text-green-700',
+      'LOGOUT': 'bg-slate-100 text-slate-700',
+      'LOGIN_FAILED': 'bg-red-100 text-red-700'
     };
     return colors[action] || 'bg-slate-100 text-slate-700';
   };
@@ -107,12 +114,32 @@ export default function AuditLogs() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold text-white">Audit Logs</h1>
-                <p className="text-slate-400 mt-2">Complete system activity trail</p>
+                <p className="text-slate-400 mt-2">Complete system activity trail - {pagination.total} total logs</p>
               </div>
               <button className="flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700">
                 <FaDownload className="w-4 h-4" />
                 Export Logs
               </button>
+            </div>
+            
+            {/* Quick Stats */}
+            <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                <p className="text-slate-400 text-sm">Total Logs</p>
+                <p className="text-white text-2xl font-bold mt-1">{pagination.total}</p>
+              </div>
+              <div className="bg-emerald-700/50 rounded-lg p-4 border border-emerald-600">
+                <p className="text-emerald-200 text-sm">Showing</p>
+                <p className="text-white text-2xl font-bold mt-1">{logs.length}</p>
+              </div>
+              <div className="bg-blue-700/50 rounded-lg p-4 border border-blue-600">
+                <p className="text-blue-200 text-sm">Current Page</p>
+                <p className="text-white text-2xl font-bold mt-1">{pagination.page} / {pagination.pages || 1}</p>
+              </div>
+              <div className="bg-violet-700/50 rounded-lg p-4 border border-violet-600">
+                <p className="text-violet-200 text-sm">Per Page</p>
+                <p className="text-white text-2xl font-bold mt-1">{pagination.limit}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -140,6 +167,14 @@ export default function AuditLogs() {
                 <option value="UPDATE">Update</option>
                 <option value="DELETE">Delete</option>
                 <option value="ASSIGN">Assign</option>
+                <option value="assigned">assigned (lowercase)</option>
+                <option value="CUSTOMER_AGENT_ADDED">Customer Agent Added</option>
+                <option value="AGENT_ADDED">Agent Added</option>
+                <option value="UPDATE_SYSTEM_SETTING">Update System Setting</option>
+                <option value="DELETE_SYSTEM_SETTING">Delete System Setting</option>
+                <option value="LOGIN">Login</option>
+                <option value="LOGOUT">Logout</option>
+                <option value="LOGIN_FAILED">Login Failed</option>
               </select>
               <select
                 value={filters.entityType}
@@ -147,9 +182,11 @@ export default function AuditLogs() {
                 className="px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500"
               >
                 <option value="">All Entities</option>
-                <option value="customer">Customer</option>
-                <option value="followup">Follow-up</option>
-                <option value="user">User</option>
+                <option value="customer">customer (lowercase)</option>
+                <option value="Customer">Customer (uppercase)</option>
+                <option value="followup">followup</option>
+                <option value="system_setting">system_setting</option>
+                <option value="auth">auth (Authentication)</option>
               </select>
             </div>
             <button
@@ -202,11 +239,26 @@ export default function AuditLogs() {
                         <p className="text-xs text-slate-500">{log.entityName}</p>
                       </td>
                       <td className="px-6 py-4 text-slate-700">
-                        {log.changes?.length > 0 && (
-                          <span className="text-xs">
-                            {log.changes.length} field(s) changed
-                          </span>
-                        )}
+                        <div className="space-y-1">
+                          {log.changes?.length > 0 && (
+                            <div className="text-xs text-slate-600">
+                              📝 {log.changes.length} field(s) changed
+                            </div>
+                          )}
+                          {log.description && (
+                            <div className="text-xs text-slate-500 italic">
+                              {log.description}
+                            </div>
+                          )}
+                          {log.details?.totalAgents && (
+                            <div className="text-xs text-blue-600">
+                              👥 Total agents: {log.details.totalAgents}
+                            </div>
+                          )}
+                          {!log.changes?.length && !log.description && !log.details?.totalAgents && (
+                            <span className="text-xs text-slate-400">-</span>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 text-center">
                         <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">

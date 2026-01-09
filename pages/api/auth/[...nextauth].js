@@ -5,6 +5,7 @@ import connectToDatabase from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import bcrypt from "bcryptjs"; // Using bcryptjs instead of bcrypt for better compatibility
 import { checkRateLimit } from "@/lib/rateLimit";
+import { logAudit } from "@/lib/auditLogger";
 
 export const authOptions = {
   session: {
@@ -57,11 +58,41 @@ export const authOptions = {
           });
 
           if (!user) {
+            // Log failed login attempt
+            await logAudit({
+              userEmail: credentials.email,
+              userName: credentials.email,
+              action: "LOGIN_FAILED",
+              entityType: "auth",
+              description: "Login failed: User not found",
+              ipAddress: ip,
+              userAgent: req.headers?.["user-agent"],
+              requestMethod: "POST",
+              requestPath: "/api/auth/callback/credentials",
+              statusCode: 401,
+              errorMessage: "Invalid email or password"
+            });
             throw new Error("Invalid email or password");
           }
 
           // Check if account is active
           if (user.isActive === false) {
+            // Log failed login attempt - account disabled
+            await logAudit({
+              userId: user._id,
+              userEmail: user.email,
+              userName: user.name,
+              userRole: user.role,
+              action: "LOGIN_FAILED",
+              entityType: "auth",
+              description: "Login failed: Account is disabled",
+              ipAddress: ip,
+              userAgent: req.headers?.["user-agent"],
+              requestMethod: "POST",
+              requestPath: "/api/auth/callback/credentials",
+              statusCode: 403,
+              errorMessage: "Account is disabled"
+            });
             throw new Error("Account is disabled");
           }
 
@@ -72,6 +103,22 @@ export const authOptions = {
           );
 
           if (!isValid) {
+            // Log failed login attempt - wrong password
+            await logAudit({
+              userId: user._id,
+              userEmail: user.email,
+              userName: user.name,
+              userRole: user.role,
+              action: "LOGIN_FAILED",
+              entityType: "auth",
+              description: "Login failed: Invalid password",
+              ipAddress: ip,
+              userAgent: req.headers?.["user-agent"],
+              requestMethod: "POST",
+              requestPath: "/api/auth/callback/credentials",
+              statusCode: 401,
+              errorMessage: "Invalid email or password"
+            });
             throw new Error("Invalid email or password");
           }
 
@@ -84,6 +131,8 @@ export const authOptions = {
             sessionVersion: user.sessionVersion || 1,
             userPhone: user.userPhone || "",
             userImage: user.userImage || "",
+            ip: ip, // Pass IP for audit logging
+            userAgent: req.headers?.["user-agent"] // Pass user agent
           };
         } catch (error) {
           console.error("Authentication error:", error.message);
@@ -107,6 +156,22 @@ export const authOptions = {
         token.sessionVersion = user.sessionVersion;
         token.userPhone = user.userPhone;
         token.userImage = user.userImage;
+        
+        // Log successful login
+        await logAudit({
+          userId: user.id,
+          userEmail: user.email,
+          userName: user.name,
+          userRole: user.role,
+          action: "LOGIN",
+          entityType: "auth",
+          description: `User ${user.name} logged in successfully`,
+          ipAddress: user.ip || "unknown",
+          userAgent: user.userAgent || "unknown",
+          requestMethod: "POST",
+          requestPath: "/api/auth/callback/credentials",
+          statusCode: 200
+        });
       }
       // Subsequent requests - verify session
       else if (token?.id) {
@@ -156,7 +221,21 @@ export const authOptions = {
   },
   events: {
     async signOut({ token }) {
-      // Optional: Handle sign-out cleanup
+      // Log logout
+      if (token) {
+        await logAudit({
+          userId: token.id,
+          userEmail: token.email,
+          userName: token.name,
+          userRole: token.role,
+          action: "LOGOUT",
+          entityType: "auth",
+          description: `User ${token.name} logged out`,
+          requestMethod: "POST",
+          requestPath: "/api/auth/signout",
+          statusCode: 200
+        });
+      }
     },
   },
   secret: process.env.NEXTAUTH_SECRET, // Required for production
