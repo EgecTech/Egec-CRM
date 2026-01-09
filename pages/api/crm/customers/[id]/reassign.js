@@ -65,10 +65,26 @@ export default async function handler(req, res) {
     const oldAgentName = customer.assignment?.assignedAgentName;
     const oldCounselorStatus = customer.evaluation?.counselorStatus;
     
-    // Cannot reassign to same agent
-    if (oldAgentId && oldAgentId.toString() === newAgentId) {
+    // Initialize assignment structure if needed
+    if (!customer.assignment) {
+      customer.assignment = {};
+    }
+    if (!customer.assignment.assignedAgents) {
+      customer.assignment.assignedAgents = [];
+    }
+    if (!customer.assignment.assignmentHistory) {
+      customer.assignment.assignmentHistory = [];
+    }
+    
+    // Check if new agent is already assigned
+    const alreadyAssigned = customer.assignment.assignedAgents.some(
+      a => a.agentId.toString() === newAgentId && a.isActive
+    );
+    
+    if (alreadyAssigned) {
       return res.status(400).json({ 
-        error: 'Customer is already assigned to this agent' 
+        error: 'This agent is already assigned to this customer',
+        message: 'Use the customer view to see all assigned agents'
       });
     }
     
@@ -79,46 +95,45 @@ export default async function handler(req, res) {
       counselorStatus: oldCounselorStatus
     };
     
-    // Update assignment
-    if (!customer.assignment) {
-      customer.assignment = {};
-    }
+    // **KEY CHANGE: ADD new agent to assignedAgents array (don't replace)**
+    customer.assignment.assignedAgents.push({
+      agentId: newAgentId,
+      agentName: newAgent.name,
+      assignedAt: new Date(),
+      assignedBy: userId,
+      assignedByName: userName,
+      counselorStatus: '', // New agent starts with empty status
+      isActive: true
+    });
     
+    // Update primary agent (for backwards compatibility)
     customer.assignment.assignedAgentId = newAgentId;
     customer.assignment.assignedAgentName = newAgent.name;
     customer.assignment.assignedAt = new Date();
     customer.assignment.assignedBy = userId;
     customer.assignment.assignedByName = userName;
     
-    // Initialize reassignment history if doesn't exist
-    if (!customer.assignment.reassignmentHistory) {
-      customer.assignment.reassignmentHistory = [];
-    }
-    
-    // Add to reassignment history
-    customer.assignment.reassignmentHistory.push({
-      fromAgentId: oldAgentId,
-      fromAgentName: oldAgentName || 'Unassigned',
-      toAgentId: newAgentId,
-      toAgentName: newAgent.name,
-      reassignedAt: new Date(),
-      reassignedBy: userId,
-      reassignedByName: userName,
-      reason: reason || 'Reassignment by admin',
+    // Add to assignment history
+    customer.assignment.assignmentHistory.push({
+      action: 'assigned',
+      agentId: newAgentId,
+      agentName: newAgent.name,
+      performedBy: userId,
+      performedByName: userName,
+      performedAt: new Date(),
+      reason: reason || 'Agent added via reassign',
       previousCounselorStatus: oldCounselorStatus || ''
     });
     
-    // Update marketingData counselor if exists
-    if (customer.marketingData) {
+    // Update marketingData counselor if this is the first agent
+    if (customer.marketingData && !customer.marketingData.counselorId) {
       customer.marketingData.counselorId = newAgentId;
       customer.marketingData.counselorName = newAgent.name;
     }
     
-    // RESET ONLY counselorStatus in evaluation
-    if (!customer.evaluation) {
-      customer.evaluation = {};
-    }
-    customer.evaluation.counselorStatus = '';
+    // NOTE: Do NOT reset global evaluation.counselorStatus
+    // Each agent has their own counselorStatus in the assignedAgents array
+    // The new agent's counselorStatus is already set to empty string in the array above
     
     // Update updatedBy
     customer.updatedBy = userId;
@@ -127,7 +142,6 @@ export default async function handler(req, res) {
     // Mark as modified to ensure save
     customer.markModified('assignment');
     customer.markModified('marketingData');
-    customer.markModified('evaluation');
     
     await customer.save();
     
@@ -137,17 +151,17 @@ export default async function handler(req, res) {
       userEmail,
       userName,
       userRole: role,
-      action: 'REASSIGN',
+      action: 'AGENT_ADDED',
       entityType: 'customer',
       entityId: customer._id,
       entityName: customer.basicData?.customerName,
       oldValues: oldValues,
       newValues: {
-        assignedAgentId: newAgentId,
-        assignedAgentName: newAgent.name,
-        counselorStatus: '' // Reset
+        addedAgentId: newAgentId,
+        addedAgentName: newAgent.name,
+        totalAgents: customer.assignment.assignedAgents.filter(a => a.isActive).length
       },
-      description: `Reassigned customer from ${oldAgentName || 'Unassigned'} to ${newAgent.name}. Counselor status reset.`,
+      description: `Added agent ${newAgent.name} to customer. Previous agent ${oldAgentName || 'None'} retains access.`,
       ipAddress: req.headers['x-forwarded-for'] || req.socket.remoteAddress,
       userAgent: req.headers['user-agent'],
       requestMethod: 'POST',
@@ -157,14 +171,15 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       data: customer,
-      message: `Customer reassigned to ${newAgent.name} successfully. Counselor status has been reset.`,
-      reassignmentDetails: {
-        from: oldAgentName || 'Unassigned',
-        to: newAgent.name,
-        counselorStatusReset: true,
-        previousCounselorStatus: oldCounselorStatus || 'None',
-        reassignedBy: userName,
-        reassignedAt: new Date()
+      message: `Agent ${newAgent.name} added successfully. ${oldAgentName ? oldAgentName + ' still has access.' : ''}`,
+      assignmentDetails: {
+        previousPrimaryAgent: oldAgentName || 'Unassigned',
+        newAgentAdded: newAgent.name,
+        newPrimaryAgent: newAgent.name,
+        bothAgentsHaveAccess: true,
+        totalActiveAgents: customer.assignment.assignedAgents.filter(a => a.isActive).length,
+        assignedBy: userName,
+        assignedAt: new Date()
       }
     });
     

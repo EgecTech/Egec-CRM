@@ -54,14 +54,58 @@ export default async function handler(req, res) {
     // Store old values for audit
     const oldValues = customer.toObject();
     
-    // Update assignment
-    customer.assignment = {
-      assignedAgentId,
-      assignedAgentName: agent.name,
-      assignedAt: new Date(),
-      assignedBy: userId,
-      assignedByName: userName
-    };
+    // Initialize assignment structure if needed
+    if (!customer.assignment) {
+      customer.assignment = {};
+    }
+    if (!customer.assignment.assignedAgents) {
+      customer.assignment.assignedAgents = [];
+    }
+    if (!customer.assignment.assignmentHistory) {
+      customer.assignment.assignmentHistory = [];
+    }
+    
+    // Check if agent is already in assignedAgents array
+    const existingAgentIndex = customer.assignment.assignedAgents.findIndex(
+      a => a.agentId.toString() === assignedAgentId
+    );
+    
+    if (existingAgentIndex >= 0) {
+      // Reactivate if exists but inactive
+      customer.assignment.assignedAgents[existingAgentIndex].isActive = true;
+      customer.assignment.assignedAgents[existingAgentIndex].assignedAt = new Date();
+      customer.assignment.assignedAgents[existingAgentIndex].assignedBy = userId;
+      customer.assignment.assignedAgents[existingAgentIndex].assignedByName = userName;
+    } else {
+      // Add new agent to assignedAgents array
+      customer.assignment.assignedAgents.push({
+        agentId: assignedAgentId,
+        agentName: agent.name,
+        assignedAt: new Date(),
+        assignedBy: userId,
+        assignedByName: userName,
+        counselorStatus: '',
+        isActive: true
+      });
+    }
+    
+    // Set as primary agent (for backwards compatibility)
+    customer.assignment.assignedAgentId = assignedAgentId;
+    customer.assignment.assignedAgentName = agent.name;
+    customer.assignment.assignedAt = new Date();
+    customer.assignment.assignedBy = userId;
+    customer.assignment.assignedByName = userName;
+    
+    // Add to assignment history
+    customer.assignment.assignmentHistory.push({
+      action: 'assigned',
+      agentId: assignedAgentId,
+      agentName: agent.name,
+      performedBy: userId,
+      performedByName: userName,
+      performedAt: new Date(),
+      reason: 'Initial assignment'
+    });
     
     await customer.save();
     

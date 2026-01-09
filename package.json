@@ -21,6 +21,7 @@
     "seed:destinations": "node scripts/updateStudyDestinations.js",
     "test:generate-data": "node scripts/generateTestCustomers.js",
     "test:performance": "node scripts/testQueryPerformance.js",
+    "migrate:agents": "node scripts/migrateAssignedAgents.js",
     "seed:all": "npm run seed:crm && npm run seed:destinations && npm run seed:universities",
     "seed:new-universities": "node scripts/seed153Universities.js",
     "update:153universities": "node scripts/updateTo153Universities.js",

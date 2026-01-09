@@ -265,10 +265,25 @@ export default function CustomerProfile() {
                   )}
                 </div>
 
-                {customer.assignment?.assignedAgentName && (
-                  <p className="text-sm text-slate-600 mt-2">
-                    Assigned to: <span className="font-semibold">{customer.assignment.assignedAgentName}</span>
-                  </p>
+                {/* Show all assigned agents */}
+                {(customer.assignment?.assignedAgents?.length > 0 || customer.assignment?.assignedAgentName) && (
+                  <div className="mt-2">
+                    <p className="text-sm text-slate-600">
+                      Assigned Agents: 
+                    </p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {customer.assignment?.assignedAgents?.filter(a => a.isActive).map((agent, idx) => (
+                        <span key={idx} className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
+                          👤 {agent.agentName}
+                        </span>
+                      )) ||
+                      (customer.assignment?.assignedAgentName && (
+                        <span className="inline-flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm font-semibold rounded-full">
+                          👤 {customer.assignment.assignedAgentName}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
 
                 {/* Reassignment Notice - Only visible to Admin, Superadmin, and Superagent */}

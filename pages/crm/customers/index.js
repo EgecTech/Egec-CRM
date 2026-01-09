@@ -224,12 +224,12 @@ export default function CustomerList() {
 
     try {
       const response = await fetch(
-        `/api/crm/customers/${reassignModal.customer._id}/reassign`,
+        `/api/crm/customers/${reassignModal.customer._id}/add-agent`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            newAgentId: reassignModal.selectedAgentId,
+            agentId: reassignModal.selectedAgentId,
             reason: reassignModal.reason
           })
         }
@@ -238,15 +238,15 @@ export default function CustomerList() {
       const data = await response.json();
 
       if (response.ok) {
-        alert(`✓ ${data.message}\n\nPrevious Counselor Status: ${data.reassignmentDetails.previousCounselorStatus}\nNew agent can now set their own counselor status.`);
+        alert(`✓ ${data.message}\n\nAgent added successfully! Both agents can now work on this customer independently.`);
         closeReassignModal();
         fetchCustomers(); // Refresh customer list
       } else {
-        alert(`Error: ${data.error}`);
+        alert(`Error: ${data.error || data.message}`);
       }
     } catch (error) {
-      console.error('Error reassigning customer:', error);
-      alert('Failed to reassign customer');
+      console.error('Error adding agent to customer:', error);
+      alert('Failed to add agent');
     }
   };
 
@@ -604,7 +604,10 @@ export default function CustomerList() {
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Phone</th>
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">حالة المرشد</th>
                     {isAdmin && (
-                      <th className="px-6 py-4 text-left text-xs font-bold uppercase">Agent</th>
+                      <>
+                        <th className="px-6 py-4 text-left text-xs font-bold uppercase">Primary Agent</th>
+                        <th className="px-6 py-4 text-left text-xs font-bold uppercase">Assigned Agents</th>
+                      </>
                     )}
                     <th className="px-6 py-4 text-left text-xs font-bold uppercase">Desired Specialization (التخصص المطلوب)</th>
                     <th className="px-6 py-4 text-center text-xs font-bold uppercase">Actions</th>
@@ -652,15 +655,48 @@ export default function CustomerList() {
                           </span>
                         </td>
                         {isAdmin && (
-                          <td className="px-6 py-4">
-                            {customer.assignment?.assignedAgentName ? (
-                              <span className="text-sm text-slate-700">
-                                {customer.assignment.assignedAgentName}
-                              </span>
-                            ) : (
-                              <span className="text-xs text-slate-400">Not assigned</span>
-                            )}
-                          </td>
+                          <>
+                            {/* Primary Agent Column */}
+                            <td className="px-6 py-4">
+                              {customer.assignment?.assignedAgentName ? (
+                                <span className="text-sm font-semibold text-blue-700">
+                                  {customer.assignment.assignedAgentName}
+                                </span>
+                              ) : (
+                                <span className="text-xs text-slate-400">Not assigned</span>
+                              )}
+                            </td>
+                            
+                            {/* Assigned Agents Column (All agents) */}
+                            <td className="px-6 py-4">
+                              {customer.assignment?.assignedAgents && customer.assignment.assignedAgents.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {customer.assignment.assignedAgents
+                                    .filter(agent => agent.isActive)
+                                    .map((agent, idx) => (
+                                      <span 
+                                        key={idx}
+                                        className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                                      >
+                                        {agent.agentName}
+                                      </span>
+                                    ))}
+                                  {customer.assignment.assignedAgents.filter(a => a.isActive).length === 0 && (
+                                    <span className="text-xs text-slate-400">No active agents</span>
+                                  )}
+                                </div>
+                              ) : (
+                                // Fallback to show primary agent if assignedAgents array doesn't exist
+                                customer.assignment?.assignedAgentName ? (
+                                  <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                    {customer.assignment.assignedAgentName}
+                                  </span>
+                                ) : (
+                                  <span className="text-xs text-slate-400">Not assigned</span>
+                                )
+                              )}
+                            </td>
+                          </>
                         )}
                         <td className="px-6 py-4">
                           <span className="text-sm text-slate-700">
@@ -688,8 +724,8 @@ export default function CustomerList() {
                             {(session?.user?.role === 'admin' || session?.user?.role === 'superadmin' || session?.user?.role === 'superagent') && (
                               <button 
                                 onClick={() => openReassignModal(customer)}
-                                className="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
-                                title="Reassign to Another Agent"
+                                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                title="Add Another Agent"
                               >
                                 <FaExchangeAlt className="w-4 h-4" />
                               </button>
@@ -762,7 +798,7 @@ export default function CustomerList() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-2xl font-bold text-slate-900">
-                  Reassign Customer
+                  Add Agent to Customer
                 </h3>
                 <button
                   onClick={closeReassignModal}
@@ -783,8 +819,9 @@ export default function CustomerList() {
                   <strong>Customer #:</strong> {reassignModal.customer?.customerNumber}
                 </p>
                 <p className="text-sm text-blue-800">
-                  <strong>Currently assigned to:</strong>{' '}
-                  {reassignModal.customer?.assignment?.assignedAgentName || 'Unassigned'}
+                  <strong>Assigned Agents:</strong>{' '}
+                  {reassignModal.customer?.assignment?.assignedAgents?.filter(a => a.isActive).map(a => a.agentName).join(', ') || 
+                   reassignModal.customer?.assignment?.assignedAgentName || 'None'}
                 </p>
               </div>
 
@@ -854,7 +891,7 @@ export default function CustomerList() {
                       : 'bg-slate-300 text-slate-500 cursor-not-allowed'
                   }`}
                 >
-                  Reassign Customer
+                  Add Agent
                 </button>
               </div>
             </div>

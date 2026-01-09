@@ -236,6 +236,7 @@ const customerSchema = new mongoose.Schema(
 
     // ========== ASSIGNMENT ==========
     assignment: {
+      // PRIMARY AGENT (for backwards compatibility)
       assignedAgentId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Profile",
@@ -251,29 +252,65 @@ const customerSchema = new mongoose.Schema(
       },
       assignedByName: String,
       
-      // Reassignment history
-      reassignmentHistory: [
+      // MULTI-AGENT SUPPORT: Array of all agents who can access this customer
+      assignedAgents: [
         {
-          fromAgentId: {
+          agentId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Profile"
+            ref: "Profile",
+            required: true,
           },
-          fromAgentName: String,
-          toAgentId: {
+          agentName: {
+            type: String,
+            required: true,
+          },
+          assignedAt: {
+            type: Date,
+            default: Date.now,
+          },
+          assignedBy: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Profile"
+            ref: "Profile",
           },
-          toAgentName: String,
-          reassignedAt: { type: Date, default: Date.now },
-          reassignedBy: {
+          assignedByName: String,
+          // Each agent has their own counselor status
+          counselorStatus: {
+            type: String,
+            default: "",
+          },
+          isActive: {
+            type: Boolean,
+            default: true, // Can be set to false to remove access without deleting history
+          },
+        },
+      ],
+      
+      // Assignment history (when agents are added/removed)
+      assignmentHistory: [
+        {
+          action: {
+            type: String,
+            enum: ["assigned", "removed", "status_updated"],
+          },
+          agentId: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "Profile"
+            ref: "Profile",
           },
-          reassignedByName: String,
+          agentName: String,
+          performedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Profile",
+          },
+          performedByName: String,
+          performedAt: {
+            type: Date,
+            default: Date.now,
+          },
           reason: String,
-          previousCounselorStatus: String // Store counselor status before reset
-        }
-      ]
+          previousCounselorStatus: String, // For status_updated actions
+          newCounselorStatus: String, // For status_updated actions
+        },
+      ],
     },
 
     // ========== METADATA ==========
