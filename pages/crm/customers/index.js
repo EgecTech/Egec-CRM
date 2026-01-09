@@ -50,6 +50,10 @@ export default function CustomerList() {
   const fetchSystemSettings = async () => {
     try {
       const response = await fetch('/api/crm/system-settings');
+      if (!response.ok) {
+        console.error('System settings API error:', response.status, response.statusText);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         const settings = {};
@@ -66,6 +70,11 @@ export default function CustomerList() {
   const fetchAgents = async () => {
     try {
       const response = await fetch('/api/admin/users');
+      if (!response.ok) {
+        console.error('Admin users API error:', response.status, response.statusText);
+        setAgents([]);
+        return;
+      }
       const data = await response.json();
       let usersList = [];
       if (Array.isArray(data)) {
@@ -88,6 +97,10 @@ export default function CustomerList() {
   const fetchDegreeStats = async () => {
     try {
       const response = await fetch('/api/crm/customers/stats');
+      if (!response.ok) {
+        console.error('Degree stats API error:', response.status, response.statusText);
+        return;
+      }
       const data = await response.json();
       if (data.success) {
         setDegreeStats(data.stats);
@@ -118,6 +131,12 @@ export default function CustomerList() {
       }
       
       const response = await fetch(`/api/crm/customers?${params}`);
+      if (!response.ok) {
+        console.error('Customers API error:', response.status, response.statusText);
+        setCustomers([]);
+        setLoading(false);
+        return;
+      }
       const data = await response.json();
 
       if (data.success) {
