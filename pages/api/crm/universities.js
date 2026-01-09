@@ -3,6 +3,7 @@ import { authOptions } from "../auth/[...nextauth]";
 import { mongooseConnect } from "../../../lib/mongoose";
 import University from "../../../models/University";
 import { cacheGet, cacheSet } from "../../../lib/cache";
+import { checkDirectAccess } from "../../../lib/apiProtection";
 
 /**
  * Internal API endpoint to fetch universities (with optional country filter)
@@ -12,6 +13,9 @@ import { cacheGet, cacheSet } from "../../../lib/cache";
  * Returns: { success: true, data: [{ value: "uni_id", label: "University Name" }] }
  */
 export default async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   // Only allow GET requests
   if (req.method !== "GET") {
     return res.status(405).json({ error: "Method not allowed" });

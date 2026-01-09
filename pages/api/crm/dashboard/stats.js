@@ -6,8 +6,12 @@ import Followup from '@/models/Followup';
 import { buildCustomerQuery, buildFollowupQuery } from '@/lib/permissions';
 import { mongooseConnect } from '@/lib/mongoose';
 import { withRateLimit } from '@/lib/rateLimit';
+import { checkDirectAccess } from '@/lib/apiProtection';
 
 async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

@@ -6,8 +6,12 @@ import { buildCustomerQuery } from '@/lib/permissions';
 import { mongooseConnect } from '@/lib/mongoose';
 import { withRateLimit } from '@/lib/rateLimit';
 import { cacheGet, cacheSet } from '@/lib/cache';
+import { checkDirectAccess } from '@/lib/apiProtection';
 
 async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   await mongooseConnect();
   
   const session = await getServerSession(req, res, authOptions);

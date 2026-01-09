@@ -3,6 +3,7 @@ import { Profile } from "@/models/Profile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import cloudinary from "cloudinary";
+import { checkDirectAccess } from "@/lib/apiProtection";
 
 cloudinary.v2.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -11,6 +12,9 @@ cloudinary.v2.config({
 });
 
 export default async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   await mongooseConnect();
 
   if (req.method !== "POST") {

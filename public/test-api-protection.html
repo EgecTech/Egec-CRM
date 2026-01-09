@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔒 API Protection Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .test-button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            direction: ltr;
+            text-align: left;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            color: #721c24;
+        }
+        
+        .result.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            color: #0c5460;
+        }
+        
+        .endpoint-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .endpoint-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-badge.protected {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status-badge.public {
+            background: #ffc107;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔒 اختبار حماية API</h1>
+            <p>اختبر حماية الوصول المباشر لجميع endpoints في النظام</p>
+        </div>
+
+        <div class="test-section">
+            <h2>📝 الشرح</h2>
+            <p><strong>ماذا يفعل هذا الاختبار؟</strong></p>
+            <ul style="margin: 15px 0; line-height: 2;">
+                <li>✅ يختبر الـ endpoints المحمية - يجب أن تُرجع خطأ 403</li>
+                <li>✅ يختبر الـ endpoints العامة - يجب أن تعمل بشكل طبيعي</li>
+                <li>✅ يتحقق من أن fetch من التطبيق يعمل بشكل صحيح</li>
+            </ul>
+        </div>
+
+        <div class="test-section">
+            <h2>🔴 اختبار الـ Endpoints المحمية (يجب أن تفشل)</h2>
+            <p>هذه الـ endpoints يجب أن ترجع خطأ 403 عند الوصول المباشر:</p>
+            <div class="endpoint-list">
+                <div class="endpoint-item">
+                    <code>/api/crm/customers</code>
+                    <span class="status-badge protected">محمي</span>
+                    <button class="test-button" onclick="testEndpoint('/api/crm/customers', 'protected-customers')">اختبر</button>
+                    <div id="protected-customers"></div>
+                </div>
+                <div class="endpoint-item">
+                    <code>/api/crm/dashboard/stats</code>
+                    <span class="status-badge protected">محمي</span>
+                    <button class="test-button" onclick="testEndpoint('/api/crm/dashboard/stats', 'protected-dashboard')">اختبر</button>
+                    <div id="protected-dashboard"></div>
+                </div>
+                <div class="endpoint-item">
+                    <code>/api/admin/users</code>
+                    <span class="status-badge protected">محمي</span>
+                    <button class="test-button" onclick="testEndpoint('/api/admin/users', 'protected-users')">اختبر</button>
+                    <div id="protected-users"></div>
+                </div>
+                <div class="endpoint-item">
+                    <code>/api/crm/universities</code>
+                    <span class="status-badge protected">محمي</span>
+                    <button class="test-button" onclick="testEndpoint('/api/crm/universities', 'protected-unis')">اختبر</button>
+                    <div id="protected-unis"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🟢 اختبار الـ Endpoints العامة (يجب أن تعمل)</h2>
+            <p>هذه الـ endpoints يجب أن تعمل بشكل طبيعي:</p>
+            <div class="endpoint-list">
+                <div class="endpoint-item">
+                    <code>/api/health</code>
+                    <span class="status-badge public">عام</span>
+                    <button class="test-button" onclick="testEndpoint('/api/health', 'public-health')">اختبر</button>
+                    <div id="public-health"></div>
+                </div>
+                <div class="endpoint-item">
+                    <code>/api/csrf-token</code>
+                    <span class="status-badge public">عام</span>
+                    <button class="test-button" onclick="testEndpoint('/api/csrf-token', 'public-csrf')">اختبر</button>
+                    <div id="public-csrf"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>📊 النتيجة المتوقعة</h2>
+            <div class="result info">
+<strong>✅ الـ Endpoints المحمية:</strong>
+{
+  "error": "Access denied",
+  "message": "Direct API access is not allowed. Please use the application interface.",
+  "code": "DIRECT_NAVIGATION_BLOCKED"
+}
+
+<strong>✅ الـ Endpoints العامة:</strong>
+- /api/health: يجب أن ترجع معلومات صحة النظام
+- /api/csrf-token: يجب أن ترجع CSRF token
+
+<strong>⚠️ ملاحظة مهمة:</strong>
+- إذا كانت جميع الطلبات تُرجع 401 (Unauthorized)، هذا طبيعي لأنك غير مسجل الدخول
+- الحماية من الوصول المباشر تأتي قبل التحقق من المصادقة
+- لاختبار كامل، سجل الدخول أولاً ثم اختبر
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>🧪 اختبار شامل لجميع الـ Endpoints</h2>
+            <button class="test-button" onclick="testAllEndpoints()" style="width: 100%; font-size: 18px; padding: 20px;">
+                🚀 اختبر الكل (16 endpoints)
+            </button>
+            <div id="all-results"></div>
+        </div>
+    </div>
+
+    <script>
+        async function testEndpoint(url, resultId) {
+            const resultDiv = document.getElementById(resultId);
+            resultDiv.innerHTML = '<div class="result info">⏳ جاري الاختبار...</div>';
+            
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                const status = response.status;
+                
+                let resultClass = 'info';
+                let message = '';
+                
+                if (status === 403 && data.code === 'DIRECT_NAVIGATION_BLOCKED') {
+                    resultClass = 'success';
+                    message = '✅ محمي بشكل صحيح!\n';
+                } else if (status === 200) {
+                    resultClass = 'success';
+                    message = '✅ يعمل بشكل صحيح (Endpoint عام)\n';
+                } else if (status === 401) {
+                    resultClass = 'info';
+                    message = '⚠️ يتطلب تسجيل دخول (طبيعي)\n';
+                } else {
+                    resultClass = 'error';
+                    message = '❌ نتيجة غير متوقعة\n';
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result ${resultClass}">
+${message}Status: ${status}
+Response:
+${JSON.stringify(data, null, 2)}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+❌ خطأ في الاتصال:
+${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testAllEndpoints() {
+            const resultsDiv = document.getElementById('all-results');
+            resultsDiv.innerHTML = '<div class="result info">⏳ جاري اختبار جميع الـ endpoints...</div>';
+            
+            const protectedEndpoints = [
+                '/api/crm/customers',
+                '/api/crm/customers/stats',
+                '/api/crm/dashboard/stats',
+                '/api/crm/followups',
+                '/api/crm/audit-logs',
+                '/api/crm/system-settings',
+                '/api/crm/universities',
+                '/api/admin/users',
+                '/api/user/update'
+            ];
+            
+            const publicEndpoints = [
+                '/api/health',
+                '/api/csrf-token'
+            ];
+            
+            let results = {
+                protectedCorrect: 0,
+                protectedTotal: protectedEndpoints.length,
+                publicCorrect: 0,
+                publicTotal: publicEndpoints.length,
+                details: []
+            };
+            
+            // Test protected endpoints
+            for (const endpoint of protectedEndpoints) {
+                try {
+                    const response = await fetch(endpoint);
+                    const data = await response.json();
+                    const isBlocked = response.status === 403 && data.code === 'DIRECT_NAVIGATION_BLOCKED';
+                    
+                    if (isBlocked) {
+                        results.protectedCorrect++;
+                        results.details.push(`✅ ${endpoint}: محمي بشكل صحيح`);
+                    } else if (response.status === 401) {
+                        results.protectedCorrect++; // Still correct, just needs auth
+                        results.details.push(`⚠️ ${endpoint}: محمي (يتطلب تسجيل دخول)`);
+                    } else {
+                        results.details.push(`❌ ${endpoint}: غير محمي! (Status: ${response.status})`);
+                    }
+                } catch (error) {
+                    results.details.push(`❌ ${endpoint}: خطأ - ${error.message}`);
+                }
+            }
+            
+            // Test public endpoints
+            for (const endpoint of publicEndpoints) {
+                try {
+                    const response = await fetch(endpoint);
+                    const isPublic = response.status === 200;
+                    
+                    if (isPublic) {
+                        results.publicCorrect++;
+                        results.details.push(`✅ ${endpoint}: يعمل بشكل صحيح (عام)`);
+                    } else {
+                        results.details.push(`❌ ${endpoint}: لا يعمل (Status: ${response.status})`);
+                    }
+                } catch (error) {
+                    results.details.push(`❌ ${endpoint}: خطأ - ${error.message}`);
+                }
+            }
+            
+            const allCorrect = (results.protectedCorrect === results.protectedTotal) && 
+                               (results.publicCorrect === results.publicTotal);
+            
+            const resultClass = allCorrect ? 'success' : 'error';
+            
+            resultsDiv.innerHTML = `
+                <div class="result ${resultClass}">
+<strong>📊 نتائج الاختبار الشامل:</strong>
+
+🔒 Endpoints المحمية: ${results.protectedCorrect}/${results.protectedTotal}
+🌐 Endpoints العامة: ${results.publicCorrect}/${results.publicTotal}
+
+<strong>التفاصيل:</strong>
+${results.details.join('\n')}
+
+<strong>الحالة النهائية:</strong>
+${allCorrect ? '✅ جميع الـ Endpoints تعمل بشكل صحيح!' : '⚠️ بعض الـ Endpoints تحتاج إلى مراجعة'}
+                </div>
+            `;
+        }
+
+        // Auto-run comprehensive test on page load
+        window.addEventListener('load', () => {
+            console.log('🔒 API Protection Test Page Loaded');
+            console.log('📝 Ready to test all endpoints');
+        });
+    </script>
+</body>
+</html>

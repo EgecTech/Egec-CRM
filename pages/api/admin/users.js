@@ -3,8 +3,12 @@ import { Profile } from "@/models/Profile";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
+import { checkDirectAccess } from "@/lib/apiProtection";
 
 async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   await mongooseConnect();
 
   try {

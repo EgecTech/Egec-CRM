@@ -5,8 +5,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 import { sanitizePhone } from "@/lib/sanitize";
+import { checkDirectAccess } from "@/lib/apiProtection";
 
 async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   // CORS headers
   res.setHeader("Access-Control-Allow-Credentials", "true");
   res.setHeader("Access-Control-Allow-Origin", "*");

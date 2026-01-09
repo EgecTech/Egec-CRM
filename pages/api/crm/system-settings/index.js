@@ -6,8 +6,12 @@ import { checkPermission } from '@/lib/permissions';
 import { logAudit } from '@/lib/auditLogger';
 import { mongooseConnect } from '@/lib/mongoose';
 import { withRateLimit } from '@/lib/rateLimit';
+import { checkDirectAccess } from '@/lib/apiProtection';
 
 async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   await mongooseConnect();
   
   const session = await getServerSession(req, res, authOptions);

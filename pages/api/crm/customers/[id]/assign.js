@@ -6,8 +6,12 @@ import { Profile } from '@/models/Profile';
 import { checkPermission } from '@/lib/permissions';
 import { logAudit } from '@/lib/auditLogger';
 import { mongooseConnect } from '@/lib/mongoose';
+import { checkDirectAccess } from '@/lib/apiProtection';
 
 export default async function handler(req, res) {
+  // Block direct browser access
+  if (checkDirectAccess(req, res)) return;
+  
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
