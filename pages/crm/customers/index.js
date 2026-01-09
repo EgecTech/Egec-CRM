@@ -13,7 +13,8 @@ import {
   FaEye,
   FaEdit,
   FaUserCheck,
-  FaDownload
+  FaDownload,
+  FaTrash
 } from 'react-icons/fa';
 import { RiCloseLine } from 'react-icons/ri';
 
@@ -151,6 +152,42 @@ export default function CustomerList() {
       console.error('Error fetching customers:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (customerId, customerName) => {
+    if (!confirm(`Are you sure you want to delete customer: ${customerName}?\n\nThis action will soft-delete the customer (can be recovered by superadmin).`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/crm/customers/${customerId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Failed to delete customer: ${errorData.error || 'Unknown error'}`);
+        return;
+      }
+
+      const data = await response.json();
+      
+      if (data.success) {
+        alert('Customer deleted successfully!');
+        // Refresh customer list
+        fetchCustomers();
+        // Refresh stats
+        fetchDegreeStats();
+      } else {
+        alert('Failed to delete customer');
+      }
+    } catch (error) {
+      console.error('Error deleting customer:', error);
+      alert('Error deleting customer. Please try again.');
     }
   };
 
@@ -589,6 +626,15 @@ export default function CustomerList() {
                                 <FaEdit className="w-4 h-4" />
                               </button>
                             </Link>
+                            {session?.user?.role === 'superadmin' && (
+                              <button 
+                                onClick={() => handleDelete(customer._id, customer.basicData?.customerName)}
+                                className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                title="Delete Customer"
+                              >
+                                <FaTrash className="w-4 h-4" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
