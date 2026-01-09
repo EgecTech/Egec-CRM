@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import LoginLayout from '@/components/LoginLayout';
 import Loading from '@/components/Loading';
-import { FaSearch, FaDownload, FaEye } from 'react-icons/fa';
+import { FaSearch, FaDownload, FaEye, FaTimes } from 'react-icons/fa';
 
 export default function AuditLogs() {
   const { data: session, status } = useSession();
@@ -24,6 +24,8 @@ export default function AuditLogs() {
     total: 0,
     pages: 0
   });
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -89,6 +91,16 @@ export default function AuditLogs() {
       'LOGIN_FAILED': 'bg-red-100 text-red-700'
     };
     return colors[action] || 'bg-slate-100 text-slate-700';
+  };
+
+  const openDetailModal = (log) => {
+    setSelectedLog(log);
+    setShowDetailModal(true);
+  };
+
+  const closeDetailModal = () => {
+    setSelectedLog(null);
+    setShowDetailModal(false);
   };
 
   if (status === 'loading' || loading) {
@@ -261,7 +273,11 @@ export default function AuditLogs() {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-center">
-                        <button className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg">
+                        <button 
+                          onClick={() => openDetailModal(log)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          title="View Details"
+                        >
                           <FaEye className="w-4 h-4" />
                         </button>
                       </td>
@@ -318,6 +334,187 @@ export default function AuditLogs() {
           )}
         </div>
       </div>
+
+      {/* Detail Modal */}
+      {showDetailModal && selectedLog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-white">Audit Log Details</h3>
+              <button
+                onClick={closeDetailModal}
+                className="text-white hover:bg-white/20 rounded-lg p-2 transition-colors"
+              >
+                <FaTimes className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Basic Information */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Action</label>
+                    <div className="mt-1">
+                      <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getActionBadge(selectedLog.action)}`}>
+                        {selectedLog.action}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Entity Type</label>
+                    <p className="mt-1 text-slate-900 font-medium">{selectedLog.entityType || '-'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Entity Name</label>
+                    <p className="mt-1 text-slate-900 font-medium">{selectedLog.entityName || '-'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Entity ID</label>
+                    <p className="mt-1 text-slate-700 text-sm font-mono bg-slate-50 px-2 py-1 rounded">
+                      {selectedLog.entityId || '-'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* User Information */}
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Performed By</label>
+                    <p className="mt-1 text-slate-900 font-medium">{selectedLog.userName || 'System'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">User Email</label>
+                    <p className="mt-1 text-slate-700">{selectedLog.userEmail || '-'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">User Role</label>
+                    <p className="mt-1 text-slate-900 font-medium capitalize">{selectedLog.userRole || '-'}</p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-semibold text-slate-500 uppercase">Timestamp</label>
+                    <p className="mt-1 text-slate-700">
+                      {new Date(selectedLog.createdAt).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit'
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              {selectedLog.description && (
+                <div className="mt-6">
+                  <label className="text-xs font-semibold text-slate-500 uppercase">Description</label>
+                  <p className="mt-2 text-slate-700 bg-slate-50 p-4 rounded-lg">{selectedLog.description}</p>
+                </div>
+              )}
+
+              {/* Changes */}
+              {selectedLog.changes && selectedLog.changes.length > 0 && (
+                <div className="mt-6">
+                  <label className="text-xs font-semibold text-slate-500 uppercase mb-3 block">
+                    Field Changes ({selectedLog.changes.length})
+                  </label>
+                  <div className="space-y-3">
+                    {selectedLog.changes.map((change, idx) => (
+                      <div key={idx} className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                        <div className="font-semibold text-slate-900 mb-2">{change.field}</div>
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-xs font-semibold text-red-600 uppercase">Old Value</span>
+                            <p className="mt-1 text-slate-700 bg-red-50 px-3 py-2 rounded border border-red-200">
+                              {change.oldValue || <span className="text-slate-400 italic">empty</span>}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-xs font-semibold text-green-600 uppercase">New Value</span>
+                            <p className="mt-1 text-slate-700 bg-green-50 px-3 py-2 rounded border border-green-200">
+                              {change.newValue || <span className="text-slate-400 italic">empty</span>}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Technical Details */}
+              <div className="mt-6 border-t border-slate-200 pt-6">
+                <label className="text-xs font-semibold text-slate-500 uppercase mb-3 block">Technical Details</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-slate-500">IP Address:</span>
+                    <span className="ml-2 text-slate-900 font-mono">{selectedLog.ipAddress || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Request Method:</span>
+                    <span className="ml-2 text-slate-900 font-semibold">{selectedLog.requestMethod || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Request Path:</span>
+                    <span className="ml-2 text-slate-700 font-mono text-xs">{selectedLog.requestPath || '-'}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Status Code:</span>
+                    <span className={`ml-2 font-semibold ${
+                      selectedLog.statusCode >= 200 && selectedLog.statusCode < 300 
+                        ? 'text-green-600' 
+                        : selectedLog.statusCode >= 400 
+                        ? 'text-red-600' 
+                        : 'text-slate-900'
+                    }`}>
+                      {selectedLog.statusCode || '-'}
+                    </span>
+                  </div>
+                </div>
+
+                {selectedLog.userAgent && (
+                  <div className="mt-3">
+                    <span className="text-slate-500 text-sm">User Agent:</span>
+                    <p className="mt-1 text-slate-700 text-xs font-mono bg-slate-100 px-3 py-2 rounded break-all">
+                      {selectedLog.userAgent}
+                    </p>
+                  </div>
+                )}
+
+                {selectedLog.errorMessage && (
+                  <div className="mt-3">
+                    <span className="text-red-600 text-sm font-semibold">Error Message:</span>
+                    <p className="mt-1 text-red-700 bg-red-50 px-3 py-2 rounded border border-red-200">
+                      {selectedLog.errorMessage}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="bg-slate-50 px-6 py-4 flex justify-end border-t border-slate-200">
+              <button
+                onClick={closeDetailModal}
+                className="px-6 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg font-semibold transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </LoginLayout>
   );
 }
