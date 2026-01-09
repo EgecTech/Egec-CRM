@@ -6,7 +6,7 @@ import { logAudit } from '@/lib/auditLogger';
 import { mongooseConnect } from '@/lib/mongoose';
 import { withRateLimit } from '@/lib/rateLimit';
 import { checkDirectAccess } from '@/lib/apiProtection';
-import { cacheDelPattern } from '@/lib/cache';
+import { cacheDeletePattern } from '@/lib/cache';
 
 async function handler(req, res) {
   // Block direct browser access
@@ -81,7 +81,7 @@ async function handler(req, res) {
       await setting.save();
 
       // Clear cache for system settings
-      await cacheDelPattern('system_settings:*', 'crm');
+      await cacheDeletePattern('system_settings:*', 'crm');
 
       // Log audit
       await logAudit({
@@ -127,7 +127,7 @@ async function handler(req, res) {
       await SystemSetting.findByIdAndDelete(id);
 
       // Clear cache for system settings
-      await cacheDelPattern('system_settings:*', 'crm');
+      await cacheDeletePattern('system_settings:*', 'crm');
 
       // Log audit
       await logAudit({
