@@ -53,9 +53,18 @@ async function handler(req, res) {
       
       const query = { ...baseQuery };
       
-      // Text search
+      // Search using regex (more reliable with filters than $text)
       if (search) {
-        query.$text = { $search: search };
+        // Escape special regex characters for safety
+        const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const searchRegex = new RegExp(escapedSearch, 'i'); // case-insensitive
+        
+        query.$or = [
+          { 'basicData.customerName': searchRegex },
+          { 'basicData.email': searchRegex },
+          { 'basicData.customerPhone': searchRegex },
+          { customerNumber: searchRegex }
+        ];
       }
       
       // Filters

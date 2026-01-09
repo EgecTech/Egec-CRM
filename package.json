@@ -30,6 +30,7 @@
     "fix:db": "node scripts/fixDatabaseStructure.js",
     "migrate:db": "node scripts/migrateToEgecCRM.js",
     "db:indexes": "node scripts/createIndexes.js",
+    "test:search": "node scripts/testSearch.js",
     "predeploy": "npm run check:env && npm run lint && npm run build",
     "postinstall": "echo 'Installation complete. Run npm run check:env to verify environment setup.'"
   },
