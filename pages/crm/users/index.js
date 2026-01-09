@@ -485,7 +485,9 @@ export default function UserManagement() {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({
+                            name: editingUser.name,
                             email: editingUser.email,
+                            userPhone: editingUser.userPhone,
                             role: editingUser.role,
                             newPassword: editingUser.newPassword
                           })

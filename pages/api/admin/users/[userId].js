@@ -139,7 +139,7 @@ async function handler(req, res) {
 
     // Handle PUT/POST for updates (exclude delete action)
     if ((req.method === "PUT" || req.method === "POST") && bodyAction !== "delete") {
-      const { email, newPassword, role, isActive } = req.body || {};
+      const { name, email, userPhone, newPassword, role, isActive } = req.body || {};
 
       // Find user to update
       const user = await Profile.findById(userId);
@@ -158,6 +158,16 @@ async function handler(req, res) {
             .status(403)
             .json({ error: "Cannot modify other admin accounts" });
         }
+      }
+
+      // Update name if provided and different
+      if (name && name !== user.name) {
+        user.name = name;
+      }
+
+      // Update phone if provided
+      if (userPhone !== undefined) {
+        user.userPhone = userPhone;
       }
 
       // Update email if provided and different
