@@ -1,17 +1,5 @@
 /** @type {import('next').NextConfig} */
 
-// Bundle analyzer for performance monitoring (optional - install with: npm install @next/bundle-analyzer)
-let withBundleAnalyzer = (config) => config;
-try {
-  withBundleAnalyzer = require("@next/bundle-analyzer")({
-    enabled: process.env.ANALYZE === "true",
-  });
-} catch (e) {
-  console.log(
-    "Bundle analyzer not installed. Run: npm install @next/bundle-analyzer --save-dev"
-  );
-}
-
 const nextConfig = {
   // Remove console logs in production (except errors and warnings)
   compiler: {
@@ -189,5 +177,5 @@ const nextConfig = {
   },
 };
 
-module.exports = withBundleAnalyzer(nextConfig);
+export default nextConfig;
 
