@@ -357,22 +357,41 @@ img {
     max-width: 100%;
     margin-left: 0;
     margin-right: 0;
-    margin-top: 64px;
+    margin-top: 4rem;
     padding: 0;
     will-change: margin-left, width;
     transform: translateZ(0);
     backface-visibility: hidden;
 }
 
-.mycontainer.active {
-    margin-left: 240px;
-    width: calc(100% - 240px);
+@media screen and (min-width: 768px) {
+    .mycontainer {
+        margin-top: 72px;
+    }
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (min-width: 1024px) {
+    .mycontainer {
+        margin-top: 5rem;
+    }
+}
+
+.mycontainer.active {
+    margin-left: 0;
+    width: 100%;
+}
+
+@media screen and (min-width: 1024px) {
     .mycontainer.active {
-        margin-left: 0;
-        width: 100%;
+        margin-left: 240px;
+        width: calc(100% - 240px);
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .mycontainer.active {
+        margin-left: 260px;
+        width: calc(100% - 260px);
     }
 }
 
@@ -450,13 +469,27 @@ button {
 
 .header {
     width: 100%;
-    height: 100px;
+    height: 64px;
     background-color: #fff;
-    padding: 2rem;
+    padding: 0.75rem 1rem;
     position: fixed;
     top: 0;
     z-index: 99;
-    box-shadow: 0 0 10px #c4c4c4;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@media screen and (min-width: 768px) {
+    .header {
+        height: 72px;
+        padding: 1rem 1.5rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .header {
+        height: 80px;
+        padding: 1rem 2rem;
+    }
 }
 
 .logo {
@@ -467,6 +500,19 @@ button {
     position: relative;
     font-weight: 900;
     color: #000;
+    font-size: 1.25rem;
+}
+
+@media screen and (min-width: 768px) {
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .logo h1 {
+        font-size: 1.75rem;
+    }
 }
 
 .logo h1::before {
@@ -482,13 +528,21 @@ button {
 }
 
 .headerham {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background-color: #eee8fa;
     color: #5f22db;
-    font-size: 20px;
+    font-size: 18px;
     border-radius: 50%;
     cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+    .headerham {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
 }
 
 .rightnav svg {
@@ -497,8 +551,20 @@ button {
 }
 
 .profilenav img {
-    width: 60px;
+    width: 40px;
     cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+    .profilenav img {
+        width: 50px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .profilenav img {
+        width: 60px;
+    }
 }
 
 /* ********************************************** */
@@ -507,13 +573,13 @@ button {
 
 .asideleft {
     position: fixed;
-    top: 64px;
+    top: 4rem;
     left: 0;
-    width: 240px;
-    height: calc(100vh - 64px);
+    width: 220px;
+    height: calc(100vh - 4rem);
     background-color: #0f172a;
     z-index: 40;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
@@ -524,22 +590,66 @@ button {
     border-right: 1px solid rgba(51, 65, 85, 0.5);
 }
 
+@media screen and (min-width: 640px) {
+    .asideleft {
+        top: 72px;
+        width: 240px;
+        height: calc(100vh - 72px);
+        box-shadow: 0 0 18px rgba(0, 0, 0, 0.3);
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .asideleft {
+        top: 5rem;
+        width: 260px;
+        height: calc(100vh - 5rem);
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    }
+}
+
 .asideleft.active {
     transform: translateX(0);
 }
 
-@media screen and (max-width: 1024px) {
-    .asideleft.active {
-        transform: translateX(0);
-    }
+/* Custom scrollbar for sidebar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 2px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
 }
 
 .asideleft ul li {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
-    padding: 0.6rem;
+    gap: 0.6rem;
+    padding: 0.5rem;
     cursor: pointer;
+}
+
+@media screen and (min-width: 768px) {
+    .asideleft ul li {
+        gap: 0.75rem;
+        padding: 0.6rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .asideleft ul li {
+        gap: 0.8rem;
+        padding: 0.7rem;
+    }
 }
 
 .asideleft ul .flex-left {
@@ -557,11 +667,29 @@ button {
 }
 
 .asideleft ul li svg {
-    font-size: 22px;
+    font-size: 18px;
 }
 
 .asideleft ul li span {
-    font-size: 20px;
+    font-size: 14px;
+}
+
+@media screen and (min-width: 768px) {
+    .asideleft ul li svg {
+        font-size: 20px;
+    }
+    .asideleft ul li span {
+        font-size: 16px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .asideleft ul li svg {
+        font-size: 22px;
+    }
+    .asideleft ul li span {
+        font-size: 18px;
+    }
 }
 
 .asideleft ul li ul {
@@ -613,13 +741,27 @@ button {
 
 .dashboard {
     position: relative;
-    /* max-width: 1650px;
-    margin: auto; */
     height: 100%;
-    /* margin-top: 120px; */
-    /* margin-left: 200px; */
-    padding: 2rem;
+    padding: 0.75rem;
     z-index: 5;
+}
+
+@media screen and (min-width: 640px) {
+    .dashboard {
+        padding: 1rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .dashboard {
+        padding: 1.5rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .dashboard {
+        padding: 2rem;
+    }
 }
 
 /* title */
@@ -629,7 +771,7 @@ button {
 
 .titledashboard h2 {
     color: #7e37d8;
-    font-size: 2rem;
+    font-size: 1.25rem;
     font-weight: 800;
 }
 
@@ -641,8 +783,34 @@ button {
     display: block;
     text-transform: uppercase;
     color: #7e37d8;
-    letter-spacing: 4px;
+    letter-spacing: 2px;
     font-weight: 700;
+    font-size: 0.75rem;
+}
+
+@media screen and (min-width: 640px) {
+    .titledashboard h2 {
+        font-size: 1.5rem;
+    }
+    .titledashboard h3 {
+        font-size: 0.875rem;
+        letter-spacing: 3px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .titledashboard h2 {
+        font-size: 1.75rem;
+    }
+    .titledashboard h3 {
+        letter-spacing: 4px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .titledashboard h2 {
+        font-size: 2rem;
+    }
 }
 
 .breadcrumb {
@@ -652,13 +820,31 @@ button {
 }
 
 .breadcrumb svg {
-    font-size: 22px;
+    font-size: 16px;
     color: #571f9e;
 }
 
 .breadcrumb span {
-    font-size: 22px;
+    font-size: 14px;
     color: #571f9e;
+}
+
+@media screen and (min-width: 768px) {
+    .breadcrumb svg {
+        font-size: 18px;
+    }
+    .breadcrumb span {
+        font-size: 16px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .breadcrumb svg {
+        font-size: 22px;
+    }
+    .breadcrumb span {
+        font-size: 18px;
+    }
 }
 
 /* fourcards */
@@ -675,17 +861,45 @@ button {
 
 .four_card {
     position: relative;
-    width: 250px;
-    height: 200px;
+    width: 100%;
+    min-width: 140px;
+    max-width: 200px;
+    height: 140px;
     background-image: linear-gradient(to bottom right, #9358e0, #571f9e);
-    box-shadow: 2px 12px 26px 3px rgba(126, 55, 216, .3);
+    box-shadow: 2px 8px 20px 2px rgba(126, 55, 216, .3);
     color: #fff;
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
-    border-radius: 50px;
-    margin-bottom: 1rem;
+    border-radius: 24px;
+    margin-bottom: 0.75rem;
+}
+
+@media screen and (min-width: 640px) {
+    .four_card {
+        max-width: 220px;
+        height: 160px;
+        border-radius: 32px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .four_card {
+        max-width: 240px;
+        height: 180px;
+        border-radius: 40px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .four_card {
+        max-width: 250px;
+        height: 200px;
+        border-radius: 50px;
+        margin-bottom: 1rem;
+        box-shadow: 2px 12px 26px 3px rgba(126, 55, 216, .3);
+    }
 }
 
 .four_card:nth-child(2) {
@@ -704,20 +918,59 @@ button {
 }
 
 .four_card h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     text-shadow: 0 0 10px #999;
 }
 
 .four_card span {
     position: absolute;
     bottom: 0;
-    width: 100px;
+    width: 70px;
     text-align: center;
-    font-size: 1rem;
+    font-size: 0.75rem;
     background-color: #5d66bda7;
-    padding: 1rem;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+    padding: 0.5rem;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+@media screen and (min-width: 640px) {
+    .four_card h2 {
+        font-size: 1.35rem;
+    }
+    .four_card span {
+        width: 80px;
+        font-size: 0.875rem;
+        padding: 0.65rem;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .four_card h2 {
+        font-size: 1.4rem;
+    }
+    .four_card span {
+        width: 90px;
+        font-size: 0.925rem;
+        padding: 0.75rem;
+        border-top-left-radius: 18px;
+        border-top-right-radius: 18px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .four_card h2 {
+        font-size: 1.5rem;
+    }
+    .four_card span {
+        width: 100px;
+        font-size: 1rem;
+        padding: 1rem;
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+    }
 }
 
 
@@ -730,26 +983,76 @@ button {
 
 .leftyearoverview {
     position: relative;
-    width: 65%;
-    height: 600px;
+    width: 100%;
+    height: 350px;
     background-color: #fff;
     box-shadow: 0 0 10px #d4d4d4;
-    border-radius: 50px;
+    border-radius: 20px;
     overflow: hidden;
-    padding: 2.5rem 4rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
 }
 
+@media screen and (min-width: 640px) {
+    .leftyearoverview {
+        height: 400px;
+        padding: 1.5rem;
+        border-radius: 24px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .leftyearoverview {
+        height: 500px;
+        padding: 2rem;
+        border-radius: 32px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .leftyearoverview {
+        width: 65%;
+        height: 600px;
+        padding: 2.5rem 4rem;
+        border-radius: 50px;
+    }
+}
+
 .right_salescont {
     position: relative;
-    width: 35%;
-    height: 600px;
-    border-radius: 50px;
-    padding: 2.5rem 4rem;
+    width: 100%;
+    height: auto;
+    min-height: 300px;
+    border-radius: 20px;
+    padding: 1rem;
     box-shadow: 0 0 10px #d4d4d4;
     overflow: hidden;
+}
 
+@media screen and (min-width: 640px) {
+    .right_salescont {
+        min-height: 350px;
+        padding: 1.5rem;
+        border-radius: 24px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .right_salescont {
+        min-height: 450px;
+        padding: 2rem;
+        border-radius: 32px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .right_salescont {
+        width: 35%;
+        height: 600px;
+        padding: 2.5rem 4rem;
+        border-radius: 50px;
+    }
 }
 
 .leftyearoverview canvas {
@@ -871,9 +1174,30 @@ button {
 
 .blogscategory td {
     list-style: auto;
-    padding: 2rem;
-    font-size: 1rem;
+    padding: 0.75rem;
+    font-size: 0.875rem;
     margin: 1px;
+}
+
+@media screen and (min-width: 640px) {
+    .blogscategory td {
+        padding: 1rem;
+        font-size: 0.925rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .blogscategory td {
+        padding: 1.25rem;
+        font-size: 0.95rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .blogscategory td {
+        padding: 2rem;
+        font-size: 1rem;
+    }
 }
 
 .blogscategory tbody tr:hover {
@@ -899,13 +1223,35 @@ button {
 }
 
 .blogstable input {
-    width: 450px;
-    padding: 10px;
+    width: 100%;
+    max-width: 450px;
+    padding: 8px 12px;
     border: 1px solid #999;
-    font-size: 22px;
+    font-size: 14px;
     outline-color: #571f9e;
     box-shadow: 0 0 5px #999;
-    border-radius: 10px;
+    border-radius: 8px;
+}
+
+@media screen and (min-width: 640px) {
+    .blogstable input {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .blogstable input {
+        font-size: 18px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .blogstable input {
+        font-size: 20px;
+        padding: 10px;
+        border-radius: 10px;
+    }
 }
 
 .blogstable input:focus {
@@ -917,19 +1263,58 @@ button {
     width: 100%;
     color: #1b3155;
     text-align: left;
-    font-size: 1.3rem;
+    font-size: 0.875rem;
 }
 
 .blogstable table thead th {
     color: #1b3155;
     background-color: #cfe2ff;
-    padding: 0.75rem;
-    font-size: 1.5rem;
+    padding: 0.5rem;
+    font-size: 0.875rem;
 }
 
 .blogstable table tbody td {
     color: #1b3155;
-    padding: 1rem 10px;
+    padding: 0.5rem;
+}
+
+@media screen and (min-width: 640px) {
+    .blogstable table {
+        font-size: 1rem;
+    }
+    .blogstable table thead th {
+        padding: 0.625rem;
+        font-size: 1rem;
+    }
+    .blogstable table tbody td {
+        padding: 0.75rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .blogstable table {
+        font-size: 1.1rem;
+    }
+    .blogstable table thead th {
+        padding: 0.7rem;
+        font-size: 1.2rem;
+    }
+    .blogstable table tbody td {
+        padding: 0.875rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .blogstable table {
+        font-size: 1.3rem;
+    }
+    .blogstable table thead th {
+        padding: 0.75rem;
+        font-size: 1.5rem;
+    }
+    .blogstable table tbody td {
+        padding: 1rem 10px;
+    }
 }
 
 .blogstable table tbody {
@@ -938,15 +1323,40 @@ button {
 }
 
 .blogstable table button {
-    font-size: 15px;
+    font-size: 12px;
     display: inline-flex;
-    gap: 10px;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
+    gap: 6px;
+    padding: 0.4rem 0.75rem;
+    border-radius: 8px;
     font-weight: 700;
     border: 1px solid #555;
     color: #444;
     transition: 0.3s ease;
+}
+
+@media screen and (min-width: 640px) {
+    .blogstable table button {
+        font-size: 13px;
+        gap: 8px;
+        padding: 0.45rem 0.875rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .blogstable table button {
+        font-size: 14px;
+        gap: 9px;
+        padding: 0.475rem 0.925rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .blogstable table button {
+        font-size: 15px;
+        gap: 10px;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+    }
 }
 
 .blogstable table button:hover:nth-child(1) {
@@ -981,11 +1391,38 @@ button {
     background-color: #f0f0f0;
     border: none;
     color: #333;
-    padding: 15px 20px;
+    padding: 8px 12px;
     font-weight: 600;
-    margin-right: 5px;
-    border-radius: 10px;
+    margin-right: 4px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 0.875rem;
+}
+
+@media screen and (min-width: 640px) {
+    .blogpagination button {
+        padding: 10px 16px;
+        margin-right: 4px;
+        border-radius: 8px;
+        font-size: 0.925rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .blogpagination button {
+        padding: 12px 18px;
+        margin-right: 5px;
+        border-radius: 9px;
+        font-size: 0.95rem;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .blogpagination button {
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 1rem;
+    }
 }
 
 .blogpagination button:hover {
@@ -1027,17 +1464,51 @@ button {
 .addWebsiteform {
     width: 100%;
     background-color: #f6f6f6;
-    padding: 2rem;
-    border-radius: 15px;
+    padding: 1rem;
+    border-radius: 12px;
     box-shadow: 0 0 10px #d1d1d1;
 }
 
 .addWebsiteform input {
     width: 100%;
-    font-size: 1.4rem;
-    padding: 0.75rem;
-    border-radius: 10px;
+    font-size: 0.925rem;
+    padding: 0.5rem;
+    border-radius: 8px;
     border: 1px solid #999;
+}
+
+@media screen and (min-width: 640px) {
+    .addWebsiteform {
+        padding: 1.25rem;
+    }
+    .addWebsiteform input {
+        font-size: 1rem;
+        padding: 0.6rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .addWebsiteform {
+        padding: 1.5rem;
+        border-radius: 14px;
+    }
+    .addWebsiteform input {
+        font-size: 1.2rem;
+        padding: 0.7rem;
+        border-radius: 9px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .addWebsiteform {
+        padding: 2rem;
+        border-radius: 15px;
+    }
+    .addWebsiteform input {
+        font-size: 1.4rem;
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
 }
 
 .addWebsiteform input:focus {
@@ -1046,17 +1517,52 @@ button {
 }
 
 .addWebsiteform label {
-    font-size: 1.4rem;
-    padding-bottom: 10px;
+    font-size: 0.925rem;
+    padding-bottom: 6px;
     font-weight: 700;
 }
 
 .addWebsiteform select {
     width: 100%;
-    font-size: 1.4rem;
-    padding: 0.5rem 1rem;
-    border-radius: 10px;
+    font-size: 0.925rem;
+    padding: 0.5rem;
+    border-radius: 8px;
     border: 1px solid #999;
+}
+
+@media screen and (min-width: 640px) {
+    .addWebsiteform label {
+        font-size: 1rem;
+        padding-bottom: 7px;
+    }
+    .addWebsiteform select {
+        font-size: 1rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .addWebsiteform label {
+        font-size: 1.2rem;
+        padding-bottom: 8px;
+    }
+    .addWebsiteform select {
+        font-size: 1.2rem;
+        padding: 0.5rem 0.875rem;
+        border-radius: 9px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .addWebsiteform label {
+        font-size: 1.4rem;
+        padding-bottom: 10px;
+    }
+    .addWebsiteform select {
+        font-size: 1.4rem;
+        padding: 0.5rem 1rem;
+        border-radius: 10px;
+    }
 }
 
 .addWebsiteform select option {
@@ -1072,14 +1578,37 @@ button {
 
 .addWebsiteform .but {
     width: 100%;
-    padding: 1rem;
+    padding: 0.75rem;
     background-color: #8667b0;
     color: #fff;
-    border-radius: 10px;
+    border-radius: 8px;
     border: none;
     outline: none;
-    font-size: 1.4rem;
+    font-size: 1rem;
     transition: 0.3s ease;
+}
+
+@media screen and (min-width: 640px) {
+    .addWebsiteform .but {
+        font-size: 1.1rem;
+        padding: 0.825rem;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .addWebsiteform .but {
+        font-size: 1.25rem;
+        padding: 0.875rem;
+        border-radius: 9px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .addWebsiteform .but {
+        font-size: 1.4rem;
+        padding: 1rem;
+        border-radius: 10px;
+    }
 }
 
 .addWebsiteform .but:hover {
@@ -1553,18 +2082,64 @@ button {
     max-width: 700px;
     background: #F8F9FD;
     background: linear-gradient(0deg, rgb(255, 255, 255) 0%, rgb(244, 247, 251) 100%);
-    border-radius: 40px;
-    padding: 25px 35px;
-    border: 5px solid rgb(255, 255, 255);
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
-    margin: 20px;
+    border-radius: 24px;
+    padding: 20px 24px;
+    border: 3px solid rgb(255, 255, 255);
+    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 20px -15px;
+    margin: 16px;
+}
+
+@media screen and (min-width: 640px) {
+    .loginform {
+        border-radius: 28px;
+        padding: 22px 28px;
+        border: 4px solid rgb(255, 255, 255);
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 24px 24px -17px;
+        margin: 18px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .loginform {
+        border-radius: 32px;
+        padding: 24px 32px;
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 26px 26px -18px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .loginform {
+        border-radius: 40px;
+        padding: 25px 35px;
+        border: 5px solid rgb(255, 255, 255);
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 30px 30px -20px;
+        margin: 20px;
+    }
 }
 
 .heading {
     text-align: center;
     font-weight: 900;
-    font-size: 30px;
+    font-size: 20px;
     color: rgb(16, 137, 211);
+}
+
+@media screen and (min-width: 640px) {
+    .heading {
+        font-size: 24px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .heading {
+        font-size: 27px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .heading {
+        font-size: 30px;
+    }
 }
 
 .form {
@@ -1575,12 +2150,42 @@ button {
     width: 100%;
     background: white;
     border: none;
-    padding: 15px 20px;
-    border-radius: 20px;
-    font-size: 25px;
-    margin-top: 15px;
-    box-shadow: #cff0ff 0px 10px 10px -5px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    margin-top: 10px;
+    box-shadow: #cff0ff 0px 6px 6px -3px;
     border-inline: 2px solid transparent;
+}
+
+@media screen and (min-width: 640px) {
+    .form .input {
+        padding: 12px 16px;
+        border-radius: 14px;
+        font-size: 16px;
+        margin-top: 12px;
+        box-shadow: #cff0ff 0px 8px 8px -4px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .form .input {
+        padding: 13px 18px;
+        border-radius: 16px;
+        font-size: 20px;
+        margin-top: 13px;
+        box-shadow: #cff0ff 0px 9px 9px -4px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .form .input {
+        padding: 15px 20px;
+        border-radius: 20px;
+        font-size: 25px;
+        margin-top: 15px;
+        box-shadow: #cff0ff 0px 10px 10px -5px;
+    }
 }
 
 .form .input::-moz-placeholder {
@@ -1603,14 +2208,44 @@ button {
     font-weight: bold;
     background: linear-gradient(45deg, rgb(16, 137, 211) 0%, rgb(18, 177, 209) 100%);
     color: white;
-    font-size: 25px;
-    padding-block: 15px;
-    margin: 20px auto;
-    border-radius: 20px;
-    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+    font-size: 16px;
+    padding-block: 12px;
+    margin: 14px auto;
+    border-radius: 12px;
+    box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 14px 8px -10px;
     border: none;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+}
+
+@media screen and (min-width: 640px) {
+    .form .login-button {
+        font-size: 18px;
+        padding-block: 13px;
+        margin: 16px auto;
+        border-radius: 14px;
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 16px 9px -12px;
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .form .login-button {
+        font-size: 21px;
+        padding-block: 14px;
+        margin: 18px auto;
+        border-radius: 17px;
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 18px 9px -13px;
+    }
+}
+
+@media screen and (min-width: 1024px) {
+    .form .login-button {
+        font-size: 25px;
+        padding-block: 15px;
+        margin: 20px auto;
+        border-radius: 20px;
+        box-shadow: rgba(133, 189, 215, 0.8784313725) 0px 20px 10px -15px;
+    }
 }
 
 .form .login-button {
@@ -2025,23 +2660,6 @@ button {
     }
 }
 
-@media screen and (max-width: 500px) {
-    .leftyearoverview{
-        height: auto;
-    }
-    .leftyearoverview canvas{
-        height: auto !important;
-    }
-    .right_salescont h3{
-        text-align: center;
-    }
-    .blogstable table, .blogstable table thead th{
-        font-size: 15px;
-    }
-    .blogstable table h3{
-        width: 125px;
-    }
-}
 @media screen and (max-width: 500px) {
     .leftyearoverview{
         height: auto;
