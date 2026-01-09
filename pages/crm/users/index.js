@@ -72,7 +72,7 @@ export default function UserManagement() {
     setCreateError('');
 
     try {
-      const response = await fetch('/api/create-user', {
+      const response = await fetch('/api/admin/users', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(createForm)
@@ -104,11 +104,10 @@ export default function UserManagement() {
     }
 
     try {
-      const response = await fetch('/api/update-user', {
+      const response = await fetch(`/api/admin/users/${userId}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userId,
           isActive: !currentStatus
         })
       });
@@ -483,11 +482,10 @@ export default function UserManagement() {
                     type="button"
                     onClick={async () => {
                       try {
-                        const response = await fetch('/api/update-user', {
+                        const response = await fetch(`/api/admin/users/${editingUser._id}`, {
                           method: 'POST',
                           headers: { 'Content-Type': 'application/json' },
                           body: JSON.stringify({
-                            userId: editingUser._id,
                             email: editingUser.email,
                             role: editingUser.role,
                             newPassword: editingUser.newPassword
