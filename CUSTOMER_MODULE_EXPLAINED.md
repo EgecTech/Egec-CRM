@@ -1,4 +1,4 @@
-# 🎓 Customer Module - Complete Architecture Explanation
+  # 🎓 Customer Module - Complete Architecture Explanation
 
 ## 📚 Table of Contents
 1. [Overview](#overview)
