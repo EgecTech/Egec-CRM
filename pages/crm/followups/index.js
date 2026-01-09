@@ -59,6 +59,11 @@ export default function FollowupsPage() {
       if (activeFilter === 'completed') params.append('status', 'Completed');
       
       const response = await fetch(`/api/crm/followups?${params}`);
+      if (!response.ok) {
+        console.error('Followups API error:', response.status, response.statusText);
+        setFollowups([]);
+        return;
+      }
       const data = await response.json();
 
       if (data.success) {
@@ -73,6 +78,7 @@ export default function FollowupsPage() {
       }
     } catch (err) {
       console.error('Error fetching followups:', err);
+      setFollowups([]);
     } finally {
       setLoading(false);
     }
@@ -89,11 +95,21 @@ export default function FollowupsPage() {
         })
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        console.error('Mark complete API error:', response.status, response.statusText);
+        alert('Failed to mark follow-up as complete');
+        return;
+      }
+
+      const data = await response.json();
+      if (data.success) {
         fetchFollowups();
+      } else {
+        alert(data.error || 'Failed to mark follow-up as complete');
       }
     } catch (err) {
       console.error('Error marking complete:', err);
+      alert('Failed to mark follow-up as complete');
     }
   };
 
