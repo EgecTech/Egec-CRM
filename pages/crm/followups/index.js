@@ -25,6 +25,12 @@ export default function FollowupsPage() {
   const [followups, setFollowups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState(filter || 'all');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 20,
+    total: 0,
+    pages: 0
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -35,13 +41,17 @@ export default function FollowupsPage() {
     if (status === 'authenticated') {
       fetchFollowups();
     }
-  }, [status, router, activeFilter]);
+  }, [status, router, activeFilter, pagination.page]);
 
   const fetchFollowups = async () => {
     try {
       setLoading(true);
       
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString()
+      });
+      
       if (activeFilter === 'overdue') params.append('overdue', 'true');
       if (activeFilter === 'today') params.append('today', 'true');
       if (activeFilter === 'thisWeek') params.append('thisWeek', 'true');
@@ -53,6 +63,13 @@ export default function FollowupsPage() {
 
       if (data.success) {
         setFollowups(data.data);
+        if (data.pagination) {
+          setPagination(prev => ({
+            ...prev,
+            total: data.pagination.total,
+            pages: data.pagination.pages
+          }));
+        }
       }
     } catch (err) {
       console.error('Error fetching followups:', err);
@@ -240,6 +257,46 @@ export default function FollowupsPage() {
                   </div>
                 );
               })}
+            </div>
+          )}
+
+          {/* Pagination */}
+          {pagination.pages > 1 && (
+            <div className="flex justify-center mt-8 gap-2">
+              {pagination.page > 1 && (
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                  className="px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-50 text-sm font-medium border border-slate-200 shadow-sm hover:shadow transition-all"
+                >
+                  ← Previous
+                </button>
+              )}
+
+              {[...Array(Math.min(5, pagination.pages))].map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPagination(prev => ({ ...prev, page: pageNum }))}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      pagination.page === pageNum
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-sm hover:shadow'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {pagination.page < pagination.pages && (
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                  className="px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-50 text-sm font-medium border border-slate-200 shadow-sm hover:shadow transition-all"
+                >
+                  Next →
+                </button>
+              )}
             </div>
           )}
         </div>

@@ -10,7 +10,7 @@ import { FaUserPlus, FaEdit, FaLock, FaUnlock } from 'react-icons/fa';
 export default function UserManagement() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -173,7 +173,7 @@ export default function UserManagement() {
                 <h1 className="text-3xl font-bold text-white">User Management</h1>
                 <p className="text-slate-400 mt-2">Manage system users and roles</p>
               </div>
-              <button 
+              <button
                 onClick={() => setShowCreateModal(true)}
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-xl font-bold hover:from-blue-600 hover:to-indigo-600"
               >
@@ -207,58 +207,57 @@ export default function UserManagement() {
                   </tr>
                 ) : (
                   users.map(user => (
-                  <tr key={user._id} className="hover:bg-slate-50">
-                    <td className="px-6 py-4">
-                      <p className="font-semibold text-slate-900">{user.name}</p>
-                    </td>
-                    <td className="px-6 py-4 text-slate-700">{user.email}</td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadge(user.role)}`}>
-                        {getRoleLabel(user.role)}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${
-                        user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                      }`}>
-                        {user.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-600">
-                      {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <button 
-                          onClick={() => {
-                            setEditingUser(user);
-                            setShowEditModal(true);
-                          }}
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
-                          title="Edit user"
-                          disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
-                          style={{ 
-                            opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
-                            cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
-                          }}
-                        >
-                          <FaEdit className="w-4 h-4" />
-                        </button>
-                        <button 
-                          onClick={() => handleToggleUserStatus(user._id, user.isActive)}
-                          className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg"
-                          title={user.isActive ? 'Disable user' : 'Enable user'}
-                          disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
-                          style={{ 
-                            opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
-                            cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
-                          }}
-                        >
-                          {user.isActive ? <FaLock className="w-4 h-4" /> : <FaUnlock className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
+                    <tr key={user._id} className="hover:bg-slate-50">
+                      <td className="px-6 py-4">
+                        <p className="font-semibold text-slate-900">{user.name}</p>
+                      </td>
+                      <td className="px-6 py-4 text-slate-700">{user.email}</td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadge(user.role)}`}>
+                          {getRoleLabel(user.role)}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className={`inline-flex px-3 py-1 rounded-full text-xs font-semibold ${user.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
+                          }`}>
+                          {user.isActive ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-600">
+                        {user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleDateString() : 'Never'}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          <button
+                            onClick={() => {
+                              setEditingUser(user);
+                              setShowEditModal(true);
+                            }}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                            title="Edit user"
+                            disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
+                            style={{
+                              opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
+                              cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
+                            }}
+                          >
+                            <FaEdit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleToggleUserStatus(user._id, user.isActive)}
+                            className="p-2 text-slate-600 hover:bg-slate-50 rounded-lg"
+                            title={user.isActive ? 'Disable user' : 'Enable user'}
+                            disabled={session?.user?.role === 'admin' && user.role === 'superadmin'}
+                            style={{
+                              opacity: session?.user?.role === 'admin' && user.role === 'superadmin' ? 0.3 : 1,
+                              cursor: session?.user?.role === 'admin' && user.role === 'superadmin' ? 'not-allowed' : 'pointer'
+                            }}
+                          >
+                            {user.isActive ? <FaLock className="w-4 h-4" /> : <FaUnlock className="w-4 h-4" />}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
                   ))
                 )}
               </tbody>
@@ -289,7 +288,7 @@ export default function UserManagement() {
                   <input
                     type="text"
                     value={createForm.name}
-                    onChange={(e) => setCreateForm({...createForm, name: e.target.value})}
+                    onChange={(e) => setCreateForm({ ...createForm, name: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Enter full name"
                     required
@@ -303,7 +302,7 @@ export default function UserManagement() {
                   <input
                     type="email"
                     value={createForm.email}
-                    onChange={(e) => setCreateForm({...createForm, email: e.target.value})}
+                    onChange={(e) => setCreateForm({ ...createForm, email: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="user@example.com"
                     required
@@ -317,7 +316,7 @@ export default function UserManagement() {
                   <input
                     type="tel"
                     value={createForm.phone}
-                    onChange={(e) => setCreateForm({...createForm, phone: e.target.value})}
+                    onChange={(e) => setCreateForm({ ...createForm, phone: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="+966501234567"
                     required
@@ -330,7 +329,7 @@ export default function UserManagement() {
                   </label>
                   <select
                     value={createForm.role}
-                    onChange={(e) => setCreateForm({...createForm, role: e.target.value})}
+                    onChange={(e) => setCreateForm({ ...createForm, role: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   >
                     {session?.user?.role === 'superadmin' && (
@@ -358,7 +357,7 @@ export default function UserManagement() {
                   <input
                     type="password"
                     value={createForm.password}
-                    onChange={(e) => setCreateForm({...createForm, password: e.target.value})}
+                    onChange={(e) => setCreateForm({ ...createForm, password: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Min 8 characters"
                     required
@@ -409,7 +408,7 @@ export default function UserManagement() {
                   <input
                     type="text"
                     value={editingUser.name}
-                    onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
@@ -419,7 +418,7 @@ export default function UserManagement() {
                   <input
                     type="email"
                     value={editingUser.email}
-                    onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
@@ -429,7 +428,7 @@ export default function UserManagement() {
                   <input
                     type="tel"
                     value={editingUser.userPhone || ''}
-                    onChange={(e) => setEditingUser({...editingUser, userPhone: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, userPhone: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
                   />
                 </div>
@@ -438,7 +437,7 @@ export default function UserManagement() {
                   <label className="block text-sm font-semibold text-slate-700 mb-2">Role</label>
                   <select
                     value={editingUser.role}
-                    onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
                     disabled={session?.user?.role !== 'superadmin'}
                   >
@@ -462,7 +461,7 @@ export default function UserManagement() {
                   <input
                     type="password"
                     placeholder="Leave empty to keep current password"
-                    onChange={(e) => setEditingUser({...editingUser, newPassword: e.target.value})}
+                    onChange={(e) => setEditingUser({ ...editingUser, newPassword: e.target.value })}
                     className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-violet-500"
                   />
                 </div>

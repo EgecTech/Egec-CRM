@@ -18,6 +18,12 @@ export default function AuditLogs() {
     entityType: '',
     search: ''
   });
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 50,
+    total: 0,
+    pages: 0
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -33,12 +39,16 @@ export default function AuditLogs() {
       }
       fetchAuditLogs();
     }
-  }, [status, router, session]);
+  }, [status, router, session, pagination.page]);
 
   const fetchAuditLogs = async () => {
     try {
       setLoading(true);
-      const params = new URLSearchParams();
+      const params = new URLSearchParams({
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString()
+      });
+      
       if (filters.action) params.append('action', filters.action);
       if (filters.entityType) params.append('entityType', filters.entityType);
       if (filters.search) params.append('search', filters.search);
@@ -48,6 +58,13 @@ export default function AuditLogs() {
 
       if (data.success) {
         setLogs(data.data);
+        if (data.pagination) {
+          setPagination(prev => ({
+            ...prev,
+            total: data.pagination.total,
+            pages: data.pagination.pages
+          }));
+        }
       }
     } catch (err) {
       console.error('Error fetching audit logs:', err);
@@ -202,6 +219,51 @@ export default function AuditLogs() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {pagination.pages > 1 && (
+            <div className="flex justify-center items-center mt-8 gap-2">
+              <div className="text-sm text-slate-600 mr-4">
+                Showing <span className="font-bold text-blue-600">{logs.length}</span> of{' '}
+                <span className="font-bold">{pagination.total}</span> logs
+              </div>
+              
+              {pagination.page > 1 && (
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+                  className="px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-50 text-sm font-medium border border-slate-200 shadow-sm hover:shadow transition-all"
+                >
+                  ← Previous
+                </button>
+              )}
+
+              {[...Array(Math.min(5, pagination.pages))].map((_, idx) => {
+                const pageNum = idx + 1;
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPagination(prev => ({ ...prev, page: pageNum }))}
+                    className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                      pagination.page === pageNum
+                        ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg'
+                        : 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 shadow-sm hover:shadow'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {pagination.page < pagination.pages && (
+                <button
+                  onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+                  className="px-4 py-2 rounded-lg bg-white text-slate-700 hover:bg-slate-50 text-sm font-medium border border-slate-200 shadow-sm hover:shadow transition-all"
+                >
+                  Next →
+                </button>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </LoginLayout>
