@@ -45,8 +45,11 @@ async function handler(req, res) {
           data: setting
         });
       } else {
-        // Get all settings - FORCE fresh query, no cache
-        const settings = await SystemSetting.find({ isActive: true })
+        // Get all settings
+        // Superadmin can see all settings (including inactive)
+        const query = role === 'superadmin' ? {} : { isActive: true };
+        
+        const settings = await SystemSetting.find(query)
           .sort({ settingKey: 1 })
           .lean()
           .exec(); // Force execution

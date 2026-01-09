@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaFlask, FaHome } from "react-icons/fa";
-import { FiUsers, FiShield } from "react-icons/fi";
+import { FiUsers, FiShield, FiSettings } from "react-icons/fi";
 
 const Aside = React.memo(({ asideOpen }) => {
   const router = useRouter();
@@ -92,15 +92,26 @@ const Aside = React.memo(({ asideOpen }) => {
   
   // Add audit logs (Superadmin only)
   if (session?.user?.role === "superadmin") {
-    navItems.push({
-      href: "/crm/audit-logs",
-      label: "Audit Logs",
-      icon: FiShield,
-      isActive: activeLink.includes("/crm/audit-logs"),
-      gradient: "from-rose-500 to-red-600",
-      bgActive: "bg-rose-500/10",
-      borderActive: "border-rose-500/30",
-    });
+    navItems.push(
+      {
+        href: "/crm/system-control",
+        label: "System Control",
+        icon: FiSettings,
+        isActive: activeLink.includes("/crm/system-control"),
+        gradient: "from-purple-500 to-pink-600",
+        bgActive: "bg-purple-500/10",
+        borderActive: "border-purple-500/30",
+      },
+      {
+        href: "/crm/audit-logs",
+        label: "Audit Logs",
+        icon: FiShield,
+        isActive: activeLink.includes("/crm/audit-logs"),
+        gradient: "from-rose-500 to-red-600",
+        bgActive: "bg-rose-500/10",
+        borderActive: "border-rose-500/30",
+      }
+    );
   }
 
   return (
