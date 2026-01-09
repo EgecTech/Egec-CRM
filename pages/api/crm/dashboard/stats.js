@@ -7,6 +7,7 @@ import { buildCustomerQuery, buildFollowupQuery } from '@/lib/permissions';
 import { mongooseConnect } from '@/lib/mongoose';
 import { withRateLimit } from '@/lib/rateLimit';
 import { checkDirectAccess } from '@/lib/apiProtection';
+import { cacheGet, cacheSet } from '@/lib/cache';
 
 async function handler(req, res) {
   // Block direct browser access
@@ -26,6 +27,17 @@ async function handler(req, res) {
   const { role, id: userId } = session.user;
   
   try {
+    // Try to get from cache first (5 minute TTL)
+    const cacheKey = `dashboard_stats:${role}:${userId}`;
+    const cached = await cacheGet(cacheKey, 'crm');
+    if (cached) {
+      return res.status(200).json({
+        success: true,
+        data: cached,
+        cached: true
+      });
+    }
+
     // Build queries based on role
     const customerQuery = buildCustomerQuery(role, userId);
     const followupQuery = buildFollowupQuery(role, userId);
@@ -141,27 +153,33 @@ async function handler(req, res) {
       ? ((convertedCount / qualifiedCount) * 100).toFixed(1)
       : 0;
     
+    const statsData = {
+      customers: {
+        total: totalCustomers,
+        byStatus: statusCounts,
+        byInterest: interestCounts,
+        unassigned: unassignedCustomers,
+        newThisMonth: newCustomersThisMonth,
+        convertedThisMonth
+      },
+      followups: {
+        overdue: overdueFollowups,
+        today: todayFollowups,
+        thisWeek: thisWeekFollowups,
+        completedThisMonth: completedFollowupsThisMonth
+      },
+      performance: {
+        conversionRate: parseFloat(conversionRate)
+      }
+    };
+
+    // Cache the stats for 5 minutes (300 seconds)
+    await cacheSet(cacheKey, statsData, 300, 'crm');
+    
     return res.status(200).json({
       success: true,
-      data: {
-        customers: {
-          total: totalCustomers,
-          byStatus: statusCounts,
-          byInterest: interestCounts,
-          unassigned: unassignedCustomers,
-          newThisMonth: newCustomersThisMonth,
-          convertedThisMonth
-        },
-        followups: {
-          overdue: overdueFollowups,
-          today: todayFollowups,
-          thisWeek: thisWeekFollowups,
-          completedThisMonth: completedFollowupsThisMonth
-        },
-        performance: {
-          conversionRate: parseFloat(conversionRate)
-        }
-      }
+      data: statsData,
+      cached: false
     });
     
   } catch (error) {

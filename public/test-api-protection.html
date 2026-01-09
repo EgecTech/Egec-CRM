@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,7 +11,7 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -18,21 +19,21 @@
             padding: 20px;
             direction: rtl;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
+
         .header {
             background: white;
             padding: 30px;
             border-radius: 20px;
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             text-align: center;
         }
-        
+
         .header h1 {
             font-size: 2.5em;
             margin-bottom: 10px;
@@ -40,15 +41,15 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .test-section {
             background: white;
             padding: 25px;
             border-radius: 15px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
-        
+
         .test-section h2 {
             color: #333;
             margin-bottom: 15px;
@@ -56,7 +57,7 @@
             border-bottom: 3px solid #667eea;
             padding-bottom: 10px;
         }
-        
+
         .test-button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -68,16 +69,16 @@
             margin: 5px;
             transition: transform 0.2s;
         }
-        
+
         .test-button:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
-        
+
         .test-button:active {
             transform: translateY(0);
         }
-        
+
         .result {
             margin-top: 15px;
             padding: 15px;
@@ -88,39 +89,39 @@
             direction: ltr;
             text-align: left;
         }
-        
+
         .result.success {
             background: #d4edda;
             border: 2px solid #28a745;
             color: #155724;
         }
-        
+
         .result.error {
             background: #f8d7da;
             border: 2px solid #dc3545;
             color: #721c24;
         }
-        
+
         .result.info {
             background: #d1ecf1;
             border: 2px solid #17a2b8;
             color: #0c5460;
         }
-        
+
         .endpoint-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .endpoint-item {
             background: #f8f9fa;
             padding: 10px;
             border-radius: 8px;
             border-left: 4px solid #667eea;
         }
-        
+
         .status-badge {
             display: inline-block;
             padding: 5px 10px;
@@ -129,24 +130,26 @@
             font-weight: bold;
             margin-left: 10px;
         }
-        
+
         .status-badge.protected {
             background: #28a745;
             color: white;
         }
-        
+
         .status-badge.public {
             background: #ffc107;
             color: black;
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
             <h1>🔒 اختبار حماية API</h1>
             <p>اختبار fetch() من التطبيق - الوصول المباشر يُختبر يدوياً في المتصفح</p>
-            <div style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 10px; margin-top: 15px; color: #856404;">
+            <div
+                style="background: #fff3cd; border: 2px solid #ffc107; padding: 15px; border-radius: 10px; margin-top: 15px; color: #856404;">
                 <strong>⚠️ مهم:</strong> هذه الصفحة تختبر fetch() من التطبيق (يجب أن يعمل ✅).<br>
                 لاختبار الحماية الحقيقية: اكتب URL مباشرة في شريط عنوان المتصفح (يجب أن يُحظر ✅).
             </div>
@@ -155,24 +158,24 @@
         <div class="test-section">
             <h2>📝 الشرح المهم</h2>
             <div class="result info">
-<strong>⚠️ ملاحظة هامة جداً:</strong>
+                <strong>⚠️ ملاحظة هامة جداً:</strong>
 
-هذه الصفحة تستخدم fetch() من داخل التطبيق، لذلك:
+                هذه الصفحة تستخدم fetch() من داخل التطبيق، لذلك:
 
-✅ النتيجة المتوقعة: جميع الـ endpoints تعمل (Status: 200)
-✅ هذا يعني أن الحماية تعمل بشكل صحيح!
-✅ fetch() من التطبيق يجب أن يعمل (وهو يعمل ✅)
+                ✅ النتيجة المتوقعة: جميع الـ endpoints تعمل (Status: 200)
+                ✅ هذا يعني أن الحماية تعمل بشكل صحيح!
+                ✅ fetch() من التطبيق يجب أن يعمل (وهو يعمل ✅)
 
-❌ هذه الصفحة لا يمكنها محاكاة "الوصول المباشر"
-   لأنها جزء من التطبيق نفسه!
+                ❌ هذه الصفحة لا يمكنها محاكاة "الوصول المباشر"
+                لأنها جزء من التطبيق نفسه!
 
-<strong>🧪 لاختبار الحماية الحقيقية:</strong>
-1. افتح تبويب جديد في المتصفح
-2. اكتب في شريط العنوان مباشرة:
-   https://egec-crm.vercel.app/api/crm/customers
-3. يجب أن ترى: {"error":"Access denied",...}
+                <strong>🧪 لاختبار الحماية الحقيقية:</strong>
+                1. افتح تبويب جديد في المتصفح
+                2. اكتب في شريط العنوان مباشرة:
+                https://egec-crm.vercel.app/api/crm/customers
+                3. يجب أن ترى: {"error":"Access denied",...}
 
-إذا رأيت رسالة "Access denied" → ✅ الحماية تعمل!
+                إذا رأيت رسالة "Access denied" → ✅ الحماية تعمل!
             </div>
         </div>
 
@@ -183,25 +186,29 @@
                 <div class="endpoint-item">
                     <code>/api/crm/customers</code>
                     <span class="status-badge protected">محمي</span>
-                    <button class="test-button" onclick="testEndpoint('/api/crm/customers', 'protected-customers')">اختبر</button>
+                    <button class="test-button"
+                        onclick="testEndpoint('/api/crm/customers', 'protected-customers')">اختبر</button>
                     <div id="protected-customers"></div>
                 </div>
                 <div class="endpoint-item">
                     <code>/api/crm/dashboard/stats</code>
                     <span class="status-badge protected">محمي</span>
-                    <button class="test-button" onclick="testEndpoint('/api/crm/dashboard/stats', 'protected-dashboard')">اختبر</button>
+                    <button class="test-button"
+                        onclick="testEndpoint('/api/crm/dashboard/stats', 'protected-dashboard')">اختبر</button>
                     <div id="protected-dashboard"></div>
                 </div>
                 <div class="endpoint-item">
                     <code>/api/admin/users</code>
                     <span class="status-badge protected">محمي</span>
-                    <button class="test-button" onclick="testEndpoint('/api/admin/users', 'protected-users')">اختبر</button>
+                    <button class="test-button"
+                        onclick="testEndpoint('/api/admin/users', 'protected-users')">اختبر</button>
                     <div id="protected-users"></div>
                 </div>
                 <div class="endpoint-item">
                     <code>/api/crm/universities</code>
                     <span class="status-badge protected">محمي</span>
-                    <button class="test-button" onclick="testEndpoint('/api/crm/universities', 'protected-unis')">اختبر</button>
+                    <button class="test-button"
+                        onclick="testEndpoint('/api/crm/universities', 'protected-unis')">اختبر</button>
                     <div id="protected-unis"></div>
                 </div>
             </div>
@@ -229,41 +236,42 @@
         <div class="test-section">
             <h2>📊 النتيجة المتوقعة من هذه الصفحة</h2>
             <div class="result info">
-<strong>✅ من fetch() (هذه الصفحة):</strong>
-- الـ Endpoints المحمية: Status 200 أو 401 (إذا لم تسجل الدخول)
-- الـ Endpoints العامة: Status 200
+                <strong>✅ من fetch() (هذه الصفحة):</strong>
+                - الـ Endpoints المحمية: Status 200 أو 401 (إذا لم تسجل الدخول)
+                - الـ Endpoints العامة: Status 200
 
-<strong>❌ من المتصفح مباشرة (اكتب URL في شريط العنوان):</strong>
-{
-  "error": "Access denied",
-  "message": "Direct API access is not allowed. Please use the application interface.",
-  "code": "DIRECT_NAVIGATION_BLOCKED"
-}
+                <strong>❌ من المتصفح مباشرة (اكتب URL في شريط العنوان):</strong>
+                {
+                "error": "Access denied",
+                "message": "Direct API access is not allowed. Please use the application interface.",
+                "code": "DIRECT_NAVIGATION_BLOCKED"
+                }
 
-<strong>🎯 الفرق الأساسي:</strong>
-┌─────────────────────────────────────────┐
-│ Browser URL Bar (مباشر)                │
-│ https://egec-crm.vercel.app/api/...    │
-│ → 403 Access Denied ✅                  │
-└─────────────────────────────────────────┘
+                <strong>🎯 الفرق الأساسي:</strong>
+                ┌─────────────────────────────────────────┐
+                │ Browser URL Bar (مباشر) │
+                │ https://egec-crm.vercel.app/api/... │
+                │ → 403 Access Denied ✅ │
+                └─────────────────────────────────────────┘
 
-┌─────────────────────────────────────────┐
-│ fetch() من التطبيق                     │
-│ fetch('/api/...')                       │
-│ → 200 يعمل بشكل طبيعي ✅                │
-└─────────────────────────────────────────┘
+                ┌─────────────────────────────────────────┐
+                │ fetch() من التطبيق │
+                │ fetch('/api/...') │
+                │ → 200 يعمل بشكل طبيعي ✅ │
+                └─────────────────────────────────────────┘
 
-<strong>⚠️ خلاصة مهمة:</strong>
-إذا كانت جميع الـ endpoints في هذه الصفحة تُرجع Status 200/401:
-✅ هذا يعني أن الحماية تعمل بشكل صحيح!
-✅ fetch() من التطبيق يعمل (المطلوب)
-✅ الوصول المباشر محظور (كما أكدت أنت)
+                <strong>⚠️ خلاصة مهمة:</strong>
+                إذا كانت جميع الـ endpoints في هذه الصفحة تُرجع Status 200/401:
+                ✅ هذا يعني أن الحماية تعمل بشكل صحيح!
+                ✅ fetch() من التطبيق يعمل (المطلوب)
+                ✅ الوصول المباشر محظور (كما أكدت أنت)
             </div>
         </div>
 
         <div class="test-section">
             <h2>🧪 اختبار fetch() من التطبيق</h2>
-            <button class="test-button" onclick="testAllEndpoints()" style="width: 100%; font-size: 18px; padding: 20px;">
+            <button class="test-button" onclick="testAllEndpoints()"
+                style="width: 100%; font-size: 18px; padding: 20px;">
                 🚀 اختبر fetch لجميع الـ endpoints
             </button>
             <div id="all-results"></div>
@@ -275,14 +283,16 @@
                 <p><strong>📝 لاختبار الحماية الحقيقية من الوصول المباشر:</strong></p>
                 <ol style="margin: 15px 0; line-height: 2.5; text-align: right;">
                     <li>📋 انسخ هذا الرابط:
-                        <code style="background: #f8f9fa; padding: 5px 10px; border-radius: 5px; display: block; margin: 10px 0; direction: ltr; text-align: left;">
+                        <code
+                            style="background: #f8f9fa; padding: 5px 10px; border-radius: 5px; display: block; margin: 10px 0; direction: ltr; text-align: left;">
                             https://egec-crm.vercel.app/api/crm/customers
                         </code>
                     </li>
                     <li>🆕 افتح تبويب جديد في المتصفح</li>
                     <li>📝 الصق الرابط في شريط العنوان واضغط Enter</li>
                     <li>✅ يجب أن ترى هذه الرسالة:
-                        <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; direction: ltr; text-align: left; overflow-x: auto;">
+                        <pre
+                            style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; direction: ltr; text-align: left; overflow-x: auto;">
 {
   "error": "Access denied",
   "message": "Direct API access is not allowed. Please use the application interface.",
@@ -290,9 +300,11 @@
 }</pre>
                     </li>
                 </ol>
-                <div style="background: #d4edda; border: 2px solid #28a745; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <div
+                    style="background: #d4edda; border: 2px solid #28a745; padding: 15px; border-radius: 10px; margin-top: 20px;">
                     <strong>✅ إذا رأيت رسالة "Access denied" → الحماية تعمل بشكل صحيح!</strong><br>
-                    <strong>✅ إذا كانت هذه الصفحة تعرض Status 200 للـ endpoints → fetch() من التطبيق يعمل!</strong><br><br>
+                    <strong>✅ إذا كانت هذه الصفحة تعرض Status 200 للـ endpoints → fetch() من التطبيق
+                        يعمل!</strong><br><br>
                     <strong>🎯 كلا النتيجتين معاً = النظام يعمل بشكل مثالي! 🎉</strong>
                 </div>
             </div>
@@ -303,7 +315,7 @@
         async function testEndpoint(url, resultId) {
             const resultDiv = document.getElementById(resultId);
             resultDiv.innerHTML = '<div class="result info">⏳ جاري الاختبار...</div>';
-            
+
             try {
                 const response = await fetch(url, {
                     method: 'GET',
@@ -311,13 +323,13 @@
                         'Accept': 'application/json'
                     }
                 });
-                
+
                 const data = await response.json();
                 const status = response.status;
-                
+
                 let resultClass = 'info';
                 let message = '';
-                
+
                 // Since we're using fetch() from the application,
                 // Status 200 or 401 is expected (not 403)
                 if (status === 200) {
@@ -336,7 +348,7 @@
                     resultClass = 'error';
                     message = '❌ نتيجة غير متوقعة\n';
                 }
-                
+
                 resultDiv.innerHTML = `
                     <div class="result ${resultClass}">
 ${message}Status: ${status}
@@ -357,7 +369,7 @@ ${error.message}
         async function testAllEndpoints() {
             const resultsDiv = document.getElementById('all-results');
             resultsDiv.innerHTML = '<div class="result info">⏳ جاري اختبار جميع الـ endpoints...</div>';
-            
+
             const protectedEndpoints = [
                 '/api/crm/customers',
                 '/api/crm/customers/stats',
@@ -369,12 +381,12 @@ ${error.message}
                 '/api/admin/users',
                 '/api/user/update'
             ];
-            
+
             const publicEndpoints = [
                 '/api/health',
                 '/api/csrf-token'
             ];
-            
+
             let results = {
                 protectedCorrect: 0,
                 protectedTotal: protectedEndpoints.length,
@@ -382,13 +394,13 @@ ${error.message}
                 publicTotal: publicEndpoints.length,
                 details: []
             };
-            
+
             // Test protected endpoints
             for (const endpoint of protectedEndpoints) {
                 try {
                     const response = await fetch(endpoint);
                     const data = await response.json().catch(() => ({}));
-                    
+
                     // From fetch(), we expect 200 or 401 (not 403)
                     if (response.status === 200 || response.status === 401) {
                         results.protectedCorrect++;
@@ -409,13 +421,13 @@ ${error.message}
                     results.details.push(`❌ ${endpoint}: خطأ - ${error.message}`);
                 }
             }
-            
+
             // Test public endpoints
             for (const endpoint of publicEndpoints) {
                 try {
                     const response = await fetch(endpoint);
                     const isPublic = response.status === 200;
-                    
+
                     if (isPublic) {
                         results.publicCorrect++;
                         results.details.push(`✅ ${endpoint}: يعمل بشكل صحيح (عام)`);
@@ -426,12 +438,12 @@ ${error.message}
                     results.details.push(`❌ ${endpoint}: خطأ - ${error.message}`);
                 }
             }
-            
-            const allCorrect = (results.protectedCorrect === results.protectedTotal) && 
-                               (results.publicCorrect === results.publicTotal);
-            
+
+            const allCorrect = (results.protectedCorrect === results.protectedTotal) &&
+                (results.publicCorrect === results.publicTotal);
+
             const resultClass = allCorrect ? 'success' : 'error';
-            
+
             resultsDiv.innerHTML = `
                 <div class="result ${resultClass}">
 <strong>📊 نتائج اختبار fetch() من التطبيق:</strong>
@@ -443,16 +455,16 @@ ${error.message}
 ${results.details.join('\n')}
 
 <strong>📝 التفسير:</strong>
-${allCorrect ? 
-`✅ جميع الـ Endpoints تعمل من fetch()!
+${allCorrect ?
+                    `✅ جميع الـ Endpoints تعمل من fetch()!
 ✅ هذا يعني fetch() من التطبيق يعمل بشكل صحيح
 ✅ الحماية تسمح لطلبات التطبيق بالمرور
 
 🎯 اختبر الآن: افتح URL مباشرة في المتصفح
    يجب أن ترى: "Access denied"
-   إذا رأيتها → الحماية تعمل 100% ✅` 
-: 
-`⚠️ بعض الـ Endpoints لديها مشاكل
+   إذا رأيتها → الحماية تعمل 100% ✅`
+                    :
+                    `⚠️ بعض الـ Endpoints لديها مشاكل
    تحقق من التفاصيل أعلاه`}
                 </div>
             `;
@@ -465,4 +477,5 @@ ${allCorrect ?
         });
     </script>
 </body>
+
 </html>
