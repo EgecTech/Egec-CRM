@@ -250,6 +250,30 @@ const customerSchema = new mongoose.Schema(
         default: null,
       },
       assignedByName: String,
+      
+      // Reassignment history
+      reassignmentHistory: [
+        {
+          fromAgentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Profile"
+          },
+          fromAgentName: String,
+          toAgentId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Profile"
+          },
+          toAgentName: String,
+          reassignedAt: { type: Date, default: Date.now },
+          reassignedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Profile"
+          },
+          reassignedByName: String,
+          reason: String,
+          previousCounselorStatus: String // Store counselor status before reset
+        }
+      ]
     },
 
     // ========== METADATA ==========

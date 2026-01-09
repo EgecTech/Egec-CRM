@@ -41,6 +41,7 @@ export default function CustomerProfile() {
   const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
   const isSuperAgent = role === 'superagent';
   const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
+  const canViewReassignmentHistory = role === 'admin' || role === 'superadmin' || role === 'superagent'; // Only Admin, Superadmin, and Superagent can see reassignment history
 
   // Dynamic tabs based on role
   const TABS = [
@@ -268,6 +269,40 @@ export default function CustomerProfile() {
                   <p className="text-sm text-slate-600 mt-2">
                     Assigned to: <span className="font-semibold">{customer.assignment.assignedAgentName}</span>
                   </p>
+                )}
+
+                {/* Reassignment Notice - Only visible to Admin, Superadmin, and Superagent */}
+                {canViewReassignmentHistory && customer.assignment?.reassignmentHistory && customer.assignment.reassignmentHistory.length > 0 && (
+                  <div className="mt-4 bg-yellow-50 border border-yellow-300 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">🔄</span>
+                      <div className="flex-1">
+                        <h4 className="text-sm font-bold text-yellow-900 mb-1">
+                          Customer Reassignment Notice
+                        </h4>
+                        <p className="text-sm text-yellow-800">
+                          This customer was reassigned to{' '}
+                          <strong>{customer.assignment.assignedAgentName}</strong>
+                          {' '}from{' '}
+                          <strong>{customer.assignment.reassignmentHistory[customer.assignment.reassignmentHistory.length - 1].fromAgentName}</strong>
+                          {' '}on{' '}
+                          {new Date(customer.assignment.reassignmentHistory[customer.assignment.reassignmentHistory.length - 1].reassignedAt).toLocaleDateString()}
+                        </p>
+                        {customer.assignment.reassignmentHistory[customer.assignment.reassignmentHistory.length - 1].previousCounselorStatus && (
+                          <p className="text-sm text-yellow-800 mt-1">
+                            Previous Counselor Status: <strong>{customer.assignment.reassignmentHistory[customer.assignment.reassignmentHistory.length - 1].previousCounselorStatus}</strong>{' '}
+                            <span className="text-orange-600 font-semibold">(was reset upon reassignment)</span>
+                          </p>
+                        )}
+                        <button
+                          onClick={() => setActiveTab('timeline')}
+                          className="text-sm text-yellow-700 hover:text-yellow-900 font-semibold underline mt-2"
+                        >
+                          View Full Reassignment History →
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {customer.evaluation?.nextFollowupDate && (
@@ -517,6 +552,54 @@ export default function CustomerProfile() {
           {activeTab === 'timeline' && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
               <h2 className="text-xl font-bold text-slate-900 mb-6">Activity Timeline</h2>
+              
+              {/* Reassignment History Section - Only visible to Admin, Superadmin, and Superagent */}
+              {canViewReassignmentHistory && customer.assignment?.reassignmentHistory && customer.assignment.reassignmentHistory.length > 0 && (
+                <div className="mb-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <h3 className="text-lg font-bold text-yellow-900 mb-4 flex items-center gap-2">
+                    🔄 Reassignment History
+                  </h3>
+                  <div className="space-y-3">
+                    {customer.assignment.reassignmentHistory
+                      .sort((a, b) => new Date(b.reassignedAt) - new Date(a.reassignedAt))
+                      .map((history, index) => (
+                        <div key={index} className="bg-white rounded-lg p-4 border border-yellow-300">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <p className="font-semibold text-slate-900">
+                                {new Date(history.reassignedAt).toLocaleString('en-US', {
+                                  year: 'numeric',
+                                  month: 'short',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                              <p className="text-sm text-slate-700 mt-1">
+                                Reassigned from <strong className="text-blue-600">{history.fromAgentName}</strong> to <strong className="text-green-600">{history.toAgentName}</strong>
+                              </p>
+                              <p className="text-sm text-slate-600 mt-1">
+                                By: {history.reassignedByName}
+                              </p>
+                              {history.previousCounselorStatus && (
+                                <p className="text-sm text-orange-600 mt-1">
+                                  Previous Counselor Status: <strong>{history.previousCounselorStatus}</strong> (was reset)
+                                </p>
+                              )}
+                              {history.reason && (
+                                <p className="text-sm text-slate-600 mt-1">
+                                  Reason: <em>{history.reason}</em>
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      ))
+                    }
+                  </div>
+                </div>
+              )}
+
               <div className="space-y-4">
                 <TimelineItem
                   icon="✅"

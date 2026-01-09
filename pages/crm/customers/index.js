@@ -14,7 +14,8 @@ import {
   FaEdit,
   FaUserCheck,
   FaDownload,
-  FaTrash
+  FaTrash,
+  FaExchangeAlt
 } from 'react-icons/fa';
 import { RiCloseLine } from 'react-icons/ri';
 
@@ -46,6 +47,12 @@ export default function CustomerList() {
     limit: 20,
     total: 0,
     pages: 0
+  });
+  const [reassignModal, setReassignModal] = useState({
+    show: false,
+    customer: null,
+    selectedAgentId: '',
+    reason: ''
   });
 
   const fetchSystemSettings = async () => {
@@ -188,6 +195,58 @@ export default function CustomerList() {
     } catch (error) {
       console.error('Error deleting customer:', error);
       alert('Error deleting customer. Please try again.');
+    }
+  };
+
+  const openReassignModal = (customer) => {
+    setReassignModal({
+      show: true,
+      customer: customer,
+      selectedAgentId: '',
+      reason: ''
+    });
+  };
+
+  const closeReassignModal = () => {
+    setReassignModal({
+      show: false,
+      customer: null,
+      selectedAgentId: '',
+      reason: ''
+    });
+  };
+
+  const handleReassign = async () => {
+    if (!reassignModal.selectedAgentId) {
+      alert('Please select an agent');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `/api/crm/customers/${reassignModal.customer._id}/reassign`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            newAgentId: reassignModal.selectedAgentId,
+            reason: reassignModal.reason
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`✓ ${data.message}\n\nPrevious Counselor Status: ${data.reassignmentDetails.previousCounselorStatus}\nNew agent can now set their own counselor status.`);
+        closeReassignModal();
+        fetchCustomers(); // Refresh customer list
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error reassigning customer:', error);
+      alert('Failed to reassign customer');
     }
   };
 
@@ -626,6 +685,15 @@ export default function CustomerList() {
                                 <FaEdit className="w-4 h-4" />
                               </button>
                             </Link>
+                            {(session?.user?.role === 'admin' || session?.user?.role === 'superadmin' || session?.user?.role === 'superagent') && (
+                              <button 
+                                onClick={() => openReassignModal(customer)}
+                                className="p-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                                title="Reassign to Another Agent"
+                              >
+                                <FaExchangeAlt className="w-4 h-4" />
+                              </button>
+                            )}
                             {session?.user?.role === 'superadmin' && (
                               <button 
                                 onClick={() => handleDelete(customer._id, customer.basicData?.customerName)}
@@ -686,6 +754,113 @@ export default function CustomerList() {
           )}
         </div>
       </div>
+
+      {/* Reassignment Modal */}
+      {reassignModal.show && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-lg w-full">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-slate-900">
+                  Reassign Customer
+                </h3>
+                <button
+                  onClick={closeReassignModal}
+                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <RiCloseLine className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <p className="text-sm font-semibold text-blue-900 mb-1">
+                  Customer Details:
+                </p>
+                <p className="text-sm text-blue-800">
+                  <strong>Name:</strong> {reassignModal.customer?.basicData?.customerName}
+                </p>
+                <p className="text-sm text-blue-800">
+                  <strong>Customer #:</strong> {reassignModal.customer?.customerNumber}
+                </p>
+                <p className="text-sm text-blue-800">
+                  <strong>Currently assigned to:</strong>{' '}
+                  {reassignModal.customer?.assignment?.assignedAgentName || 'Unassigned'}
+                </p>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Reassign to Agent: <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={reassignModal.selectedAgentId}
+                  onChange={(e) => setReassignModal(prev => ({
+                    ...prev,
+                    selectedAgentId: e.target.value
+                  }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                >
+                  <option value="">Select Agent...</option>
+                  {agents.map(agent => (
+                    <option key={agent._id} value={agent._id}>
+                      {agent.name} - {agent.email}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-bold text-slate-700 mb-2">
+                  Reason (Optional):
+                </label>
+                <textarea
+                  value={reassignModal.reason}
+                  onChange={(e) => setReassignModal(prev => ({
+                    ...prev,
+                    reason: e.target.value
+                  }))}
+                  className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"
+                  rows="3"
+                  placeholder="Why are you reassigning this customer?"
+                />
+              </div>
+
+              <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p className="text-sm font-bold text-yellow-900 mb-2">
+                  ⚠️ Important Notice:
+                </p>
+                <ul className="text-sm text-yellow-800 space-y-1 ml-4 list-disc">
+                  <li>All customer data will be transferred to the new agent</li>
+                  <li><strong>Counselor Status (حالة المرشد) will be RESET</strong></li>
+                  <li>New agent can set their own counselor status</li>
+                  <li>Follow-up history will be preserved</li>
+                  <li>Reassignment will be logged in history</li>
+                </ul>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={closeReassignModal}
+                  className="flex-1 px-6 py-3 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 font-semibold transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleReassign}
+                  disabled={!reassignModal.selectedAgentId}
+                  className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    reassignModal.selectedAgentId
+                      ? 'bg-yellow-600 text-white hover:bg-yellow-700'
+                      : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  }`}
+                >
+                  Reassign Customer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </LoginLayout>
   );
 }
