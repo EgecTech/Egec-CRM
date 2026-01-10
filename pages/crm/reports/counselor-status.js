@@ -304,7 +304,7 @@ export default function CounselorStatusReport() {
                       className="w-4 h-4 text-purple-600 focus:ring-2 focus:ring-purple-500"
                     />
                     <span className="mr-2 text-sm font-semibold text-slate-700">
-                      جميع المرشدين المعينين (All Assigned Agents)
+                      المرشدين الإضافيين فقط (Additional Agents Only - NOT Primary)
                     </span>
                   </label>
                 </div>
@@ -388,9 +388,9 @@ export default function CounselorStatusReport() {
                     filterType === 'assigned' ? 'bg-purple-100 text-purple-800 border border-purple-300' :
                     'bg-blue-100 text-blue-800 border border-blue-300'
                   }`}>
-                    {filterType === 'primary' ? '📊 تقرير المرشد الأساسي (Primary Agent)' :
-                     filterType === 'assigned' ? '📊 تقرير جميع المرشدين (All Assigned)' :
-                     '📊 تقرير شامل (All - Primary + Assigned)'}
+                    {filterType === 'primary' ? '📊 تقرير المرشد الأساسي (Primary Agent Only)' :
+                     filterType === 'assigned' ? '📊 تقرير المرشدين الإضافيين (Additional Agents - NOT Primary)' :
+                     '📊 تقرير شامل (Complete - Primary + Additional)'}
                   </span>
                 </div>
                 

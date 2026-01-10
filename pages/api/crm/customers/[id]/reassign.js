@@ -93,6 +93,26 @@ export default async function handler(req, res) {
       assignedAgentName: oldAgentName
     };
     
+    // ✅ BEST PRACTICE: Ensure OLD primary agent is in assignedAgents array before reassigning
+    if (oldAgentId) {
+      const oldAgentInArray = customer.assignment.assignedAgents.find(
+        a => a.agentId && a.agentId.toString() === oldAgentId.toString()
+      );
+      
+      if (!oldAgentInArray) {
+        // Old primary agent is NOT in array - add them first!
+        customer.assignment.assignedAgents.push({
+          agentId: oldAgentId,
+          agentName: oldAgentName,
+          assignedAt: customer.assignment.assignedAt || new Date(),
+          assignedBy: customer.assignment.assignedBy || userId,
+          assignedByName: customer.assignment.assignedByName || userName,
+          counselorStatus: '', // Preserve their old status if possible
+          isActive: true
+        });
+      }
+    }
+    
     // **KEY CHANGE: ADD new agent to assignedAgents array (don't replace)**
     customer.assignment.assignedAgents.push({
       agentId: newAgentId,

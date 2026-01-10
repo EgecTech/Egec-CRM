@@ -24,38 +24,38 @@ export default function CustomerCreate() {
   const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
 
   // Dynamic steps based on role
-  const STEPS = [
+const STEPS = [
     ...(canSeeMarketing ? [{
-      id: 1,
-      title: "Marketing Data",
-      subtitle: "Lead source and counselor info",
-      required: false,
+    id: 1,
+    title: "Marketing Data",
+    subtitle: "Lead source and counselor info",
+    required: false,
     }] : []),
-    {
+  {
       id: canSeeMarketing ? 2 : 1,
-      title: "Basic Data",
-      subtitle: "Customer contact information",
-      required: true,
-    },
-    {
+    title: "Basic Data",
+    subtitle: "Customer contact information",
+    required: true,
+  },
+  {
       id: canSeeMarketing ? 3 : 2,
-      title: "Current Qualification",
-      subtitle: "Educational background",
-      required: false,
-    },
-    {
+    title: "Current Qualification",
+    subtitle: "Educational background",
+    required: false,
+  },
+  {
       id: canSeeMarketing ? 4 : 3,
-      title: "Desired Program",
-      subtitle: "Target university and specialization",
-      required: false,
-    },
-    {
+    title: "Desired Program",
+    subtitle: "Target university and specialization",
+    required: false,
+  },
+  {
       id: canSeeMarketing ? 5 : 4,
-      title: "Evaluation & Status",
-      subtitle: "Assessment and follow-up",
-      required: false,
-    },
-  ];
+    title: "Evaluation & Status",
+    subtitle: "Assessment and follow-up",
+    required: false,
+  },
+];
 
   const [currentStep, setCurrentStep] = useState(canSeeMarketing ? 1 : 2); // Start from step 2 for Agent/Super Agent
   const [loading, setLoading] = useState(false);
@@ -659,7 +659,7 @@ export default function CustomerCreate() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* Study Destination moved to Desired Program section */}
-                  
+
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Source (المصدر)

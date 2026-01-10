@@ -49,13 +49,17 @@ export default async function handler(req, res) {
         // Only primary agent
         matchQuery['assignment.assignedAgentId'] = targetAgentId;
       } else if (filterType === 'assigned') {
-        // Only in assignedAgents array
-        matchQuery['assignment.assignedAgents'] = {
-          $elemMatch: {
-            agentId: targetAgentId,
-            isActive: true
-          }
-        };
+        // Only in assignedAgents array BUT NOT as primary (additional agents only)
+        matchQuery.$and = matchQuery.$and || [];
+        matchQuery.$and.push({
+          'assignment.assignedAgents': {
+            $elemMatch: {
+              agentId: targetAgentId,
+              isActive: true
+            }
+          },
+          'assignment.assignedAgentId': { $ne: targetAgentId } // NOT primary agent
+        });
       } else {
         // Both (default - backwards compatibility)
         matchQuery.$or = [
@@ -133,10 +137,16 @@ export default async function handler(req, res) {
         assignedAgents.forEach(agent => {
           if (!agent.isActive) return;
           
-          // Filter by target agent if specified
-          if (targetAgentId && agent.agentId.toString() !== targetAgentId) return;
-          
           const agentIdStr = agent.agentId.toString();
+          
+          // ✅ For 'assigned' filter, skip if this agent is the primary agent
+          if (filterType === 'assigned' && primaryAgentId && agentIdStr === primaryAgentId.toString()) {
+            return; // Skip primary agent
+          }
+          
+          // Filter by target agent if specified
+          if (targetAgentId && agentIdStr !== targetAgentId) return;
+          
           allAgentIds.add(agentIdStr);
           
           if (!agentReports[agentIdStr]) {
