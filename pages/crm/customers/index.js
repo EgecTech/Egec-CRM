@@ -664,7 +664,7 @@ export default function CustomerList() {
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Customer #</th>
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Name</th>
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden sm:table-cell">Phone</th>
-                    {!isAdmin && (
+                    {isAgent && (
                       <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Status</th>
                     )}
                     {isAdmin && (
@@ -681,13 +681,13 @@ export default function CustomerList() {
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={isAdmin ? 7 : 6} className="text-center py-12">
+                      <td colSpan={isAdmin ? 8 : isAgent ? 6 : 5} className="text-center py-12">
                         <Loading />
                       </td>
                     </tr>
                   ) : customers.length === 0 ? (
                     <tr>
-                      <td colSpan={isAdmin ? 7 : 6} className="text-center py-12 text-slate-500">
+                      <td colSpan={isAdmin ? 8 : isAgent ? 6 : 5} className="text-center py-12 text-slate-500">
                         No customers found
                       </td>
                     </tr>
@@ -714,7 +714,7 @@ export default function CustomerList() {
                             {customer.basicData?.customerPhone}
                           </span>
                         </td>
-                        {!isAdmin && (
+                        {isAgent && (
                           <td className="px-2 sm:px-4 py-2 sm:py-3">
                             <span className={`text-[10px] sm:text-xs font-medium ${
                               getCounselorStatusForDisplay(customer) !== '-' 
