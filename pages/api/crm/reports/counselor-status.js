@@ -185,17 +185,57 @@ export default async function handler(req, res) {
       }
     });
     
-    // Calculate system-wide totals (all agents combined)
+    // Calculate system-wide totals (UNIQUE customers only)
+    const uniqueCustomers = new Set();
     const systemTotals = {
       statusBreakdown: {},
       totalCustomers: 0,
       totalAgents: allAgentIds.size
     };
     
-    Object.values(agentReports).forEach(agentReport => {
-      Object.entries(agentReport.statusBreakdown).forEach(([status, counts]) => {
-        if (!systemTotals.statusBreakdown[status]) {
-          systemTotals.statusBreakdown[status] = {
+    // Re-process customers to count unique ones for system totals
+    customers.forEach(customer => {
+      const customerId = customer._id.toString();
+      const degreeType = customer.desiredProgram?.degreeType;
+      
+      // Track unique customers
+      uniqueCustomers.add(customerId);
+      
+      // Determine which agents to process based on filter type
+      let agentsToProcess = [];
+      
+      if (filterType === 'primary') {
+        // Primary agent only
+        if (customer.assignment?.assignedAgentId) {
+          const agent = customer.assignment.assignedAgents?.find(
+            a => a.agentId?.toString() === customer.assignment.assignedAgentId.toString()
+          );
+          if (agent && agent.isActive) {
+            agentsToProcess = [agent];
+          }
+        }
+      } else if (filterType === 'assigned') {
+        // Additional agents only (exclude primary)
+        const primaryAgentId = customer.assignment?.assignedAgentId?.toString();
+        agentsToProcess = (customer.assignment?.assignedAgents || []).filter(
+          agent => agent.isActive && agent.agentId?.toString() !== primaryAgentId
+        );
+      } else {
+        // All agents (default)
+        agentsToProcess = (customer.assignment?.assignedAgents || []).filter(agent => agent.isActive);
+      }
+      
+      // For system totals, count each customer only ONCE by their PRIMARY agent's status
+      // or first assigned agent's status if no primary
+      const primaryAgent = agentsToProcess.find(
+        a => a.agentId?.toString() === customer.assignment?.assignedAgentId?.toString()
+      ) || agentsToProcess[0];
+      
+      if (primaryAgent) {
+        const counselorStatus = primaryAgent.counselorStatus || 'blank';
+        
+        if (!systemTotals.statusBreakdown[counselorStatus]) {
+          systemTotals.statusBreakdown[counselorStatus] = {
             total: 0,
             بكالوريوس: 0,
             ماجستير: 0,
@@ -203,13 +243,22 @@ export default async function handler(req, res) {
           };
         }
         
-        systemTotals.statusBreakdown[status].total += counts.total;
-        systemTotals.statusBreakdown[status].بكالوريوس += counts.بكالوريوس;
-        systemTotals.statusBreakdown[status].ماجستير += counts.ماجستير;
-        systemTotals.statusBreakdown[status].دكتوراه += counts.دكتوراه;
-        systemTotals.totalCustomers += counts.total;
-      });
+        // Increment counts (each customer counted ONCE)
+        systemTotals.statusBreakdown[counselorStatus].total++;
+        
+        // Increment degree type count
+        if (degreeType === 'Bachelor') {
+          systemTotals.statusBreakdown[counselorStatus].بكالوريوس++;
+        } else if (degreeType === 'Master') {
+          systemTotals.statusBreakdown[counselorStatus].ماجستير++;
+        } else if (degreeType === 'PhD') {
+          systemTotals.statusBreakdown[counselorStatus].دكتوراه++;
+        }
+      }
     });
+    
+    // Set total unique customers
+    systemTotals.totalCustomers = uniqueCustomers.size;
     
     // Sort statuses by total count (descending)
     const sortedStatuses = Object.entries(systemTotals.statusBreakdown)
