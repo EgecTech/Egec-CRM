@@ -96,6 +96,32 @@ export const authOptions = {
             throw new Error("Account is disabled");
           }
 
+          // Check if account is locked
+          if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
+            const remainingMinutes = Math.ceil(
+              (new Date(user.lockedUntil) - new Date()) / 60000
+            );
+            // Log failed login attempt - account locked
+            await logAudit({
+              userId: user._id,
+              userEmail: user.email,
+              userName: user.name,
+              userRole: user.role,
+              action: "LOGIN_FAILED",
+              entityType: "auth",
+              description: `Login failed: Account is locked for ${remainingMinutes} more minutes`,
+              ipAddress: ip,
+              userAgent: req.headers?.["user-agent"],
+              requestMethod: "POST",
+              requestPath: "/api/auth/callback/credentials",
+              statusCode: 403,
+              errorMessage: "Account is temporarily locked"
+            });
+            throw new Error(
+              `Account is locked. Please try again in ${remainingMinutes} minutes.`
+            );
+          }
+
           // Verify password
           const isValid = await bcrypt.compare(
             credentials.password,
@@ -103,6 +129,24 @@ export const authOptions = {
           );
 
           if (!isValid) {
+            // Increment failed login attempts
+            const failedAttempts = (user.failedLoginAttempts || 0) + 1;
+            const updateData = {
+              failedLoginAttempts: failedAttempts,
+              lastFailedLogin: new Date()
+            };
+
+            // Lock account after 5 failed attempts
+            if (failedAttempts >= 5) {
+              updateData.lockedUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+            }
+
+            // Update user in database
+            await collection.updateOne(
+              { _id: user._id },
+              { $set: updateData }
+            );
+
             // Log failed login attempt - wrong password
             await logAudit({
               userId: user._id,
@@ -111,7 +155,9 @@ export const authOptions = {
               userRole: user.role,
               action: "LOGIN_FAILED",
               entityType: "auth",
-              description: "Login failed: Invalid password",
+              description: failedAttempts >= 5 
+                ? "Login failed: Account locked after 5 failed attempts"
+                : `Login failed: Invalid password (Attempt ${failedAttempts}/5)`,
               ipAddress: ip,
               userAgent: req.headers?.["user-agent"],
               requestMethod: "POST",
@@ -119,7 +165,26 @@ export const authOptions = {
               statusCode: 401,
               errorMessage: "Invalid email or password"
             });
+
+            if (failedAttempts >= 5) {
+              throw new Error("Account locked due to multiple failed login attempts. Please try again in 15 minutes.");
+            }
+
             throw new Error("Invalid email or password");
+          }
+
+          // Reset failed login attempts on successful login
+          if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+            await collection.updateOne(
+              { _id: user._id },
+              { 
+                $set: { 
+                  failedLoginAttempts: 0,
+                  lockedUntil: null,
+                  lastFailedLogin: null
+                } 
+              }
+            );
           }
 
           // Return user data without sensitive information
