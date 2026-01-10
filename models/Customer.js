@@ -111,7 +111,7 @@ const customerSchema = new mongoose.Schema(
         bachelorGPA: String, // معدل
         bachelorRating: String, // تقدير
         bachelorSemesters: String, // فصول دراسية
-        
+
         // Master degree information (second degree)
         masterSpecialization: String, // تخصص الماجستير
         masterSector: String, // قطاع تخصص الماجستير
@@ -152,7 +152,7 @@ const customerSchema = new mongoose.Schema(
     desiredProgram: {
       // Study destination - moved from marketingData
       studyDestination: { type: String, default: "Egypt" }, // الوجهة الدراسية
-      
+
       // Common fields for all degree types
       desiredSpecialization: String,
       desiredCollege: String,
@@ -198,7 +198,7 @@ const customerSchema = new mongoose.Schema(
       technicalOpinion: String,
       interestRate: String, // Removed enum to allow any value from dropdown
       interestPercentage: String, // نسبة الاهتمام
-      counselorStatus: String,
+      // ❌ REMOVED: counselorStatus (now per-agent only in assignedAgents array)
       customerStatus: String,
       salesStatus: {
         type: String,
@@ -241,7 +241,7 @@ const customerSchema = new mongoose.Schema(
         default: null,
       },
       assignedByName: String,
-      
+
       // MULTI-AGENT SUPPORT: Array of all agents who can access this customer
       assignedAgents: [
         {
@@ -263,18 +263,27 @@ const customerSchema = new mongoose.Schema(
             ref: "Profile",
           },
           assignedByName: String,
-          // Each agent has their own counselor status
+
+          // Each agent has their own counselor status (حالة المرشد)
           counselorStatus: {
             type: String,
             default: "",
           },
+          // Track who last updated this agent's status
+          counselorStatusLastUpdatedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Profile",
+          },
+          counselorStatusLastUpdatedByName: String,
+          counselorStatusLastUpdatedAt: Date,
+
           isActive: {
             type: Boolean,
             default: true, // Can be set to false to remove access without deleting history
           },
         },
       ],
-      
+
       // Assignment history (when agents are added/removed)
       assignmentHistory: [
         {

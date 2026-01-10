@@ -34,6 +34,7 @@ async function handler(req, res) {
         search, 
         salesStatus, 
         interestRate, 
+        primaryAgent,
         assignedAgent,
         counselorStatus,
         country,
@@ -74,8 +75,28 @@ async function handler(req, res) {
       if (interestRate) {
         query['evaluation.interestRate'] = interestRate;
       }
+      
+      // ✅ Primary Agent Filter - Only checks primary assignedAgentId
+      if (primaryAgent) {
+        query['assignment.assignedAgentId'] = primaryAgent;
+      }
+      
+      // ✅ Assigned Agents Filter - Checks assignedAgents array
       if (assignedAgent) {
-        query['assignment.assignedAgentId'] = assignedAgent;
+        query.$and = query.$and || [];
+        query.$and.push({
+          $or: [
+            { 'assignment.assignedAgentId': assignedAgent }, // Also check primary for backwards compatibility
+            { 
+              'assignment.assignedAgents': {
+                $elemMatch: {
+                  agentId: assignedAgent,
+                  isActive: true
+                }
+              }
+            }
+          ]
+        });
       }
       if (counselorStatus) {
         query['evaluation.counselorStatus'] = counselorStatus;

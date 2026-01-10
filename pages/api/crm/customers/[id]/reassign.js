@@ -63,7 +63,6 @@ export default async function handler(req, res) {
     // Get current assignment details
     const oldAgentId = customer.assignment?.assignedAgentId;
     const oldAgentName = customer.assignment?.assignedAgentName;
-    const oldCounselorStatus = customer.evaluation?.counselorStatus;
     
     // Initialize assignment structure if needed
     if (!customer.assignment) {
@@ -91,8 +90,7 @@ export default async function handler(req, res) {
     // Store old values for audit
     const oldValues = {
       assignedAgentId: oldAgentId,
-      assignedAgentName: oldAgentName,
-      counselorStatus: oldCounselorStatus
+      assignedAgentName: oldAgentName
     };
     
     // **KEY CHANGE: ADD new agent to assignedAgents array (don't replace)**
@@ -121,8 +119,7 @@ export default async function handler(req, res) {
       performedBy: userId,
       performedByName: userName,
       performedAt: new Date(),
-      reason: reason || 'Agent added via reassign',
-      previousCounselorStatus: oldCounselorStatus || ''
+      reason: reason || 'Agent added via reassign'
     });
     
     // Update marketingData counselor if this is the first agent
@@ -131,9 +128,9 @@ export default async function handler(req, res) {
       customer.marketingData.counselorName = newAgent.name;
     }
     
-    // NOTE: Do NOT reset global evaluation.counselorStatus
-    // Each agent has their own counselorStatus in the assignedAgents array
-    // The new agent's counselorStatus is already set to empty string in the array above
+    // ✅ IMPORTANT: Each agent has their own counselorStatus in assignedAgents array
+    // The new agent's counselorStatus is already set to empty string (reset)
+    // This allows the new agent to set their own status without affecting other agents
     
     // Update updatedBy
     customer.updatedBy = userId;

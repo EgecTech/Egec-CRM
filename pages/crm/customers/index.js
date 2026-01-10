@@ -30,6 +30,7 @@ export default function CustomerList() {
   const [activeDegreeTab, setActiveDegreeTab] = useState('all'); // all, bachelor, master, phd
   const [filters, setFilters] = useState({
     counselorStatus: '',
+    primaryAgent: '',
     assignedAgent: '',
     createdFrom: '',
     createdTo: ''
@@ -93,7 +94,7 @@ export default function CustomerList() {
         usersList = data.data;
       }
       const agentUsers = usersList.filter(user => 
-        ['agent'].includes(user.role) && user.isActive
+        ['agent', 'superagent'].includes(user.role) && user.isActive
       );
       setAgents(agentUsers);
     } catch (err) {
@@ -129,6 +130,7 @@ export default function CustomerList() {
       
       if (searchQuery) params.append('search', searchQuery);
       if (filters.counselorStatus) params.append('counselorStatus', filters.counselorStatus);
+      if (filters.primaryAgent) params.append('primaryAgent', filters.primaryAgent);
       if (filters.assignedAgent) params.append('assignedAgent', filters.assignedAgent);
       if (filters.createdFrom) params.append('createdFrom', filters.createdFrom);
       if (filters.createdTo) params.append('createdTo', filters.createdTo);
@@ -297,6 +299,7 @@ export default function CustomerList() {
   const resetFilters = useCallback(() => {
     setFilters({
       counselorStatus: '',
+      primaryAgent: '',
       assignedAgent: '',
       createdFrom: '',
       createdTo: ''
@@ -504,21 +507,42 @@ export default function CustomerList() {
                     </select>
                   </div>
 
-                  {/* Agent Filter - Only for Admin roles (not for Agent or Data Entry) */}
+                  {/* Primary Agent Filter - Only for Admin roles */}
                   {isAdmin && (
                   <div>
                     <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
-                      Agent
+                      Primary Agent (المرشد الأساسي)
+                    </label>
+                    <select
+                      value={filters.primaryAgent}
+                      onChange={(e) => handleFilterChange('primaryAgent', e.target.value)}
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
+                    >
+                      <option value="">All Customers</option>
+                      {agents.map((agent) => (
+                        <option key={agent._id} value={agent._id}>
+                          {agent.name} ({agent.role})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  )}
+                  
+                  {/* Assigned Agents Filter - Only for Admin roles */}
+                  {isAdmin && (
+                  <div>
+                    <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
+                      Assigned Agents (جميع المرشدين)
                     </label>
                     <select
                       value={filters.assignedAgent}
                       onChange={(e) => handleFilterChange('assignedAgent', e.target.value)}
                       className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm"
                     >
-                      <option value="">All Agents</option>
+                      <option value="">All Customers</option>
                       {agents.map((agent) => (
                         <option key={agent._id} value={agent._id}>
-                          {agent.name} - {agent.email}
+                          {agent.name} ({agent.role})
                         </option>
                       ))}
                     </select>

@@ -73,9 +73,28 @@ export default function CustomerProfile() {
       const data = await response.json();
 
       if (data.success) {
-        setCustomer(data.data);
+        const customerData = data.data;
+        
+        // ✅ IMPORTANT: Extract per-agent counselorStatus
+        // Find this agent's counselorStatus from assignedAgents array
+        const userId = session?.user?.id;
+        if (userId && customerData.assignment?.assignedAgents?.length > 0) {
+          const agentData = customerData.assignment.assignedAgents.find(
+            a => a.agentId && a.agentId.toString() === userId && a.isActive
+          );
+          
+          // Set this agent's counselorStatus into evaluation for display
+          if (agentData) {
+            if (!customerData.evaluation) {
+              customerData.evaluation = {};
+            }
+            customerData.evaluation.counselorStatus = agentData.counselorStatus || '';
+          }
+        }
+        
+        setCustomer(customerData);
       } else {
-        setError(data.error);
+        console.error('Failed to fetch customer:', data.error);
       }
     } catch (err) {
       console.error('Error fetching customer:', err);

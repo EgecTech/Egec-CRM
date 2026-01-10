@@ -81,6 +81,51 @@ export default function Reports() {
 
         {/* Reports Content */}
         <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Available Reports */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {/* Counselor Status Report */}
+            <div 
+              onClick={() => router.push('/crm/reports/counselor-status')}
+              className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl shadow-lg p-6 cursor-pointer hover:shadow-2xl transition-all hover:-translate-y-1"
+            >
+              <div className="text-white">
+                <FaChartLine className="text-4xl mb-4" />
+                <h3 className="text-xl font-bold mb-2">تقرير حالة المرشد</h3>
+                <p className="text-blue-100 text-sm mb-4">
+                  تقارير مفصلة لحالة كل مرشد مع العملاء حسب نوع الدرجة العلمية
+                </p>
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <span>عرض التقرير</span>
+                  <span>←</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Sales Pipeline Report (Coming Soon) */}
+            <div className="bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl shadow-lg p-6 opacity-50">
+              <div className="text-white">
+                <FaChartLine className="text-4xl mb-4" />
+                <h3 className="text-xl font-bold mb-2">Sales Pipeline</h3>
+                <p className="text-green-100 text-sm mb-4">
+                  Track customers through each stage of the sales process
+                </p>
+                <div className="text-sm font-semibold">Coming Soon</div>
+              </div>
+            </div>
+            
+            {/* Agent Performance Report (Coming Soon) */}
+            <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl shadow-lg p-6 opacity-50">
+              <div className="text-white">
+                <FaChartLine className="text-4xl mb-4" />
+                <h3 className="text-xl font-bold mb-2">Agent Performance</h3>
+                <p className="text-purple-100 text-sm mb-4">
+                  Individual agent metrics and performance indicators
+                </p>
+                <div className="text-sm font-semibold">Coming Soon</div>
+              </div>
+            </div>
+          </div>
+          
           {/* Sales Pipeline */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
             <h2 className="text-xl font-bold text-slate-900 mb-6">Sales Pipeline</h2>

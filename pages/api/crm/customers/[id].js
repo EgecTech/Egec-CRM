@@ -92,10 +92,54 @@ async function handler(req, res) {
         });
       }
       
+      // ⚠️ IMPORTANT: Remove old counselorStatus from evaluation if present
+      // It's now stored per-agent in assignedAgents array, not at root level
+      const counselorStatusToTrack = updateData.evaluation?.counselorStatus;
+      if (updateData.evaluation && 'counselorStatus' in updateData.evaluation) {
+        delete updateData.evaluation.counselorStatus;
+      }
+      
       // Update customer
       Object.assign(customer, updateData);
       customer.updatedBy = userId;
       customer.updatedByName = userName;
+      
+      // ✅ SPECIAL HANDLING: Track counselorStatus updates per agent
+      // If the user is an agent updating the customer, update their counselorStatus tracking
+      if (
+        counselorStatusToTrack !== undefined &&
+        customer.assignment?.assignedAgents?.length > 0
+      ) {
+        // Find this agent in the assignedAgents array
+        const agentIndex = customer.assignment.assignedAgents.findIndex(
+          a => a.agentId && a.agentId.toString() === userId && a.isActive
+        );
+        
+        if (agentIndex !== -1 && agentIndex !== undefined) {
+          // Update this agent's counselorStatus and tracking fields
+          customer.assignment.assignedAgents[agentIndex].counselorStatus = counselorStatusToTrack || '';
+          customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedBy = userId;
+          customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedByName = userName;
+          customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedAt = new Date();
+          
+          // Mark as modified to ensure save
+          customer.markModified('assignment.assignedAgents');
+          
+          // Add to assignment history
+          if (!customer.assignment.assignmentHistory) {
+            customer.assignment.assignmentHistory = [];
+          }
+          customer.assignment.assignmentHistory.push({
+            action: 'status_updated',
+            agentId: userId,
+            agentName: userName,
+            performedBy: userId,
+            performedByName: userName,
+            performedAt: new Date(),
+            reason: `Updated counselorStatus to: ${counselorStatusToTrack || 'empty'}`
+          });
+        }
+      }
       
       await customer.save();
       
