@@ -238,16 +238,9 @@ export default function EditCustomer() {
     setError('');
     setSuccess('');
 
-    console.log('🔵 FRONTEND: Save button clicked');
-    console.log('🔵 User role:', role);
-    console.log('🔵 Customer ID:', id);
-    console.log('🔵 Counselor Status:', customer.evaluation?.counselorStatus);
-
     try {
       // Clean empty ObjectId fields
       const cleanData = JSON.parse(JSON.stringify(customer));
-      
-      console.log('🔵 FRONTEND: Sending PUT request to:', `/api/crm/customers/${id}`);
 
       if (cleanData.marketingData) {
         if (!cleanData.marketingData.counselorId)
@@ -275,20 +268,14 @@ export default function EditCustomer() {
         body: JSON.stringify(cleanData)
       });
 
-      console.log('🔵 FRONTEND: Response status:', response.status);
-      
       const data = await response.json();
-      
-      console.log('🔵 FRONTEND: Response data:', data);
 
       if (response.ok && data.success) {
-        console.log('✅ FRONTEND: Save successful!');
         setSuccess('Customer updated successfully!');
         setTimeout(() => {
           router.push(`/crm/customers/${id}`);
         }, 1500);
       } else {
-        console.log('❌ FRONTEND: Save failed:', data.error || data.message);
         if (data.errors && Array.isArray(data.errors)) {
           setError(data.errors.join(', '));
       } else {
@@ -296,11 +283,9 @@ export default function EditCustomer() {
         }
       }
     } catch (err) {
-      console.error('❌ FRONTEND ERROR: Error updating customer:', err);
-      console.error('❌ FRONTEND ERROR: Error details:', err.message);
+      console.error('Error updating customer:', err);
       setError('Failed to update customer. Please try again.');
     } finally {
-      console.log('🔵 FRONTEND: Save process completed (finally block)');
       setSaving(false);
     }
   };
