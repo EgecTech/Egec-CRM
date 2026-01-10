@@ -230,7 +230,27 @@ async function handler(req, res) {
           assignedAgentName: customerData.marketingData.counselorName,
           assignedAt: new Date(),
           assignedBy: userId,
-          assignedByName: userName
+          assignedByName: userName,
+          // ✅ POPULATE assignedAgents array on creation
+          assignedAgents: [{
+            agentId: customerData.marketingData.counselorId,
+            agentName: customerData.marketingData.counselorName,
+            counselorStatus: "",  // Empty initially - agent will set on first update
+            isActive: true,
+            assignedAt: new Date(),
+            assignedBy: userId,
+            assignedByName: userName
+          }],
+          // Initialize assignment history
+          assignmentHistory: [{
+            action: 'assigned',
+            agentId: customerData.marketingData.counselorId,
+            agentName: customerData.marketingData.counselorName,
+            performedBy: userId,
+            performedByName: userName,
+            performedAt: new Date(),
+            reason: 'Initial assignment during customer creation'
+          }]
         };
       }
       

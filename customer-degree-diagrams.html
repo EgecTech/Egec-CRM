@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Data Structure - Complete Field Mapping</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 15px 30px;
+            background: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tab-btn.bachelor {
+            border-left: 5px solid #3b82f6;
+        }
+
+        .tab-btn.master {
+            border-left: 5px solid #8b5cf6;
+        }
+
+        .tab-btn.phd {
+            border-left: 5px solid #10b981;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .degree-header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e5e7eb;
+        }
+
+        .degree-header h2 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .degree-header .emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .bachelor-color {
+            color: #3b82f6;
+        }
+
+        .master-color {
+            color: #8b5cf6;
+        }
+
+        .phd-color {
+            color: #10b981;
+        }
+
+        .diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .section {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .bachelor .section {
+            border-left-color: #3b82f6;
+        }
+
+        .master .section {
+            border-left-color: #8b5cf6;
+        }
+
+        .phd .section {
+            border-left-color: #10b981;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1f2937;
+        }
+
+        .section-title .icon {
+            font-size: 1.8rem;
+        }
+
+        .section-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 1rem;
+            margin-right: 5px;
+        }
+
+        .field-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .field-table thead th {
+            background: #1f2937;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .field-table thead th:first-child {
+            border-radius: 10px 0 0 10px;
+        }
+
+        .field-table thead th:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .field-table tbody tr {
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .field-table tbody tr:hover {
+            transform: translateX(5px);
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .field-table tbody td {
+            padding: 12px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .field-table tbody tr td:first-child {
+            border-radius: 10px 0 0 10px;
+            font-family: 'Courier New', monospace;
+            color: #dc2626;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .field-table tbody tr td:nth-child(2) {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .field-table tbody tr td:nth-child(3) {
+            color: #6b7280;
+            font-size: 0.85rem;
+            font-style: italic;
+        }
+
+        .field-table tbody tr td:last-child {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .badge.required {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .badge.unique {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .badge.enum {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .subsection {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff;
+            border-radius: 10px;
+            border: 2px dashed #e5e7eb;
+        }
+
+        .subsection-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #4b5563;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .degree-specific {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+            border: 2px solid #93c5fd;
+        }
+
+        .comparison {
+            margin-top: 40px;
+            background: #f0f9ff;
+            border-radius: 15px;
+            padding: 25px;
+        }
+
+        .comparison h3 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #1f2937;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .comparison-table th {
+            background: #667eea;
+            color: white;
+            font-weight: bold;
+            font-size: 0.95rem;
+        }
+
+        .comparison-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .comparison-table td:first-child {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .check {
+            color: #10b981;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .cross {
+            color: #ef4444;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .tab-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            .field-table {
+                font-size: 0.85rem;
+            }
+
+            .field-table thead th,
+            .field-table tbody td {
+                padding: 8px;
+            }
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 40px;
+            padding: 20px;
+            opacity: 0.9;
+        }
+
+        .note {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            color: #856404;
+        }
+
+        .note strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>📚 Complete Customer Data Structure</h1>
+            <p>EduGate CRM - Field-by-Field Mapping with Variable Names & Labels</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn bachelor active" onclick="showTab('bachelor')">
+                📘 Bachelor (بكالوريوس)
+            </button>
+            <button class="tab-btn master" onclick="showTab('master')">
+                📕 Master (ماجستير)
+            </button>
+            <button class="tab-btn phd" onclick="showTab('phd')">
+                📗 PhD (دكتوراه)
+            </button>
+            <button class="tab-btn" onclick="showTab('comparison')" style="border-left: 5px solid #f59e0b;">
+                📊 Comparison
+            </button>
+        </div>
+
+        <!-- BACHELOR TAB -->
+        <div id="bachelor" class="tab-content bachelor active">
+            <div class="degree-header">
+                <div class="emoji">📘</div>
+                <h2 class="bachelor-color">Bachelor Degree (بكالوريوس)</h2>
+                <p>Complete data structure for undergraduate students</p>
+            </div>
+
+            <div class="diagram">
+                <!-- Section 1: Marketing Data -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">1</span>
+                        <span class="icon">📢</span>
+                        <span>Marketing Data (بيانات التسويق)</span>
+                    </div>
+                    <table class="field-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Variable Name</th>
+                                <th style="width: 35%;">Label (English / Arabic)</th>
+                                <th style="width: 35%;">Data Type / Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>marketingData.source</td>
+                                <td>Source (المصدر)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>marketingData.company</td>
+                                <td>Company (الشركة)</td>
+                                <td>String - Default: "EGEC"</td>
+                            </tr>
+                            <tr>
+                                <td>marketingData.inquiryDate</td>
+                                <td>Inquiry Date (تاريخ الاستفسار)</td>
+                                <td>DateTime - Auto-set to current</td>
+                            </tr>
+                            <tr>
+                                <td>marketingData.inquiryReference</td>
+                                <td>Reference Number (رقم المرجع)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>marketingData.articleInquiry</td>
+                                <td>Article/Inquiry (المقال/الاستفسار)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>marketingData.counselorId</td>
+                                <td>Assign to Agent (تعيين للمرشد)</td>
+                                <td>ObjectId (ref: Profile)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note">
+                        <strong>⚠️ Visibility Note:</strong>
+                        Marketing Data section is visible only to Superadmin and Admin roles. Agents and Superagents
+                        cannot see this section.
+                    </div>
+                </div>
+
+                <!-- Section 2: Basic Data -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">2</span>
+                        <span class="icon">👤</span>
+                        <span>Basic Data (بيانات أساسية)</span>
+                        <span class="badge required">Required Section</span>
+                    </div>
+                    <table class="field-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Variable Name</th>
+                                <th style="width: 35%;">Label (English / Arabic)</th>
+                                <th style="width: 35%;">Data Type / Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>basicData.customerName</td>
+                                <td>Customer Name (اسم العميل) <span class="badge required">*</span></td>
+                                <td>String - Required</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.customerPhone</td>
+                                <td>Customer Phone (رقم العميل) <span class="badge required">*</span></td>
+                                <td>String - Required, Indexed</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.anotherContactNumber</td>
+                                <td>Another Contact (رقم آخر)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.email</td>
+                                <td>Email</td>
+                                <td>String - Indexed</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.gender</td>
+                                <td>Gender (الجنس)</td>
+                                <td>Enum: Male, Female, Other <span class="badge enum">Dropdown</span></td>
+                            </tr>
+                            <tr>
+                                <td>basicData.nationality</td>
+                                <td>جنسية العميل</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.country</td>
+                                <td>دولة العميل</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>basicData.cityRegion</td>
+                                <td>City/Region (المدينة)</td>
+                                <td>String</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Section 3: Current Qualification -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">3</span>
+                        <span class="icon">🎓</span>
+                        <span>Current Qualification (بيانات الشهادة)</span>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div class="subsection-title">📋 Common Fields (All Degrees)</div>
+                    <table class="field-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Variable Name</th>
+                                <th style="width: 35%;">Label (English / Arabic)</th>
+                                <th style="width: 35%;">Data Type / Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>currentQualification.certificateName</td>
+                                <td>Certificate Name (اسم الشهادة)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.grade</td>
+                                <td>Grade/GPA (المعدل)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.overallRating</td>
+                                <td>Overall Rating (التقدير)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.studySystem</td>
+                                <td>Study System (نظام الدراسة)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.graduationYear</td>
+                                <td>Graduation Year (سنة التخرج)</td>
+                                <td>Number</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.studyDuration</td>
+                                <td>Study Duration (مدة الدراسة)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.equivalencyRequirements</td>
+                                <td>Equivalency Requirements (متطلبات المعادلة)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>currentQualification.counselorNotes</td>
+                                <td>Counselor Notes (ملاحظات المرشد)</td>
+                                <td>Text</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Bachelor-Specific Fields -->
+                    <div class="subsection degree-specific">
+                        <div class="subsection-title">🎯 Bachelor-Specific Fields (High School Info)</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>currentQualification.bachelor.certificateTrack</td>
+                                    <td>Certificate Track (المسار)</td>
+                                    <td>String - Options: Scientific, Literary, Islamic, Commercial <span
+                                            class="badge unique">Bachelor Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.bachelor.availableColleges</td>
+                                    <td>Available Colleges (الكليات المتاحة)</td>
+                                    <td>Array of Strings <span class="badge unique">Bachelor Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 4: Desired Program -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">4</span>
+                        <span class="icon">🎯</span>
+                        <span>Desired Program (البرنامج المطلوب)</span>
+                    </div>
+                    <table class="field-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Variable Name</th>
+                                <th style="width: 35%;">Label (English / Arabic)</th>
+                                <th style="width: 35%;">Data Type / Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>degreeType</td>
+                                <td>Degree Type (نوع الدرجة العلمية) <span class="badge required">*</span></td>
+                                <td>Enum: bachelor, master, phd - Required, Indexed</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.studyDestination</td>
+                                <td>Study Destination (الوجهة الدراسية)</td>
+                                <td>String - Default: "Egypt" <span class="badge enum">Dropdown</span></td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredUniversity</td>
+                                <td>Desired University (الجامعة المطلوبة)</td>
+                                <td>String - Cascading Dropdown</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredUniversityId</td>
+                                <td>University ID</td>
+                                <td>ObjectId (ref: University)</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredCollege</td>
+                                <td>Desired College (الكلية المطلوبة)</td>
+                                <td>String - Cascading Dropdown (depends on University)</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredSpecialization</td>
+                                <td>Desired Specialization (التخصص المطلوب)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredSector</td>
+                                <td>Desired Sector (القطاع المطلوب)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredStudySystem</td>
+                                <td>Desired Study System (نظام الدراسة المطلوب)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredUniversityType</td>
+                                <td>University Type (نوع الجامعة)</td>
+                                <td>String - Options: Public, Private</td>
+                            </tr>
+                            <tr>
+                                <td>desiredProgram.desiredStudyTime</td>
+                                <td>Study Time (وقت الدراسة المطلوب)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Section 5: Evaluation & Status -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">5</span>
+                        <span class="icon">📊</span>
+                        <span>Evaluation & Status (التقييم والحالة)</span>
+                    </div>
+                    <table class="field-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Variable Name</th>
+                                <th style="width: 35%;">Label (English / Arabic)</th>
+                                <th style="width: 35%;">Data Type / Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>evaluation.agentEvaluation</td>
+                                <td>Agent Evaluation (تقييم المرشد)</td>
+                                <td>Text</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.technicalOpinion</td>
+                                <td>Technical Opinion (الرأي الفني)</td>
+                                <td>Text</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.interestRate</td>
+                                <td>Interest Rate (معدل الاهتمام)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.interestPercentage</td>
+                                <td>Interest Percentage (نسبة الاهتمام)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>assignment.assignedAgents[].counselorStatus</td>
+                                <td>Counselor Status (حالة المرشد)</td>
+                                <td>String - Per-agent status, Dropdown from system settings <span
+                                        class="badge unique">Per Agent</span></td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.customerStatus</td>
+                                <td>Customer Status (حالة العميل)</td>
+                                <td>String - Dropdown from system settings</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.salesStatus</td>
+                                <td>Sales Status (حالة المبيعات)</td>
+                                <td>String - Default: "prospect" <span class="badge required">*</span></td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.bestTimeToContact</td>
+                                <td>Best Time to Contact (أفضل وقت للتواصل)</td>
+                                <td>String</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.nextFollowupDate</td>
+                                <td>Next Follow-up Date (تاريخ المتابعة القادم)</td>
+                                <td>Date - Indexed</td>
+                            </tr>
+                            <tr>
+                                <td>evaluation.additionalNotes</td>
+                                <td>Additional Notes (ملاحظات إضافية)</td>
+                                <td>Text</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="note">
+                        <strong>🔑 Important:</strong>
+                        Counselor Status (حالة المرشد) is stored per-agent in the assignedAgents array. Each agent has
+                        independent status tracking.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MASTER TAB -->
+        <div id="master" class="tab-content master">
+            <div class="degree-header">
+                <div class="emoji">📕</div>
+                <h2 class="master-color">Master Degree (ماجستير)</h2>
+                <p>Complete data structure for postgraduate students</p>
+            </div>
+
+            <div class="diagram">
+                <!-- Sections 1, 2, 5 are identical to Bachelor -->
+                <div class="note" style="background: #e0f2fe; border-color: #0ea5e9;">
+                    <strong>📋 Note:</strong>
+                    Sections 1 (Marketing Data), 2 (Basic Data), and 5 (Evaluation & Status) are identical to Bachelor.
+                    Below are only the sections that differ.
+                </div>
+
+                <!-- Section 3: Current Qualification -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">3</span>
+                        <span class="icon">🎓</span>
+                        <span>Current Qualification (بيانات الشهادة)</span>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div class="subsection-title">📋 Common Fields (Same as Bachelor)</div>
+                    <p style="color: #6b7280; margin-bottom: 15px;">
+                        All common fields (certificateName, grade, overallRating, studySystem, graduationYear, etc.) are
+                        identical to Bachelor.
+                    </p>
+
+                    <!-- Master-Specific Fields -->
+                    <div class="subsection degree-specific">
+                        <div class="subsection-title">🎯 Master-Specific Fields (Bachelor Degree Info)</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorSpecialization</td>
+                                    <td>تخصص البكالوريوس <span class="badge required">*</span></td>
+                                    <td>String - Required for Master seekers <span class="badge unique">Master
+                                            Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorCollege</td>
+                                    <td>كلية البكالوريوس</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorUniversity</td>
+                                    <td>جامعة البكالوريوس</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorCountry</td>
+                                    <td>دولة شهادة البكالوريوس</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorGraduationYear</td>
+                                    <td>سنة الحصول على البكالوريوس</td>
+                                    <td>Number <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorStudySystem</td>
+                                    <td>نظام الدراسة</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorRating</td>
+                                    <td>التقدير</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.bachelorGPA</td>
+                                    <td>المعدل (GPA)</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.creditHours</td>
+                                    <td>عدد الساعات المعتمدة</td>
+                                    <td>Number <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.masterSeeker.studyDuration</td>
+                                    <td>مدة الدراسة</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 4: Desired Program -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">4</span>
+                        <span class="icon">🎯</span>
+                        <span>Desired Program (البرنامج المطلوب)</span>
+                    </div>
+
+                    <div class="subsection-title">📋 Common Fields (Same as Bachelor)</div>
+                    <p style="color: #6b7280; margin-bottom: 15px;">
+                        All common fields (studyDestination, desiredUniversity, desiredCollege, etc.) are identical to
+                        Bachelor.
+                    </p>
+
+                    <div class="subsection degree-specific">
+                        <div class="subsection-title">🎯 Master-Specific Fields</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>desiredProgram.master.specificSpecialization</td>
+                                    <td>Specific Specialization (التخصص الدقيق المطلوب)</td>
+                                    <td>String <span class="badge unique">Master Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>desiredProgram.master.studyMethod</td>
+                                    <td>Study Method (طريقة الدراسة المطلوب)</td>
+                                    <td>String - Options: On-campus, Online, Hybrid <span class="badge unique">Master
+                                            Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>desiredProgram.master.masterType</td>
+                                    <td>Master Type (نوع الماجستير المطلوب)</td>
+                                    <td>String - Options: Research-based, Professional, Mixed <span
+                                            class="badge unique">Master Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHD TAB -->
+        <div id="phd" class="tab-content phd">
+            <div class="degree-header">
+                <div class="emoji">📗</div>
+                <h2 class="phd-color">PhD Degree (دكتوراه)</h2>
+                <p>Complete data structure for doctoral students</p>
+            </div>
+
+            <div class="diagram">
+                <!-- Sections 1, 2, 5 are identical -->
+                <div class="note" style="background: #d1fae5; border-color: #10b981;">
+                    <strong>📋 Note:</strong>
+                    Sections 1 (Marketing Data), 2 (Basic Data), and 5 (Evaluation & Status) are identical to Bachelor.
+                    Below are only the sections that differ.
+                </div>
+
+                <!-- Section 3: Current Qualification -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">3</span>
+                        <span class="icon">🎓</span>
+                        <span>Current Qualification (بيانات الشهادة)</span>
+                    </div>
+
+                    <!-- Common Fields -->
+                    <div class="subsection-title">📋 Common Fields (Same as Bachelor & Master)</div>
+                    <p style="color: #6b7280; margin-bottom: 15px;">
+                        All common fields (certificateName, grade, overallRating, studySystem, graduationYear, etc.) are
+                        identical.
+                    </p>
+
+                    <!-- PhD-Specific Fields -->
+                    <div class="subsection degree-specific">
+                        <div class="subsection-title">🎯 PhD-Specific Fields (Bachelor Degree Info)</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorSpecialization</td>
+                                    <td>تخصص (بكالوريوس) الحاصل عليه الطالب</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorSector</td>
+                                    <td>قطاع تخصص البكالوريوس</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorCollege</td>
+                                    <td>كلية مؤهل (بكالوريوس) الحاصل عليه الطالب</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorUniversity</td>
+                                    <td>جامعة المؤهل (البكالوريوس)</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorCountry</td>
+                                    <td>دولة شهادة البكالوريوس</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorGraduationYear</td>
+                                    <td>سنة الحصول على البكالوريوس</td>
+                                    <td>Number <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorStudySystem</td>
+                                    <td>نظام الدراسة</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorGPA</td>
+                                    <td>معدل البكالوريوس</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorRating</td>
+                                    <td>تقدير البكالوريوس</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.bachelorSemesters</td>
+                                    <td>فصول دراسية</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="subsection degree-specific" style="margin-top: 20px;">
+                        <div class="subsection-title">🎯 PhD-Specific Fields (Master Degree Info)</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterSpecialization</td>
+                                    <td>تخصص الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterSector</td>
+                                    <td>قطاع تخصص الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterCollege</td>
+                                    <td>كلية الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterUniversity</td>
+                                    <td>جامعة الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterCountry</td>
+                                    <td>دولة شهادة الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterGraduationYear</td>
+                                    <td>سنة الحصول على الماجستير</td>
+                                    <td>Number <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterStudySystem</td>
+                                    <td>نظام الدراسة</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterDegreeType</td>
+                                    <td>نوع الدرجة العلمية (بحثي/مهني)</td>
+                                    <td>String - Options: Research-based, Professional <span class="badge unique">PhD
+                                            Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterGPA</td>
+                                    <td>معدل الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterRating</td>
+                                    <td>تقدير الماجستير</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.masterThesisTitle</td>
+                                    <td>عنوان رسالة الماجستير</td>
+                                    <td>Text <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>currentQualification.phdSeeker.studyDuration</td>
+                                    <td>مدة الدراسة</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 4: Desired Program -->
+                <div class="section">
+                    <div class="section-title">
+                        <span class="section-number">4</span>
+                        <span class="icon">🎯</span>
+                        <span>Desired Program (البرنامج المطلوب)</span>
+                    </div>
+
+                    <div class="subsection-title">📋 Common Fields (Same as Bachelor & Master)</div>
+                    <p style="color: #6b7280; margin-bottom: 15px;">
+                        All common fields (studyDestination, desiredUniversity, desiredCollege, etc.) are identical.
+                    </p>
+
+                    <div class="subsection degree-specific">
+                        <div class="subsection-title">🎯 PhD-Specific Fields</div>
+                        <table class="field-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30%;">Variable Name</th>
+                                    <th style="width: 35%;">Label (English / Arabic)</th>
+                                    <th style="width: 35%;">Data Type / Options</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>desiredProgram.phd.specificSpecialization</td>
+                                    <td>Specific Specialization (التخصص الدقيق المطلوب)</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>desiredProgram.phd.studyMethod</td>
+                                    <td>Study Method (طريقة الدراسة المطلوب)</td>
+                                    <td>String - Options: On-campus, Online, Hybrid <span class="badge unique">PhD
+                                            Only</span></td>
+                                </tr>
+                                <tr>
+                                    <td>desiredProgram.phd.researchField</td>
+                                    <td>Research Field (مجال البحث المطلوب)</td>
+                                    <td>String <span class="badge unique">PhD Only</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPARISON TAB -->
+        <div id="comparison" class="tab-content">
+            <div class="degree-header">
+                <div class="emoji">📊</div>
+                <h2 style="color: #f59e0b;">Complete Degree Comparison</h2>
+                <p>Field-by-field comparison across all degree types</p>
+            </div>
+
+            <div class="comparison">
+                <h3>Section 1: Marketing Data</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>📘 Bachelor</th>
+                            <th>📕 Master</th>
+                            <th>📗 PhD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>marketingData.source</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>marketingData.company</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>marketingData.inquiryDate</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>marketingData.counselorId</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center; background: #f9fafb; font-weight: bold;">
+                                ✓ All Marketing Data fields are identical across all degree types
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison" style="margin-top: 30px;">
+                <h3>Section 2: Basic Data</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>📘 Bachelor</th>
+                            <th>📕 Master</th>
+                            <th>📗 PhD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>basicData.customerName</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.customerPhone</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.email</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.gender</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.nationality</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.country</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>basicData.cityRegion</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center; background: #f9fafb; font-weight: bold;">
+                                ✓ All Basic Data fields are identical across all degree types
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison" style="margin-top: 30px;">
+                <h3>Section 3: Current Qualification (KEY DIFFERENCES)</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Field / Subsection</th>
+                            <th>📘 Bachelor</th>
+                            <th>📕 Master</th>
+                            <th>📗 PhD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" style="background: #e0e7ff; font-weight: bold; text-align: center;">
+                                Common Fields (All Degrees)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>certificateName, grade, overallRating, etc.</td>
+                            <td class="check">✓ Yes</td>
+                            <td class="check">✓ Yes</td>
+                            <td class="check">✓ Yes</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="background: #fef3c7; font-weight: bold; text-align: center;">
+                                Degree-Specific Subsections
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>bachelor.certificateTrack</strong> (High School Track)</td>
+                            <td class="check">✓ Yes (2 fields)</td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>masterSeeker.*</strong> (Bachelor Degree Info)</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes (10 fields)</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>phdSeeker.bachelor*</strong> (Bachelor Degree Info)</td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes (10 fields)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>phdSeeker.master*</strong> (Master Degree Info)</td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes (12 fields)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="background: #f9fafb; font-weight: bold; text-align: center;">
+                                Total Fields Count
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Qualification Fields</strong></td>
+                            <td>8 common + 2 specific = <strong>10</strong></td>
+                            <td>8 common + 10 specific = <strong>18</strong></td>
+                            <td>8 common + 22 specific = <strong>30</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison" style="margin-top: 30px;">
+                <h3>Section 4: Desired Program (KEY DIFFERENCES)</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>📘 Bachelor</th>
+                            <th>📕 Master</th>
+                            <th>📗 PhD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" style="background: #e0e7ff; font-weight: bold; text-align: center;">
+                                Common Fields
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>studyDestination, desiredUniversity, etc.</td>
+                            <td class="check">✓ Yes (10 fields)</td>
+                            <td class="check">✓ Yes (10 fields)</td>
+                            <td class="check">✓ Yes (10 fields)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="background: #fef3c7; font-weight: bold; text-align: center;">
+                                Degree-Specific Fields
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>master.specificSpecialization</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>master.studyMethod</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>master.masterType</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                            <td class="cross">✗ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>phd.specificSpecialization</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>phd.studyMethod</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>phd.researchField</strong></td>
+                            <td class="cross">✗ No</td>
+                            <td class="cross">✗ No</td>
+                            <td class="check">✓ Yes</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="background: #f9fafb; font-weight: bold; text-align: center;">
+                                Total Fields Count
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Desired Program Fields</strong></td>
+                            <td>10 common = <strong>10</strong></td>
+                            <td>10 common + 3 specific = <strong>13</strong></td>
+                            <td>10 common + 3 specific = <strong>13</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison" style="margin-top: 30px;">
+                <h3>Section 5: Evaluation & Status</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>📘 Bachelor</th>
+                            <th>📕 Master</th>
+                            <th>📗 PhD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>evaluation.agentEvaluation</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>evaluation.technicalOpinion</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>evaluation.interestRate</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>assignment.assignedAgents[].counselorStatus</td>
+                            <td class="check">✓ Same (Per-Agent)</td>
+                            <td class="check">✓ Same (Per-Agent)</td>
+                            <td class="check">✓ Same (Per-Agent)</td>
+                        </tr>
+                        <tr>
+                            <td>evaluation.salesStatus</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td>evaluation.nextFollowupDate</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                            <td class="check">✓ Same</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="text-align: center; background: #f9fafb; font-weight: bold;">
+                                ✓ All Evaluation & Status fields are identical (10 fields)
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison" style="margin-top: 30px; background: #f0fdf4;">
+                <h3>📊 Complete Field Count Summary</h3>
+                <div
+                    style="display: flex; gap: 20px; justify-content: space-around; margin-top: 20px; flex-wrap: wrap;">
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3rem;">📘</div>
+                        <div style="font-weight: bold; margin: 10px 0; font-size: 1.2rem;">Bachelor</div>
+                        <div
+                            style="background: #3b82f6; color: white; padding: 15px 20px; border-radius: 10px; margin: 10px 0;">
+                            <div style="font-size: 2rem; font-weight: bold;">~38</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">Total Fields</div>
+                        </div>
+                        <div
+                            style="text-align: left; margin-top: 10px; padding: 10px; background: white; border-radius: 8px; font-size: 0.85rem;">
+                            • Marketing: 6<br>
+                            • Basic: 8<br>
+                            • Qualification: 10<br>
+                            • Desired: 10<br>
+                            • Evaluation: 10
+                        </div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3rem;">📕</div>
+                        <div style="font-weight: bold; margin: 10px 0; font-size: 1.2rem;">Master</div>
+                        <div
+                            style="background: #8b5cf6; color: white; padding: 15px 20px; border-radius: 10px; margin: 10px 0;">
+                            <div style="font-size: 2rem; font-weight: bold;">~53</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">Total Fields</div>
+                        </div>
+                        <div
+                            style="text-align: left; margin-top: 10px; padding: 10px; background: white; border-radius: 8px; font-size: 0.85rem;">
+                            • Marketing: 6<br>
+                            • Basic: 8<br>
+                            • Qualification: 18<br>
+                            • Desired: 13<br>
+                            • Evaluation: 10
+                        </div>
+                    </div>
+                    <div style="text-align: center; flex: 1; min-width: 200px;">
+                        <div style="font-size: 3rem;">📗</div>
+                        <div style="font-weight: bold; margin: 10px 0; font-size: 1.2rem;">PhD</div>
+                        <div
+                            style="background: #10b981; color: white; padding: 15px 20px; border-radius: 10px; margin: 10px 0;">
+                            <div style="font-size: 2rem; font-weight: bold;">~71</div>
+                            <div style="font-size: 0.9rem; margin-top: 5px;">Total Fields</div>
+                        </div>
+                        <div
+                            style="text-align: left; margin-top: 10px; padding: 10px; background: white; border-radius: 8px; font-size: 0.85rem;">
+                            • Marketing: 6<br>
+                            • Basic: 8<br>
+                            • Qualification: 30<br>
+                            • Desired: 13<br>
+                            • Evaluation: 10
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note" style="margin-top: 30px; background: #ede9fe; border-color: #8b5cf6;">
+                <strong>🔑 Key Insights:</strong>
+                <ul style="margin-top: 10px; margin-left: 20px; line-height: 1.8;">
+                    <li>All 3 degree types share <strong>24 common fields</strong> (Marketing + Basic + Evaluation)</li>
+                    <li><strong>Current Qualification</strong> section has the most variation (2 vs 10 vs 22 specific
+                        fields)</li>
+                    <li><strong>Desired Program</strong> section has minimal variation (0 vs 3 vs 3 specific fields)
+                    </li>
+                    <li>Field complexity increases: Bachelor (38) → Master (53) → PhD (71)</li>
+                    <li><strong>Counselor Status (حالة المرشد)</strong> is stored per-agent for all degree types</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>EduGate CRM</strong> - Complete Field-by-Field Documentation</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Generated from Customer Model - January 2026</p>
+        </footer>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+
+</html>

@@ -242,6 +242,20 @@ const customerSchema = new mongoose.Schema(
       },
       assignedByName: String,
 
+      // 🎯 MAIN STATUS: Latest counselorStatus from any agent (for admin quick view)
+      latestCounselorStatus: {
+        status: {
+          type: String,
+          default: "",
+        },
+        agentId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Profile",
+        },
+        agentName: String,
+        updatedAt: Date,
+      },
+
       // MULTI-AGENT SUPPORT: Array of all agents who can access this customer
       assignedAgents: [
         {

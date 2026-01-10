@@ -672,6 +672,7 @@ export default function CustomerList() {
                         <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden lg:table-cell">Primary</th>
                         <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Agents</th>
                         <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Status</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Latest Update</th>
                       </>
                     )}
                     <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden md:table-cell">Specialization</th>
@@ -681,13 +682,13 @@ export default function CustomerList() {
                 <tbody className="divide-y divide-slate-100">
                   {loading ? (
                     <tr>
-                      <td colSpan={isAdmin ? 8 : isAgent ? 6 : 5} className="text-center py-12">
+                      <td colSpan={isAdmin ? 9 : isAgent ? 6 : 5} className="text-center py-12">
                         <Loading />
                       </td>
                     </tr>
                   ) : customers.length === 0 ? (
                     <tr>
-                      <td colSpan={isAdmin ? 8 : isAgent ? 6 : 5} className="text-center py-12 text-slate-500">
+                      <td colSpan={isAdmin ? 9 : isAgent ? 6 : 5} className="text-center py-12 text-slate-500">
                         No customers found
                       </td>
                     </tr>
@@ -792,6 +793,32 @@ export default function CustomerList() {
                                 </div>
                               ) : (
                                 <span className="text-[10px] sm:text-xs text-slate-400">Not assigned</span>
+                              )}
+                            </td>
+
+                            {/* 🎯 Latest Status Update (Main Status - from any agent) */}
+                            <td className="px-2 sm:px-4 py-2 sm:py-3">
+                              {customer.assignment?.latestCounselorStatus?.status ? (
+                                <div>
+                                  <span className="inline-flex items-center px-2 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border border-green-200 text-[9px] sm:text-xs font-bold rounded-full">
+                                    {customer.assignment.latestCounselorStatus.status}
+                                  </span>
+                                  <div className="mt-1 text-[8px] sm:text-[10px] text-slate-500">
+                                    by {customer.assignment.latestCounselorStatus.agentName}
+                                    {customer.assignment.latestCounselorStatus.updatedAt && (
+                                      <span className="block">
+                                        {new Date(customer.assignment.latestCounselorStatus.updatedAt).toLocaleDateString('en-GB', { 
+                                          day: '2-digit', 
+                                          month: 'short',
+                                          hour: '2-digit',
+                                          minute: '2-digit'
+                                        })}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              ) : (
+                                <span className="text-[10px] sm:text-xs text-slate-400">No updates yet</span>
                               )}
                             </td>
                           </>

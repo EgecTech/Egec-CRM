@@ -95,6 +95,14 @@ async function handler(req, res) {
       // ⚠️ IMPORTANT: Remove old counselorStatus from evaluation if present
       // It's now stored per-agent in assignedAgents array, not at root level
       const counselorStatusToTrack = updateData.evaluation?.counselorStatus;
+      
+      // 🔍 DEBUG: Log what we received
+      console.log('🔍 DEBUG - Counselor Status Update:');
+      console.log('  - User:', userName, '(', role, ')');
+      console.log('  - Status received:', counselorStatusToTrack);
+      console.log('  - Has assignedAgents:', !!customer.assignment?.assignedAgents);
+      console.log('  - Agents count:', customer.assignment?.assignedAgents?.length || 0);
+      
       if (updateData.evaluation && 'counselorStatus' in updateData.evaluation) {
         delete updateData.evaluation.counselorStatus;
       }
@@ -115,15 +123,35 @@ async function handler(req, res) {
           a => a.agentId && a.agentId.toString() === userId && a.isActive
         );
         
+        console.log('  - Agent found at index:', agentIndex);
+        
         if (agentIndex !== -1 && agentIndex !== undefined) {
+          const currentTime = new Date();
+          
           // Update this agent's counselorStatus and tracking fields
           customer.assignment.assignedAgents[agentIndex].counselorStatus = counselorStatusToTrack || '';
           customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedBy = userId;
           customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedByName = userName;
-          customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedAt = new Date();
+          customer.assignment.assignedAgents[agentIndex].counselorStatusLastUpdatedAt = currentTime;
+          
+          // 🎯 UPDATE MAIN STATUS: Set this as the latest status update
+          if (!customer.assignment.latestCounselorStatus) {
+            customer.assignment.latestCounselorStatus = {};
+          }
+          customer.assignment.latestCounselorStatus.status = counselorStatusToTrack || '';
+          customer.assignment.latestCounselorStatus.agentId = userId;
+          customer.assignment.latestCounselorStatus.agentName = userName;
+          customer.assignment.latestCounselorStatus.updatedAt = currentTime;
           
           // Mark as modified to ensure save
           customer.markModified('assignment.assignedAgents');
+          customer.markModified('assignment.latestCounselorStatus');
+          
+          console.log('  ✅ Successfully updated:');
+          console.log('    - Agent status:', counselorStatusToTrack);
+          console.log('    - Main status:', customer.assignment.latestCounselorStatus.status);
+          console.log('    - Updated by:', customer.assignment.latestCounselorStatus.agentName);
+          console.log('    - Updated at:', customer.assignment.latestCounselorStatus.updatedAt);
           
           // Add to assignment history
           if (!customer.assignment.assignmentHistory) {
@@ -135,10 +163,14 @@ async function handler(req, res) {
             agentName: userName,
             performedBy: userId,
             performedByName: userName,
-            performedAt: new Date(),
+            performedAt: currentTime,
             reason: `Updated counselorStatus to: ${counselorStatusToTrack || 'empty'}`
           });
+        } else {
+          console.log('  ❌ Agent NOT found in assignedAgents array for this user');
         }
+      } else {
+        console.log('  ⏭️  Skipped: counselorStatus not provided or no assigned agents');
       }
       
       await customer.save();
