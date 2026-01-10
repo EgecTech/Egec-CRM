@@ -19,7 +19,7 @@ export default function CustomerCreate() {
 
   // Permission checks
   const role = session?.user?.role;
-  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isAgent = role === 'agent';
   const isSuperAgent = role === 'superagent';
   const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
 
@@ -320,7 +320,7 @@ export default function CustomerCreate() {
       // Filter only agent users
       const agentUsers = usersList.filter(
         (user) =>
-          ["agent", "egecagent", "studyagent", "edugateagent"].includes(
+          ["agent"].includes(
             user.role
           ) && user.isActive
       );

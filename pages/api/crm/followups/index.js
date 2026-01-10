@@ -135,7 +135,7 @@ async function handler(req, res) {
       }
       
       // Check if user can add followup to this customer
-      if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+      if (role === 'agent') {
         if (customer.assignment?.assignedAgentId?.toString() !== userId) {
           return res.status(403).json({ error: 'Forbidden: Customer not assigned to you' });
         }

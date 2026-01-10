@@ -217,10 +217,6 @@ async function handler(req, res) {
           "superagent",
           "dataentry",
           "agent",
-          "agency",
-          "egecagent",
-          "studyagent",
-          "edugateagent",
         ];
         if (!validRoles.includes(role)) {
           return res.status(400).json({

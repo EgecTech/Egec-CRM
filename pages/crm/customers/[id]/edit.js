@@ -27,7 +27,7 @@ export default function EditCustomer() {
 
   // Permission checks
   const role = session?.user?.role;
-  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isAgent = role === 'agent';
   const isSuperAgent = role === 'superagent';
   const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
 
@@ -124,7 +124,7 @@ export default function EditCustomer() {
       }
       
       const agentUsers = usersList.filter(user => 
-        ['agent', 'egecagent', 'studyagent', 'edugateagent'].includes(user.role) && user.isActive
+        ['agent'].includes(user.role) && user.isActive
       );
       setAgents(agentUsers);
     } catch (err) {
@@ -205,7 +205,7 @@ export default function EditCustomer() {
     }
 
     // Agents can edit their assigned customers
-    if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+    if (role === 'agent') {
       const assignedAgentId = customerData.assignment?.assignedAgentId?.toString() || customerData.assignment?.assignedAgentId;
       return assignedAgentId === userId;
     }

@@ -436,14 +436,22 @@ export default function AuditLogs() {
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
                             <span className="text-xs font-semibold text-red-600 uppercase">Old Value</span>
-                            <p className="mt-1 text-slate-700 bg-red-50 px-3 py-2 rounded border border-red-200">
-                              {change.oldValue || <span className="text-slate-400 italic">empty</span>}
+                            <p className="mt-1 text-slate-700 bg-red-50 px-3 py-2 rounded border border-red-200 whitespace-pre-wrap break-words">
+                              {change.oldValue 
+                                ? (typeof change.oldValue === 'object' 
+                                    ? JSON.stringify(change.oldValue, null, 2) 
+                                    : String(change.oldValue))
+                                : <span className="text-slate-400 italic">empty</span>}
                             </p>
                           </div>
                           <div>
                             <span className="text-xs font-semibold text-green-600 uppercase">New Value</span>
-                            <p className="mt-1 text-slate-700 bg-green-50 px-3 py-2 rounded border border-green-200">
-                              {change.newValue || <span className="text-slate-400 italic">empty</span>}
+                            <p className="mt-1 text-slate-700 bg-green-50 px-3 py-2 rounded border border-green-200 whitespace-pre-wrap break-words">
+                              {change.newValue 
+                                ? (typeof change.newValue === 'object' 
+                                    ? JSON.stringify(change.newValue, null, 2) 
+                                    : String(change.newValue))
+                                : <span className="text-slate-400 italic">empty</span>}
                             </p>
                           </div>
                         </div>

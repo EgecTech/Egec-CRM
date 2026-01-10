@@ -35,7 +35,7 @@ async function handler(req, res) {
       }
       
       // Check permission
-      if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+      if (role === 'agent') {
         if (followup.agentId?.toString() !== userId) {
           return res.status(403).json({ error: 'Forbidden: Not your follow-up' });
         }
@@ -62,7 +62,7 @@ async function handler(req, res) {
       }
       
       // Check permission (only owner or admin/superadmin can edit)
-      if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+      if (role === 'agent') {
         if (followup.agentId?.toString() !== userId) {
           return res.status(403).json({ error: 'Forbidden: Not your follow-up' });
         }

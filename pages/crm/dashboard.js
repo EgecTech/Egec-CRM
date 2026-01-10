@@ -91,7 +91,7 @@ export default function CRMDashboard() {
 
   // Role-based dashboard rendering
   const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
-  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isAgent = role === 'agent';
   const isDataEntry = role === 'dataentry';
 
   return (

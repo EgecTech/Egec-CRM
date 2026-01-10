@@ -140,10 +140,7 @@ export default function UserManagement() {
       'admin': 'Admin',
       'superagent': 'Super Agent',
       'agent': 'Agent',
-      'dataentry': 'Data Entry',
-      'egecagent': 'EGEC Agent',
-      'studyagent': 'Study Agent',
-      'edugateagent': 'EduGate Agent'
+      'dataentry': 'Data Entry'
     };
     return labels[role] || role;
   };

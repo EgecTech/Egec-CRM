@@ -93,7 +93,7 @@ export default function CustomerList() {
         usersList = data.data;
       }
       const agentUsers = usersList.filter(user => 
-        ['agent', 'egecagent', 'studyagent', 'edugateagent'].includes(user.role) && user.isActive
+        ['agent'].includes(user.role) && user.isActive
       );
       setAgents(agentUsers);
     } catch (err) {
@@ -259,7 +259,7 @@ export default function CustomerList() {
     if (status === 'authenticated') {
       const role = session?.user?.role;
       const isAdminUser = role === 'superadmin' || role === 'admin' || role === 'superagent';
-      const isAgentUser = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+      const isAgentUser = role === 'agent';
       const isDataEntryUser = role === 'dataentry';
       
       fetchCustomers();
@@ -318,7 +318,7 @@ export default function CustomerList() {
 
   const role = session?.user?.role;
   const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
-  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isAgent = role === 'agent';
   const isDataEntry = role === 'dataentry';
   const canAccessCustomers = isAdmin || isAgent || isDataEntry;
 

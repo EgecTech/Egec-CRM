@@ -60,12 +60,12 @@ export default async function handler(req, res) {
     // Filter out colleges with "لا يوجد" (none/not available)
     const dropdownData = (university.colleges || [])
       .filter(college => {
-        const collegeName = college.collegeName || college.name || '';
+        const collegeName = college.collegeName || '';
         return collegeName && collegeName !== 'لا يوجد';
       })
-      .map(college => ({
-        value: college.collegeId ? college.collegeId.toString() : college._id.toString(),
-        label: college.collegeName || college.name || 'Unknown College'
+      .map((college, index) => ({
+        value: college._id ? college._id.toString() : `college_${index}`,
+        label: college.collegeName || 'Unknown College'
       }));
 
     // Sort by name

@@ -155,17 +155,7 @@ const customerSchema = new mongoose.Schema(
       
       // Common fields for all degree types
       desiredSpecialization: String,
-      desiredSpecializationId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Specialization",
-        default: null,
-      },
       desiredCollege: String,
-      desiredCollegeId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "College",
-        default: null,
-      },
       desiredUniversity: String,
       desiredUniversityId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -398,8 +388,6 @@ customerSchema.pre("save", function (next) {
 
   // Clean desired program ObjectIds
   if (this.desiredProgram) {
-    cleanObjectId(this.desiredProgram, "desiredSpecializationId");
-    cleanObjectId(this.desiredProgram, "desiredCollegeId");
     cleanObjectId(this.desiredProgram, "desiredUniversityId");
   }
 

@@ -38,7 +38,7 @@ export default function CustomerProfile() {
 
   // Permission checks
   const role = session?.user?.role;
-  const isAgent = role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent';
+  const isAgent = role === 'agent';
   const isSuperAgent = role === 'superagent';
   const canSeeMarketing = !isAgent && !isSuperAgent; // Only Superadmin and Admin can see marketing data
   const canViewReassignmentHistory = role === 'admin' || role === 'superadmin' || role === 'superagent'; // Only Admin, Superadmin, and Superagent can see reassignment history
@@ -108,7 +108,7 @@ export default function CustomerProfile() {
     }
 
     // Agents can edit their assigned customers
-    if (role === 'agent' || role === 'egecagent' || role === 'studyagent' || role === 'edugateagent') {
+    if (role === 'agent') {
       const assignedAgentId = customer.assignment?.assignedAgentId?.toString() || customer.assignment?.assignedAgentId;
       return assignedAgentId === userId;
     }

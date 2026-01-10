@@ -53,8 +53,7 @@ const Aside = React.memo(({ asideOpen }) => {
   ];
 
   // Add follow-ups for agents and admins
-  if (session?.user?.role === "agent" || session?.user?.role === "egecagent" || 
-      session?.user?.role === "studyagent" || session?.user?.role === "edugateagent" ||
+  if (session?.user?.role === "agent" || 
       session?.user?.role === "admin" || session?.user?.role === "superadmin") {
     navItems.push({
       href: "/crm/followups",
