@@ -6,6 +6,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 import { sanitizePhone } from "@/lib/sanitize";
 import { checkDirectAccess } from "@/lib/apiProtection";
+import { logAudit } from "@/lib/auditLogger";
 
 async function handler(req, res) {
   // Block direct browser access
@@ -46,11 +47,17 @@ async function handler(req, res) {
       return res.status(404).json({ error: "User not found" });
     }
 
+    // Track changes for audit log
+    const changes = [];
+
     // Update phone if provided
     if (phone) {
       const phoneRegex = /^\+?[\d\s-]{8,}$/;
       if (!phoneRegex.test(phone)) {
         return res.status(400).json({ error: "Invalid phone number format" });
+      }
+      if (phone !== user.userPhone) {
+        changes.push({ field: "userPhone", oldValue: user.userPhone || "", newValue: phone });
       }
       user.userPhone = phone;
     }
@@ -72,11 +79,28 @@ async function handler(req, res) {
 
       // Hash and update new password
       const saltRounds = 10;
+      changes.push({ field: "password", oldValue: "[REDACTED]", newValue: "[CHANGED]" });
       user.password = await bcrypt.hash(newPassword, saltRounds);
       user.sessionVersion = (user.sessionVersion || 1) + 1; // Increment session version
     }
 
     await user.save();
+
+    // Log audit if there were changes
+    if (changes.length > 0) {
+      await logAudit({
+        userId: user._id,
+        userEmail: user.email,
+        userName: user.name,
+        userRole: user.role,
+        action: "UPDATE_PROFILE",
+        entityType: "profile",
+        entityId: user._id,
+        entityName: user.name,
+        description: `User ${user.name} updated their own profile`,
+        changes
+      });
+    }
 
     // Return updated user without password
     const { password: _, ...userWithoutPassword } = user.toObject();

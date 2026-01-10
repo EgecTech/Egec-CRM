@@ -5,6 +5,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { withRateLimit, rateLimitPresets } from "@/lib/rateLimit";
 import bcrypt from "bcrypt";
 import { checkDirectAccess } from "@/lib/apiProtection";
+import { logAudit } from "@/lib/auditLogger";
 
 async function handler(req, res) {
   // Block direct browser access
@@ -124,6 +125,26 @@ async function handler(req, res) {
           email: updatedUser.email
         });
 
+        // Log audit
+        await logAudit({
+          userId: currentUser._id,
+          userEmail: currentUser.email,
+          userName: currentUser.name,
+          userRole: currentUser.role,
+          action: "DELETE_USER",
+          entityType: "profile",
+          entityId: updatedUser._id,
+          entityName: updatedUser.name,
+          description: `User ${updatedUser.name} (${updatedUser.email}) was deactivated by ${currentUser.name}`,
+          changes: [
+            {
+              field: "isActive",
+              oldValue: true,
+              newValue: false
+            }
+          ]
+        });
+
         // Return updated user without sensitive information
         const { password, sessionVersion, ...userWithoutSensitive } = updatedUser;
         return res.status(200).json({
@@ -147,6 +168,9 @@ async function handler(req, res) {
         return res.status(404).json({ error: "User not found" });
       }
 
+      // Track changes for audit log
+      const changes = [];
+
       // Security checks: Admin cannot modify other admin/superadmin accounts
       // Superadmin can modify anyone
       if (currentUser.role === "admin") {
@@ -162,11 +186,13 @@ async function handler(req, res) {
 
       // Update name if provided and different
       if (name && name !== user.name) {
+        changes.push({ field: "name", oldValue: user.name, newValue: name });
         user.name = name;
       }
 
       // Update phone if provided
       if (userPhone !== undefined) {
+        changes.push({ field: "userPhone", oldValue: user.userPhone, newValue: userPhone });
         user.userPhone = userPhone;
       }
 
@@ -180,6 +206,7 @@ async function handler(req, res) {
         if (emailExists) {
           return res.status(400).json({ error: "Email already in use" });
         }
+        changes.push({ field: "email", oldValue: user.email, newValue: email });
         user.email = email;
       }
 
@@ -191,6 +218,7 @@ async function handler(req, res) {
             .json({ error: "Password must be at least 6 characters" });
         }
         const saltRounds = 10;
+        changes.push({ field: "password", oldValue: "[REDACTED]", newValue: "[CHANGED]" });
         user.password = await bcrypt.hash(newPassword, saltRounds);
         // Increment session version to log out user from all devices
         user.sessionVersion = (user.sessionVersion || 1) + 1;
@@ -224,6 +252,7 @@ async function handler(req, res) {
             message: `Role must be one of: ${validRoles.join(", ")}`,
           });
         }
+        changes.push({ field: "role", oldValue: user.role, newValue: role });
         user.role = role;
       }
 
@@ -242,6 +271,7 @@ async function handler(req, res) {
             message: "You cannot deactivate yourself",
           });
         }
+        changes.push({ field: "isActive", oldValue: user.isActive, newValue: isActive });
         user.isActive = isActive;
         // If deactivating, increment session version to log out user
         if (!isActive) {
@@ -250,6 +280,22 @@ async function handler(req, res) {
       }
 
       await user.save();
+
+      // Log audit if there were changes
+      if (changes.length > 0) {
+        await logAudit({
+          userId: currentUser._id,
+          userEmail: currentUser.email,
+          userName: currentUser.name,
+          userRole: currentUser.role,
+          action: "UPDATE_USER",
+          entityType: "profile",
+          entityId: user._id,
+          entityName: user.name,
+          description: `User ${user.name} (${user.email}) was updated by ${currentUser.name}`,
+          changes
+        });
+      }
 
       // Return updated user without sensitive information
       const { password, sessionVersion, ...userWithoutSensitive } =

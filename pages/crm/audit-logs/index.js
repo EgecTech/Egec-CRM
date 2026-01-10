@@ -86,6 +86,9 @@ export default function AuditLogs() {
       'AGENT_ADDED': 'bg-indigo-100 text-indigo-700',
       'UPDATE_SYSTEM_SETTING': 'bg-amber-100 text-amber-700',
       'DELETE_SYSTEM_SETTING': 'bg-rose-100 text-rose-700',
+      'UPDATE_USER': 'bg-cyan-100 text-cyan-700',
+      'DELETE_USER': 'bg-red-100 text-red-700',
+      'UPDATE_PROFILE': 'bg-teal-100 text-teal-700',
       'LOGIN': 'bg-green-100 text-green-700',
       'LOGOUT': 'bg-slate-100 text-slate-700',
       'LOGIN_FAILED': 'bg-red-100 text-red-700'
@@ -184,6 +187,9 @@ export default function AuditLogs() {
                 <option value="AGENT_ADDED">Agent Added</option>
                 <option value="UPDATE_SYSTEM_SETTING">Update System Setting</option>
                 <option value="DELETE_SYSTEM_SETTING">Delete System Setting</option>
+                <option value="UPDATE_USER">Update User (Admin)</option>
+                <option value="DELETE_USER">Delete User</option>
+                <option value="UPDATE_PROFILE">Update Profile (Self)</option>
                 <option value="LOGIN">Login</option>
                 <option value="LOGOUT">Logout</option>
                 <option value="LOGIN_FAILED">Login Failed</option>
@@ -197,6 +203,7 @@ export default function AuditLogs() {
                 <option value="customer">customer (lowercase)</option>
                 <option value="Customer">Customer (uppercase)</option>
                 <option value="followup">followup</option>
+                <option value="profile">profile (User Management)</option>
                 <option value="system_setting">system_setting</option>
                 <option value="auth">auth (Authentication)</option>
               </select>
