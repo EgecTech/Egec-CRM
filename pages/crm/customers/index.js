@@ -320,10 +320,48 @@ export default function CustomerList() {
   }
 
   const role = session?.user?.role;
+  const userId = session?.user?.id;
   const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
   const isAgent = role === 'agent';
   const isDataEntry = role === 'dataentry';
   const canAccessCustomers = isAdmin || isAgent || isDataEntry;
+
+  // Helper function to get counselorStatus to display in table
+  const getCounselorStatusForDisplay = (customer) => {
+    if (!customer?.assignment?.assignedAgents || customer.assignment.assignedAgents.length === 0) {
+      return '-';
+    }
+    
+    // For ADMINS: Show primary agent's counselorStatus (or first active agent)
+    if (isAdmin) {
+      const primaryAgentId = customer.assignment?.assignedAgentId?.toString();
+      
+      // Try to find primary agent
+      if (primaryAgentId) {
+        const primaryAgent = customer.assignment.assignedAgents.find(
+          agent => agent.agentId?.toString() === primaryAgentId && agent.isActive
+        );
+        if (primaryAgent) {
+          return primaryAgent.counselorStatus || '-';
+        }
+      }
+      
+      // Fallback: Get first active agent's status
+      const firstActiveAgent = customer.assignment.assignedAgents.find(agent => agent.isActive);
+      return firstActiveAgent?.counselorStatus || '-';
+    }
+    
+    // For AGENTS: Show their own counselorStatus for this customer
+    if (!userId) {
+      return '-';
+    }
+    
+    const currentAgentEntry = customer.assignment.assignedAgents.find(
+      agent => agent.agentId?.toString() === userId.toString() && agent.isActive
+    );
+    
+    return currentAgentEntry?.counselorStatus || '-';
+  };
 
   // Redirect if no access
   if (status === 'authenticated' && !canAccessCustomers) {
@@ -620,21 +658,24 @@ export default function CustomerList() {
           {/* Customers Table */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="min-w-full">
+              <table className="min-w-full text-xs sm:text-sm">
                 <thead className="bg-gradient-to-r from-slate-800 to-slate-700 text-white">
                   <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Customer #</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Name</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Phone</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">حالة المرشد</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Customer #</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Name</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden sm:table-cell">Phone</th>
+                    {!isAdmin && (
+                      <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Status</th>
+                    )}
                     {isAdmin && (
                       <>
-                        <th className="px-6 py-4 text-left text-xs font-bold uppercase">Primary Agent</th>
-                        <th className="px-6 py-4 text-left text-xs font-bold uppercase">Assigned Agents</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden lg:table-cell">Primary</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Agents</th>
+                        <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase">Status</th>
                       </>
                     )}
-                    <th className="px-6 py-4 text-left text-xs font-bold uppercase">Desired Specialization (التخصص المطلوب)</th>
-                    <th className="px-6 py-4 text-center text-xs font-bold uppercase">Actions</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-left text-[10px] sm:text-xs font-bold uppercase hidden md:table-cell">Specialization</th>
+                    <th className="px-2 sm:px-4 py-2 sm:py-3 text-center text-[10px] sm:text-xs font-bold uppercase">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -653,114 +694,147 @@ export default function CustomerList() {
                   ) : (
                     customers.map((customer) => (
                       <tr key={customer._id} className="hover:bg-slate-50 transition-colors">
-                        <td className="px-6 py-4">
-                          <span className="font-mono text-sm text-blue-600 font-semibold">
+                        <td className="px-2 sm:px-4 py-2 sm:py-3">
+                          <span className="font-mono text-[10px] sm:text-xs text-blue-600 font-semibold">
                             {customer.customerNumber}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-2 sm:px-4 py-2 sm:py-3">
                           <div>
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-[11px] sm:text-sm text-slate-900">
                               {customer.basicData?.customerName}
                             </p>
-                            <p className="text-xs text-slate-500">
-                              {customer.basicData?.email || 'No email'}
+                            <p className="text-[9px] sm:text-xs text-slate-500 sm:hidden">
+                              {customer.basicData?.customerPhone}
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-slate-700">
+                        <td className="px-2 sm:px-4 py-2 sm:py-3 hidden sm:table-cell">
+                          <span className="text-xs sm:text-sm text-slate-700">
                             {customer.basicData?.customerPhone}
                           </span>
                         </td>
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-slate-700">
-                            {customer.evaluation?.counselorStatus || '-'}
-                          </span>
-                        </td>
+                        {!isAdmin && (
+                          <td className="px-2 sm:px-4 py-2 sm:py-3">
+                            <span className={`text-[10px] sm:text-xs font-medium ${
+                              getCounselorStatusForDisplay(customer) !== '-' 
+                                ? 'text-blue-700' 
+                                : 'text-slate-400'
+                            }`}>
+                              {getCounselorStatusForDisplay(customer)}
+                            </span>
+                          </td>
+                        )}
                         {isAdmin && (
                           <>
                             {/* Primary Agent Column */}
-                            <td className="px-6 py-4">
+                            <td className="px-2 sm:px-4 py-2 sm:py-3 hidden lg:table-cell">
                               {customer.assignment?.assignedAgentName ? (
-                                <span className="text-sm font-semibold text-blue-700">
+                                <span className="text-xs sm:text-sm font-semibold text-blue-700">
                                   {customer.assignment.assignedAgentName}
                                 </span>
                               ) : (
-                                <span className="text-xs text-slate-400">Not assigned</span>
+                                <span className="text-[10px] sm:text-xs text-slate-400">Not assigned</span>
                               )}
                             </td>
                             
                             {/* Assigned Agents Column (All agents) */}
-                            <td className="px-6 py-4">
+                            <td className="px-2 sm:px-4 py-2 sm:py-3">
                               {customer.assignment?.assignedAgents && customer.assignment.assignedAgents.length > 0 ? (
-                                <div className="flex flex-wrap gap-1">
+                                <div className="flex flex-wrap gap-0.5 sm:gap-1">
                                   {customer.assignment.assignedAgents
                                     .filter(agent => agent.isActive)
                                     .map((agent, idx) => (
                                       <span 
                                         key={idx}
-                                        className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full"
+                                        className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-800 text-[9px] sm:text-xs font-medium rounded-full"
                                       >
                                         {agent.agentName}
                                       </span>
                                     ))}
                                   {customer.assignment.assignedAgents.filter(a => a.isActive).length === 0 && (
-                                    <span className="text-xs text-slate-400">No active agents</span>
+                                    <span className="text-[10px] sm:text-xs text-slate-400">No active agents</span>
                                   )}
                                 </div>
                               ) : (
                                 // Fallback to show primary agent if assignedAgents array doesn't exist
                                 customer.assignment?.assignedAgentName ? (
-                                  <span className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
+                                  <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 bg-blue-100 text-blue-800 text-[9px] sm:text-xs font-medium rounded-full">
                                     {customer.assignment.assignedAgentName}
                                   </span>
                                 ) : (
-                                  <span className="text-xs text-slate-400">Not assigned</span>
+                                  <span className="text-[10px] sm:text-xs text-slate-400">Not assigned</span>
                                 )
+                              )}
+                            </td>
+
+                            {/* Counselor Status for Each Agent (Statuses Only - Aligned with Agents Above) */}
+                            <td className="px-2 sm:px-4 py-2 sm:py-3">
+                              {customer.assignment?.assignedAgents && customer.assignment.assignedAgents.length > 0 ? (
+                                <div className="flex flex-wrap gap-0.5 sm:gap-1">
+                                  {customer.assignment.assignedAgents
+                                    .filter(agent => agent.isActive)
+                                    .map((agent, idx) => (
+                                      <span 
+                                        key={idx}
+                                        className={`inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[9px] sm:text-xs font-medium ${
+                                          agent.counselorStatus 
+                                            ? 'bg-blue-100 text-blue-800 border border-blue-200' 
+                                            : 'bg-slate-100 text-slate-400 border border-slate-200'
+                                        }`}
+                                      >
+                                        {agent.counselorStatus || '-'}
+                                      </span>
+                                    ))}
+                                  {customer.assignment.assignedAgents.filter(a => a.isActive).length === 0 && (
+                                    <span className="text-[10px] sm:text-xs text-slate-400">No active agents</span>
+                                  )}
+                                </div>
+                              ) : (
+                                <span className="text-[10px] sm:text-xs text-slate-400">Not assigned</span>
                               )}
                             </td>
                           </>
                         )}
-                        <td className="px-6 py-4">
-                          <span className="text-sm text-slate-700">
+                        <td className="px-2 sm:px-4 py-2 sm:py-3 hidden md:table-cell">
+                          <span className="text-xs sm:text-sm text-slate-700">
                             {customer.desiredProgram?.desiredSpecialization || '-'}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-center">
-                          <div className="flex items-center justify-center gap-2">
+                        <td className="px-2 sm:px-4 py-2 sm:py-3 text-center">
+                          <div className="flex items-center justify-center gap-0.5 sm:gap-1">
                             <Link href={`/crm/customers/${customer._id}`}>
                               <button 
-                                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                className="p-1.5 sm:p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                                 title="View Profile"
                               >
-                                <FaEye className="w-4 h-4" />
+                                <FaEye className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             </Link>
                             <Link href={`/crm/customers/${customer._id}/edit`}>
                               <button 
-                                className="p-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+                                className="p-1.5 sm:p-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
                                 title="Edit Customer"
                               >
-                                <FaEdit className="w-4 h-4" />
+                                <FaEdit className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             </Link>
                             {(session?.user?.role === 'admin' || session?.user?.role === 'superadmin' || session?.user?.role === 'superagent') && (
                               <button 
                                 onClick={() => openReassignModal(customer)}
-                                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                className="p-1.5 sm:p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                                 title="Add Another Agent"
                               >
-                                <FaExchangeAlt className="w-4 h-4" />
+                                <FaExchangeAlt className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             )}
                             {session?.user?.role === 'superadmin' && (
                               <button 
                                 onClick={() => handleDelete(customer._id, customer.basicData?.customerName)}
-                                className="p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                                className="p-1.5 sm:p-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
                                 title="Delete Customer"
                               >
-                                <FaTrash className="w-4 h-4" />
+                                <FaTrash className="w-3 h-3 sm:w-4 sm:h-4" />
                               </button>
                             )}
                           </div>

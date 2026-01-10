@@ -98,8 +98,17 @@ async function handler(req, res) {
           ]
         });
       }
+      // ✅ Counselor Status Filter - Check assignedAgents array for current user's status
       if (counselorStatus) {
-        query['evaluation.counselorStatus'] = counselorStatus;
+        // For agents: filter by their own counselorStatus
+        // For admins: filter by any agent's counselorStatus
+        query['assignment.assignedAgents'] = {
+          $elemMatch: {
+            counselorStatus: counselorStatus,
+            isActive: true,
+            ...(role === 'agent' ? { agentId: userId } : {}) // Agents only see their own status
+          }
+        };
       }
       if (country) {
         query['basicData.country'] = country;
