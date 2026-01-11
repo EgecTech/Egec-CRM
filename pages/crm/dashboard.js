@@ -93,6 +93,7 @@ export default function CRMDashboard() {
   const isAdmin = role === 'superadmin' || role === 'admin' || role === 'superagent';
   const isAgent = role === 'agent';
   const isDataEntry = role === 'dataentry';
+  const canAccessReports = role === 'superadmin' || role === 'admin'; // Only superadmin and admin
 
   return (
     <LoginLayout>
@@ -399,7 +400,7 @@ export default function CRMDashboard() {
               </Link>
             )}
 
-            {isAdmin && (
+            {canAccessReports && (
               <Link href="/crm/reports">
                 <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow cursor-pointer">
                   <div className="flex items-center gap-3">

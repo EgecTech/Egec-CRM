@@ -68,7 +68,7 @@ export default async function handler(req, res) {
     }
 
     // Validate that the new user is actually an agent
-    const validAgentRoles = ['agent', 'superagent'];
+    const validAgentRoles = ['agent']; // Only regular agents can be assigned
     if (!validAgentRoles.includes(newAgent.role)) {
       return res.status(400).json({ 
         error: 'Invalid Agent', 

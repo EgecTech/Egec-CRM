@@ -40,8 +40,9 @@ export default function CounselorStatusReport() {
       const res = await fetch('/api/admin/users');
       const data = await res.json();
       if (data.success) {
+        // Only regular agents (not superagent) for assignment
         const agentUsers = data.users.filter(u => 
-          ['agent', 'superagent'].includes(u.role) && u.isActive
+          u.role === 'agent' && u.isActive
         );
         setAgents(agentUsers);
       }

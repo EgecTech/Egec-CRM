@@ -18,23 +18,29 @@ async function handler(req, res) {
       return res.status(401).json({ error: "You must be logged in" });
     }
 
-    // Verify admin or superadmin role from database
+    // Verify admin, superadmin, or superagent role from database
     const currentUser = await Profile.findOne({ email: session.user.email });
-    if (!currentUser || !["admin", "superadmin"].includes(currentUser.role)) {
+    if (!currentUser || !["admin", "superadmin", "superagent"].includes(currentUser.role)) {
       return res
         .status(403)
         .json({ error: "Access denied. Admin privileges required." });
     }
 
     if (req.method === "GET") {
-      // Fetch all users
-      const users = await Profile.find(
-        {},
-        {
-          password: 0, // Exclude password field
-          sessionVersion: 0, // Exclude session version
-        }
-      );
+      // Fetch all users (or only agents if superagent is requesting)
+      const query = {};
+      const projection = {
+        password: 0, // Exclude password field
+        sessionVersion: 0, // Exclude session version
+      };
+      
+      // Superagent can only see agents (for assignment purposes)
+      if (currentUser.role === "superagent") {
+        query.role = "agent";
+        query.isActive = true;
+      }
+      
+      const users = await Profile.find(query, projection);
 
       return res.status(200).json({ users });
     }
@@ -76,7 +82,14 @@ async function handler(req, res) {
         });
       }
 
-      // Security check: Admin cannot create superadmin
+      // Security check: Admin cannot create superadmin, Superagent cannot create users
+      if (currentUser.role === "superagent") {
+        return res.status(403).json({ 
+          error: "Access denied",
+          message: "Superagents cannot create users" 
+        });
+      }
+      
       if (currentUser.role === "admin" && role === "superadmin") {
         return res.status(403).json({ 
           error: "Access denied",

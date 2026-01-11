@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     const newAgent = await Profile.findOne({
       _id: newAgentId,
       isActive: true,
-      role: { $in: ['agent', 'superagent'] }
+      role: 'agent' // Only regular agents can be assigned to customers
     }).select('name email role').lean();
     
     if (!newAgent) {

@@ -94,7 +94,7 @@ export default function CustomerList() {
         usersList = data.data;
       }
       const agentUsers = usersList.filter(user => 
-        ['agent', 'superagent'].includes(user.role) && user.isActive
+        user.role === 'agent' && user.isActive
       );
       setAgents(agentUsers);
     } catch (err) {

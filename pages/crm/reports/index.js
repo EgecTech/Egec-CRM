@@ -22,7 +22,8 @@ export default function Reports() {
 
     if (status === 'authenticated') {
       const role = session?.user?.role;
-      if (role !== 'admin' && role !== 'superadmin' && role !== 'superagent') {
+      // Only superadmin and admin can access reports
+      if (role !== 'admin' && role !== 'superadmin') {
         router.push('/crm/dashboard');
         return;
       }

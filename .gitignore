@@ -65,3 +65,17 @@ next-env.d.ts
 
 # info files
 info
+
+# Development files - NEVER deploy these
+/dev/
+/dev/**/*
+*.local.md
+*.draft.md
+*.temp.*
+/temp/
+/tmp/
+
+# Development databases
+*.db
+*.sqlite
+*.sqlite3
